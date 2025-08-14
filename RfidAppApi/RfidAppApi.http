@@ -1,0 +1,158 @@
+### RFID Jewelry Inventory System - Multi-Tenant API Tests
+
+### 🚀 Quick Start Guide:
+### 1. First, register a new client organization
+### 2. Then login to get JWT token
+### 3. Use the token to test protected endpoints
+
+### 1. User Registration - Create New Client Database
+POST {{baseUrl}}/api/user/register
+Content-Type: application/json
+
+{
+    "userName": "jewelry_admin",
+    "email": "admin@diamondjewelry.com",
+    "password": "SecurePass123!",
+    "fullName": "John Smith",
+    "mobileNumber": "+1234567890",
+    "organisationName": "Diamond Jewelry Store",
+    "showroomType": "Premium",
+    "city": "New York",
+    "address": "123 Jewelry Street"
+}
+
+### 2. User Login - Get JWT Token
+POST {{baseUrl}}/api/user/login
+Content-Type: application/json
+
+{
+    "email": "admin@diamondjewelry.com",
+    "password": "SecurePass123!"
+}
+
+### 3. Get All RFID Tags (Requires Authentication)
+GET {{baseUrl}}/api/rfid
+Authorization: Bearer {{authToken}}
+
+### 4. Create New RFID Tag (Requires Authentication)
+POST {{baseUrl}}/api/rfid
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+    "rfidCode": "RFID001",
+    "epcValue": "EPC001234567890"
+}
+
+### 5. Get RFID Tag by Code (Requires Authentication)
+GET {{baseUrl}}/api/rfid/RFID001
+Authorization: Bearer {{authToken}}
+
+### 6. Get Available RFID Tags (Requires Authentication)
+GET {{baseUrl}}/api/rfid/available
+Authorization: Bearer {{authToken}}
+
+### 7. Get Active RFID Tags (Requires Authentication)
+GET {{baseUrl}}/api/rfid/active
+Authorization: Bearer {{authToken}}
+
+### 8. Get RFID Count (Requires Authentication)
+GET {{baseUrl}}/api/rfid/count
+Authorization: Bearer {{authToken}}
+
+### 9. Update RFID Tag (Requires Authentication)
+PUT {{baseUrl}}/api/rfid/RFID001
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+    "epcValue": "EPC001234567890_UPDATED",
+    "isActive": true
+}
+
+### 10. Delete RFID Tag (Requires Authentication)
+DELETE {{baseUrl}}/api/rfid/RFID001
+Authorization: Bearer {{authToken}}
+
+### 11. Get User by ID (Requires Authentication)
+GET {{baseUrl}}/api/user/1
+Authorization: Bearer {{authToken}}
+
+### 12. Get User by Email (Requires Authentication)
+GET {{baseUrl}}/api/user/by-email/admin@diamondjewelry.com
+Authorization: Bearer {{authToken}}
+
+### 13. Get User by Client Code (Requires Authentication)
+GET {{baseUrl}}/api/user/by-client-code/LS0001
+Authorization: Bearer {{authToken}}
+
+### 14. Get All Users (Requires Authentication)
+GET {{baseUrl}}/api/user
+Authorization: Bearer {{authToken}}
+
+### 15. Update User (Requires Authentication)
+PUT {{baseUrl}}/api/user/1
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+    "fullName": "John Smith Updated",
+    "mobileNumber": "+1234567891",
+    "city": "Los Angeles"
+}
+
+### 16. Delete User (Requires Authentication)
+DELETE {{baseUrl}}/api/user/1
+Authorization: Bearer {{authToken}}
+
+### 📋 Additional Test Scenarios
+
+### 17. Test Invalid Login
+POST {{baseUrl}}/api/user/login
+Content-Type: application/json
+
+{
+    "email": "wrong@email.com",
+    "password": "WrongPassword123!"
+}
+
+### 18. Test Duplicate Email Registration
+POST {{baseUrl}}/api/user/register
+Content-Type: application/json
+
+{
+    "userName": "another_user",
+    "email": "admin@diamondjewelry.com",
+    "password": "AnotherPass123!",
+    "fullName": "Another User",
+    "organisationName": "Another Store"
+}
+
+### 19. Test RFID Tag Creation with Duplicate Code
+POST {{baseUrl}}/api/rfid
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+    "rfidCode": "RFID001",
+    "epcValue": "EPC001234567890_DUPLICATE"
+}
+
+### 20. Test RFID Tag Update with Non-existent Code
+PUT {{baseUrl}}/api/rfid/NONEXISTENT
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+    "epcValue": "EPC001234567890_UPDATE"
+}
+
+### Environment Variables
+@baseUrl = https://localhost:7001
+@authToken = your_jwt_token_here
+
+### 🔧 How to Use This File:
+### 1. Replace {{authToken}} with your actual JWT token
+### 2. Run the requests in sequence (register → login → test endpoints)
+### 3. Use VS Code REST Client extension or similar tool
+### 4. Check response codes and messages for validation

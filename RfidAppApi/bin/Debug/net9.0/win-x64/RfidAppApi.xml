@@ -1,0 +1,1233 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>RfidAppApi</name>
+    </assembly>
+    <members>
+        <member name="T:RfidAppApi.Controllers.DatabaseMigrationController">
+            <summary>
+            Controller for database migration and health monitoring
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.DatabaseMigrationController.GetDatabaseHealth">
+            <summary>
+            Get database health status for all clients
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.DatabaseMigrationController.GetClientDatabaseHealth(System.String)">
+            <summary>
+            Get database health status for a specific client
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.DatabaseMigrationController.MigrateClientDatabase(System.String)">
+            <summary>
+            Migrate a specific client database
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.DatabaseMigrationController.MigrateAllClientDatabases">
+            <summary>
+            Migrate all client databases
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.DatabaseMigrationController.RepairClientDatabase(System.String)">
+            <summary>
+            Force repair a specific client database
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.DatabaseMigrationController.GetMigrationStatistics">
+            <summary>
+            Get migration statistics
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.DatabaseMigrationController.EmergencyRepairAllDatabases">
+            <summary>
+            Emergency database repair for all clients
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.DatabaseMigrationController.TestTableCreation(System.String)">
+            <summary>
+            Test endpoint to verify table creation for a specific client
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.DatabaseMigrationController.ForceCreateMissingTables(System.String)">
+            <summary>
+            Force create missing tables for a specific client
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.Controllers.InvoiceController">
+            <summary>
+            Controller for comprehensive invoice management functionality
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.InvoiceController.CreateInvoice(RfidAppApi.DTOs.CreateInvoiceDto)">
+            <summary>
+            Create a new invoice
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.InvoiceController.GetInvoiceById(System.Int32)">
+            <summary>
+            Get invoice by ID
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.InvoiceController.GetAllInvoices(System.Int32,System.Int32,System.String,System.String,System.String,System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.Nullable{System.Decimal},System.Nullable{System.Decimal},System.String,System.String)">
+            <summary>
+            Get all invoices with pagination and filtering
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.InvoiceController.UpdateInvoice(System.Int32,RfidAppApi.DTOs.UpdateInvoiceDto)">
+            <summary>
+            Update an existing invoice
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.InvoiceController.DeleteInvoice(System.Int32)">
+            <summary>
+            Delete an invoice (soft delete)
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.InvoiceController.GetInvoicesByDateRange(System.DateTime,System.DateTime)">
+            <summary>
+            Get invoices by date range
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.InvoiceController.GetInvoicesByProduct(System.Int32)">
+            <summary>
+            Get invoices by product ID
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.InvoiceController.GetInvoicesByCustomer(System.String)">
+            <summary>
+            Get invoices by customer name (partial match)
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.InvoiceController.GetInvoicesByPaymentMethod(System.String)">
+            <summary>
+            Get invoices by payment method
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.InvoiceController.GetInvoiceStatistics">
+            <summary>
+            Get comprehensive invoice statistics
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.InvoiceController.GetRevenueAnalytics(System.DateTime,System.DateTime,System.String)">
+            <summary>
+            Get revenue analytics by date range
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.InvoiceController.GetTopProducts(System.Int32,System.Nullable{System.DateTime},System.Nullable{System.DateTime})">
+            <summary>
+            Get top performing products by revenue
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.InvoiceController.CreateBulkInvoices(RfidAppApi.Controllers.BulkCreateInvoiceDto)">
+            <summary>
+            Create multiple invoices in bulk
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.InvoiceController.ExportInvoicesToCsv(System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.String)">
+            <summary>
+            Export invoices to CSV format
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.Controllers.PaginatedInvoiceResponseDto">
+            <summary>
+            DTO for paginated invoice response
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.Controllers.PaginationInfoDto">
+            <summary>
+            DTO for pagination information
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.Controllers.BulkCreateInvoiceDto">
+            <summary>
+            DTO for bulk invoice creation
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.Controllers.BulkInvoiceResponseDto">
+            <summary>
+            DTO for bulk invoice response
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.Controllers.RevenueAnalyticsDto">
+            <summary>
+            DTO for revenue analytics
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.Controllers.RevenuePeriodDto">
+            <summary>
+            DTO for revenue period
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.Controllers.TopProductDto">
+            <summary>
+            DTO for top performing products
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ProductController.CreateProduct(RfidAppApi.DTOs.UserFriendlyCreateProductDto)">
+            <summary>
+            Create a new product with user-friendly inputs
+            Users can simply enter text values like "Gold", "Pune", "Counter1" instead of knowing IDs
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ProductController.CreateBulkProducts(RfidAppApi.DTOs.BulkCreateProductsDto)">
+            <summary>
+            Create multiple products in bulk with user-friendly inputs
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ProductController.CreateProductWithImages(RfidAppApi.DTOs.UserFriendlyCreateProductWithImagesDto,System.Collections.Generic.List{Microsoft.AspNetCore.Http.IFormFile})">
+            <summary>
+            Create a new product with images
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ProductController.GetProduct(System.Int32)">
+            <summary>
+            Get a product by ID with user-friendly response
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ProductController.GetAllProducts">
+            <summary>
+            Get all products with user-friendly response
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ProductController.UpdateProduct(System.Int32,RfidAppApi.DTOs.UserFriendlyUpdateProductDto)">
+            <summary>
+            Update a product with user-friendly inputs
+            Users can update master data using text values instead of IDs
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ProductController.UpdateProductWithImages(System.Int32,RfidAppApi.DTOs.UserFriendlyUpdateProductWithImagesDto,System.Collections.Generic.List{Microsoft.AspNetCore.Http.IFormFile})">
+            <summary>
+            Update a product with images
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ProductController.DeleteProduct(System.Int32)">
+            <summary>
+            Delete a product by ID
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ProductController.SearchProducts(System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.Nullable{System.Decimal},System.Nullable{System.Decimal})">
+            <summary>
+            Search products by various criteria
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ProductController.GetProductStats">
+            <summary>
+            Get product statistics
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ProductController.GetProductImage(System.String)">
+            <summary>
+            Serve product image by file path
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ProductImageController.UploadImage(Microsoft.AspNetCore.Http.IFormFile,RfidAppApi.DTOs.ProductImageUploadDto)">
+            <summary>
+            Upload a single image for a product
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ProductImageController.UploadMultipleImages(System.Collections.Generic.List{Microsoft.AspNetCore.Http.IFormFile},System.String)">
+            <summary>
+            Upload multiple images for products
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ProductImageController.GetImage(System.Int32)">
+            <summary>
+            Get a specific image by ID
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ProductImageController.GetProductImages(System.Int32)">
+            <summary>
+            Get all images for a specific product
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ProductImageController.UpdateImage(System.Int32,RfidAppApi.DTOs.ProductImageUpdateDto)">
+            <summary>
+            Update image metadata
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ProductImageController.DeleteImage(System.Int32)">
+            <summary>
+            Delete a specific image
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ProductImageController.DeleteProductImages(System.Int32)">
+            <summary>
+            Delete all images for a specific product
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ProductImageController.BulkUpdateImages(RfidAppApi.DTOs.BulkImageOperationDto)">
+            <summary>
+            Bulk update images
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ProductImageController.BulkDeleteImages(System.Collections.Generic.List{System.Int32})">
+            <summary>
+            Bulk delete images
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ProductImageController.ValidateImage(Microsoft.AspNetCore.Http.IFormFile)">
+            <summary>
+            Validate image file
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.Controllers.ReportingController">
+            <summary>
+            Controller for comprehensive reporting functionality
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ReportingController.CreateStockMovement(RfidAppApi.DTOs.CreateStockMovementDto)">
+            <summary>
+            Create a new stock movement
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ReportingController.CreateBulkStockMovements(RfidAppApi.DTOs.BulkStockMovementDto)">
+            <summary>
+            Create multiple stock movements in bulk
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ReportingController.GetStockMovements(RfidAppApi.DTOs.ReportFilterDto)">
+            <summary>
+            Get stock movements with filters
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ReportingController.GetStockMovementById(System.Int32)">
+            <summary>
+            Get stock movement by ID
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ReportingController.GetDailyStockBalance(System.Int32,System.DateTime)">
+            <summary>
+            Get daily stock balance for a specific product and date
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ReportingController.GetDailyStockBalances(RfidAppApi.DTOs.ReportFilterDto)">
+            <summary>
+            Get daily stock balances with filters
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ReportingController.CalculateDailyStockBalance(System.Int32,System.DateTime)">
+            <summary>
+            Calculate daily stock balance for a specific product and date
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ReportingController.CalculateDailyStockBalances(System.DateTime)">
+            <summary>
+            Calculate daily stock balances for all products on a specific date
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ReportingController.GetSalesReport(RfidAppApi.DTOs.ReportFilterDto)">
+            <summary>
+            Get sales report with filters
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ReportingController.GetSalesReportByDate(System.DateTime)">
+            <summary>
+            Get sales report for a specific date
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ReportingController.GetSalesReportByDateRange(System.DateTime,System.DateTime)">
+            <summary>
+            Get sales report for a date range
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ReportingController.GetSalesReportByBranch(System.Int32,System.DateTime)">
+            <summary>
+            Get sales report for a specific branch on a date
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ReportingController.GetSalesReportByCounter(System.Int32,System.DateTime)">
+            <summary>
+            Get sales report for a specific counter on a date
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ReportingController.GetSalesReportByCategory(System.Int32,System.DateTime)">
+            <summary>
+            Get sales report for a specific category on a date
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ReportingController.GetStockSummaryReport(RfidAppApi.DTOs.ReportFilterDto)">
+            <summary>
+            Get stock summary report with filters
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ReportingController.GetStockSummaryByDate(System.DateTime)">
+            <summary>
+            Get stock summary for a specific date
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ReportingController.GetStockSummaryByBranch(System.Int32,System.DateTime)">
+            <summary>
+            Get stock summary for a specific branch on a date
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ReportingController.GetStockSummaryByCounter(System.Int32,System.DateTime)">
+            <summary>
+            Get stock summary for a specific counter on a date
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ReportingController.GetStockSummaryByCategory(System.Int32,System.DateTime)">
+            <summary>
+            Get stock summary for a specific category on a date
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ReportingController.GetDailyActivityReport(RfidAppApi.DTOs.ReportFilterDto)">
+            <summary>
+            Get daily activity report with filters
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ReportingController.GetDailyActivityByDate(System.DateTime)">
+            <summary>
+            Get daily activity for a specific date
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ReportingController.GetDailyActivityByBranch(System.Int32,System.DateTime)">
+            <summary>
+            Get daily activity for a specific branch on a date
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ReportingController.GetDailyActivityByCounter(System.Int32,System.DateTime)">
+            <summary>
+            Get daily activity for a specific counter on a date
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ReportingController.GetDailyActivityByCategory(System.Int32,System.DateTime)">
+            <summary>
+            Get daily activity for a specific category on a date
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ReportingController.GetReportSummary(System.DateTime)">
+            <summary>
+            Get report summary for a specific date
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ReportingController.GetReportSummaryByDateRange(System.DateTime,System.DateTime)">
+            <summary>
+            Get report summary for a date range
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ReportingController.GetReportSummaryByBranch(System.Int32,System.DateTime)">
+            <summary>
+            Get report summary for a specific branch on a date
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ReportingController.GetReportSummaryByCounter(System.Int32,System.DateTime)">
+            <summary>
+            Get report summary for a specific counter on a date
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ReportingController.GetCurrentStock(System.Int32)">
+            <summary>
+            Get current stock for a specific product
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ReportingController.GetCurrentStockByBranch(System.Int32,System.Int32)">
+            <summary>
+            Get current stock for a specific product by branch
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ReportingController.GetCurrentStockByCounter(System.Int32,System.Int32)">
+            <summary>
+            Get current stock for a specific product by counter
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ReportingController.GetCurrentStockByCategory(System.Int32)">
+            <summary>
+            Get current stock for a specific category
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ReportingController.GetCurrentStockValue(System.Int32)">
+            <summary>
+            Get current stock value for a specific product
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ReportingController.GetCurrentStockValueByBranch(System.Int32,System.Int32)">
+            <summary>
+            Get current stock value for a specific product by branch
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ReportingController.GetCurrentStockValueByCounter(System.Int32,System.Int32)">
+            <summary>
+            Get current stock value for a specific product by counter
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ReportingController.GetCurrentStockValueByCategory(System.Int32)">
+            <summary>
+            Get current stock value for a specific category
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ReportingController.ProcessDailyStockBalances(System.DateTime)">
+            <summary>
+            Process daily stock balances for a specific date
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ReportingController.ProcessAllDailyStockBalances(System.DateTime,System.DateTime)">
+            <summary>
+            Process daily stock balances for a date range
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ReportingController.RecalculateStockBalances(System.DateTime,System.DateTime)">
+            <summary>
+            Recalculate stock balances for a date range
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ReportingController.GetRfidUsageReport">
+            <summary>
+            Get comprehensive RFID usage report
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ReportingController.GetRfidUsageReportByDate(System.DateTime)">
+            <summary>
+            Get RFID usage report for a specific date
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ReportingController.GetUsedRfidTags">
+            <summary>
+            Get all used RFID tags
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ReportingController.GetUnusedRfidTags">
+            <summary>
+            Get all unused RFID tags
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ReportingController.GetRfidTagsByStatus(System.Boolean)">
+            <summary>
+            Get RFID tags by usage status
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ReportingController.GetRfidUsageByCategory">
+            <summary>
+            Get RFID usage summary by category
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ReportingController.GetRfidUsageByBranch">
+            <summary>
+            Get RFID usage summary by branch
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ReportingController.GetRfidUsageByCounter">
+            <summary>
+            Get RFID usage summary by counter
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ReportingController.GetRfidUsageByCategoryId(System.Int32)">
+            <summary>
+            Get RFID usage summary for a specific category
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ReportingController.GetRfidUsageByBranchId(System.Int32)">
+            <summary>
+            Get RFID usage summary for a specific branch
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ReportingController.GetRfidUsageByCounterId(System.Int32)">
+            <summary>
+            Get RFID usage summary for a specific counter
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ReportingController.GetTotalRfidTagsCount">
+            <summary>
+            Get total count of RFID tags
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ReportingController.GetUsedRfidTagsCount">
+            <summary>
+            Get count of used RFID tags
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ReportingController.GetUnusedRfidTagsCount">
+            <summary>
+            Get count of unused RFID tags
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ReportingController.GetRfidUsagePercentage">
+            <summary>
+            Get RFID usage percentage
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.Controllers.RfidController">
+            <summary>
+            RFID management controller for handling RFID tag operations
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.RfidController.GetAllRfids">
+            <summary>
+            Get all RFID tags for the authenticated client
+            </summary>
+            <returns>List of all RFID tags for the client</returns>
+            <response code="200">RFID tags retrieved successfully</response>
+            <response code="400">Client code not found in token</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:RfidAppApi.Controllers.RfidController.GetRfidByCode(System.String)">
+            <summary>
+            Get RFID tag by code for the authenticated client
+            </summary>
+            <param name="rfidCode">RFID tag code</param>
+            <returns>RFID tag information</returns>
+            <response code="200">RFID tag found</response>
+            <response code="400">Client code not found in token</response>
+            <response code="404">RFID tag not found</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:RfidAppApi.Controllers.RfidController.CreateRfid(RfidAppApi.DTOs.CreateRfidDto)">
+            <summary>
+            Create a new RFID tag for the authenticated client
+            </summary>
+            <param name="createRfidDto">RFID tag creation details</param>
+            <returns>Created RFID tag information</returns>
+            <response code="201">RFID tag created successfully</response>
+            <response code="400">Invalid input or client code not found in token</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:RfidAppApi.Controllers.RfidController.UpdateRfid(System.String,RfidAppApi.DTOs.UpdateRfidDto)">
+            <summary>
+            Update an existing RFID tag for the authenticated client
+            </summary>
+            <param name="rfidCode">RFID tag code</param>
+            <param name="updateRfidDto">Updated RFID tag information</param>
+            <returns>Updated RFID tag information</returns>
+            <response code="200">RFID tag updated successfully</response>
+            <response code="400">Invalid input or client code not found in token</response>
+            <response code="404">RFID tag not found</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:RfidAppApi.Controllers.RfidController.DeleteRfid(System.String)">
+            <summary>
+            Delete an RFID tag for the authenticated client
+            </summary>
+            <param name="rfidCode">RFID tag code</param>
+            <returns>No content</returns>
+            <response code="204">RFID tag deleted successfully</response>
+            <response code="400">Client code not found in token</response>
+            <response code="404">RFID tag not found</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:RfidAppApi.Controllers.RfidController.GetAvailableRfids">
+            <summary>
+            Get available RFID tags (not assigned to any product) for the authenticated client
+            </summary>
+            <returns>List of available RFID tags</returns>
+            <response code="200">Available RFID tags retrieved successfully</response>
+            <response code="400">Client code not found in token</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:RfidAppApi.Controllers.RfidController.GetActiveRfids">
+            <summary>
+            Get active RFID tags for the authenticated client
+            </summary>
+            <returns>List of active RFID tags</returns>
+            <response code="200">Active RFID tags retrieved successfully</response>
+            <response code="400">Client code not found in token</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:RfidAppApi.Controllers.RfidController.GetRfidCount">
+            <summary>
+            Get RFID count for the authenticated client
+            </summary>
+            <returns>Total count of RFID tags</returns>
+            <response code="200">RFID count retrieved successfully</response>
+            <response code="400">Client code not found in token</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="T:RfidAppApi.Controllers.UserController">
+            <summary>
+            User management controller for handling user registration, authentication, and management
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.UserController.Register(RfidAppApi.DTOs.CreateUserDto)">
+            <summary>
+            Register a new client organization with automatic database creation
+            </summary>
+            <param name="createUserDto">User registration details</param>
+            <returns>Created user information with client code and database details</returns>
+            <response code="201">User successfully registered</response>
+            <response code="400">Invalid input or email already exists</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:RfidAppApi.Controllers.UserController.Login(RfidAppApi.DTOs.LoginDto)">
+            <summary>
+            Authenticate user and get JWT token
+            </summary>
+            <param name="loginDto">Login credentials</param>
+            <returns>JWT token and user information</returns>
+            <response code="200">Login successful</response>
+            <response code="400">Invalid input</response>
+            <response code="401">Invalid credentials</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:RfidAppApi.Controllers.UserController.GetUserById(System.Int32)">
+            <summary>
+            Get user by ID
+            </summary>
+            <param name="id">User ID</param>
+            <returns>User information</returns>
+            <response code="200">User found</response>
+            <response code="404">User not found</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:RfidAppApi.Controllers.UserController.GetUserByEmail(System.String)">
+            <summary>
+            Get user by email address
+            </summary>
+            <param name="email">Email address</param>
+            <returns>User information</returns>
+            <response code="200">User found</response>
+            <response code="404">User not found</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:RfidAppApi.Controllers.UserController.GetUserByClientCode(System.String)">
+            <summary>
+            Get user by client code
+            </summary>
+            <param name="clientCode">Client code (e.g., LS0001)</param>
+            <returns>User information</returns>
+            <response code="200">User found</response>
+            <response code="404">User not found</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:RfidAppApi.Controllers.UserController.GetAllUsers">
+            <summary>
+            Get all active users
+            </summary>
+            <returns>List of all active users</returns>
+            <response code="200">Users retrieved successfully</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:RfidAppApi.Controllers.UserController.UpdateUser(System.Int32,RfidAppApi.DTOs.UpdateUserDto)">
+            <summary>
+            Update user information
+            </summary>
+            <param name="id">User ID</param>
+            <param name="updateUserDto">Updated user information</param>
+            <returns>Updated user information</returns>
+            <response code="200">User updated successfully</response>
+            <response code="400">Invalid input</response>
+            <response code="404">User not found</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:RfidAppApi.Controllers.UserController.DeleteUser(System.Int32)">
+            <summary>
+            Delete user (soft delete - sets IsActive to false)
+            </summary>
+            <param name="id">User ID</param>
+            <returns>No content</returns>
+            <response code="204">User deleted successfully</response>
+            <response code="404">User not found</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="T:RfidAppApi.DTOs.ProductImageUploadDto">
+            <summary>
+            DTO for uploading product images
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.ProductImageResponseDto">
+            <summary>
+            DTO for product image response
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.ProductImageUpdateDto">
+            <summary>
+            DTO for updating product image
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.BulkImageOperationDto">
+            <summary>
+            DTO for bulk image operations
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.UserFriendlyCreateProductWithImagesDto">
+            <summary>
+            DTO for product creation with images
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.UserFriendlyUpdateProductWithImagesDto">
+            <summary>
+            DTO for product update with images
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.StockMovementDto">
+            <summary>
+            DTO for stock movement tracking
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.DailyStockBalanceDto">
+            <summary>
+            DTO for daily stock balance
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.SalesReportDto">
+            <summary>
+            DTO for sales report
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.StockSummaryReportDto">
+            <summary>
+            DTO for stock summary report
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.DailyActivityReportDto">
+            <summary>
+            DTO for daily activity report
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.ReportFilterDto">
+            <summary>
+            DTO for report filters
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.CreateStockMovementDto">
+            <summary>
+            DTO for stock movement creation
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.BulkStockMovementDto">
+            <summary>
+            DTO for bulk stock movement creation
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.ReportSummaryDto">
+            <summary>
+            DTO for report summary
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.RfidUsageReportDto">
+            <summary>
+            DTO for RFID usage report
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.RfidUsageDetailDto">
+            <summary>
+            DTO for RFID usage detail
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.RfidUsageByCategoryDto">
+            <summary>
+            DTO for RFID usage summary by category
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.RfidUsageByBranchDto">
+            <summary>
+            DTO for RFID usage summary by branch
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.RfidUsageByCounterDto">
+            <summary>
+            DTO for RFID usage summary by counter
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.UserDto">
+            <summary>
+            User data transfer object for API responses
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.UserDto.UserId">
+            <summary>
+            Unique identifier for the user
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.UserDto.UserName">
+            <summary>
+            Username for login
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.UserDto.Email">
+            <summary>
+            Email address (unique)
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.UserDto.FullName">
+            <summary>
+            Full name of the user
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.UserDto.MobileNumber">
+            <summary>
+            Mobile phone number
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.UserDto.FaxNumber">
+            <summary>
+            Fax number
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.UserDto.City">
+            <summary>
+            City where the user is located
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.UserDto.Address">
+            <summary>
+            Physical address
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.UserDto.OrganisationName">
+            <summary>
+            Organization/company name
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.UserDto.ShowroomType">
+            <summary>
+            Type of showroom (e.g., Premium, Standard)
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.UserDto.ClientCode">
+            <summary>
+            Unique client code (e.g., LS0001)
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.UserDto.DatabaseName">
+            <summary>
+            Database name for the client
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.UserDto.ConnectionString">
+            <summary>
+            Connection string for the client database
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.UserDto.IsActive">
+            <summary>
+            Whether the user is active
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.UserDto.CreatedOn">
+            <summary>
+            When the user was created
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.CreateUserDto">
+            <summary>
+            Data transfer object for creating a new user
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.CreateUserDto.UserName">
+            <summary>
+            Username for login (required)
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.CreateUserDto.Email">
+            <summary>
+            Email address (required, unique)
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.CreateUserDto.Password">
+            <summary>
+            Password (required)
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.CreateUserDto.FullName">
+            <summary>
+            Full name of the user
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.CreateUserDto.MobileNumber">
+            <summary>
+            Mobile phone number
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.CreateUserDto.FaxNumber">
+            <summary>
+            Fax number
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.CreateUserDto.City">
+            <summary>
+            City where the user is located
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.CreateUserDto.Address">
+            <summary>
+            Physical address
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.CreateUserDto.OrganisationName">
+            <summary>
+            Organization/company name (required)
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.CreateUserDto.ShowroomType">
+            <summary>
+            Type of showroom (e.g., Premium, Standard)
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.UpdateUserDto">
+            <summary>
+            Data transfer object for updating user information
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.UpdateUserDto.FullName">
+            <summary>
+            Full name of the user
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.UpdateUserDto.MobileNumber">
+            <summary>
+            Mobile phone number
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.UpdateUserDto.FaxNumber">
+            <summary>
+            Fax number
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.UpdateUserDto.City">
+            <summary>
+            City where the user is located
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.UpdateUserDto.Address">
+            <summary>
+            Physical address
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.UpdateUserDto.OrganisationName">
+            <summary>
+            Organization/company name
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.UpdateUserDto.ShowroomType">
+            <summary>
+            Type of showroom (e.g., Premium, Standard)
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.UpdateUserDto.IsActive">
+            <summary>
+            Whether the user is active
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.LoginDto">
+            <summary>
+            Data transfer object for user login
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.LoginDto.Email">
+            <summary>
+            Email address (required)
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.LoginDto.Password">
+            <summary>
+            Password (required)
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.LoginResponseDto">
+            <summary>
+            Data transfer object for login response
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.LoginResponseDto.Token">
+            <summary>
+            JWT authentication token
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.LoginResponseDto.User">
+            <summary>
+            User information
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.LoginResponseDto.ExpiresAt">
+            <summary>
+            When the token expires
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.UserFriendlyCreateProductDto">
+            <summary>
+            User-friendly DTO for creating products with text-based master data
+            Users can simply enter text values like "Gold", "Pune", "Counter1" instead of knowing IDs
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.UserFriendlyUpdateProductDto">
+            <summary>
+            User-friendly DTO for updating products
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.UserFriendlyProductResponseDto">
+            <summary>
+            Response DTO for user-friendly product operations
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.BulkCreateProductsDto">
+            <summary>
+            DTO for bulk product creation with user-friendly inputs
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.BulkProductResponseDto">
+            <summary>
+            Response for bulk operations
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.CreateInvoiceDto">
+            <summary>
+            DTO for creating invoice
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.UpdateInvoiceDto">
+            <summary>
+            DTO for updating invoice
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.InvoiceResponseDto">
+            <summary>
+            DTO for invoice response
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.InvoiceStatisticsDto">
+            <summary>
+            DTO for invoice statistics
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.Models.DailyStockBalance">
+            <summary>
+            Model for tracking daily opening and closing stock balances
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.Models.Invoice">
+            <summary>
+            Model for storing invoice information in client database
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.Models.ProductImage">
+            <summary>
+            Model for storing product images in client database
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.Models.StockMovement">
+            <summary>
+            Model for tracking all stock movements (additions, sales, returns, transfers)
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Services.DatabaseMigrationService.MigrateClientDatabaseAsync(System.String)">
+            <summary>
+            Comprehensive migration for a single client database
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Services.DatabaseMigrationService.MigrateAllClientDatabasesAsync">
+            <summary>
+            Migrate all client databases with comprehensive table creation
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Services.DatabaseMigrationService.EnsureAllRequiredTablesExistAsync(System.String,System.String)">
+            <summary>
+            Ensure all required tables exist in the client database
+            Returns the number of tables created
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Services.DatabaseMigrationService.CreateTableAsync(System.String,System.String,System.String)">
+            <summary>
+            Create a specific table based on table name
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Services.DatabaseMigrationService.GetStockMovementTableSql">
+            <summary>
+            Get SQL for creating StockMovement table
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Services.DatabaseMigrationService.GetDailyStockBalanceTableSql">
+            <summary>
+            Get SQL for creating DailyStockBalance table
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Services.DatabaseMigrationService.GetProductImageTableSql">
+            <summary>
+            Get SQL for creating ProductImage table
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Services.DatabaseMigrationService.TableExistsAsync(System.String,System.String)">
+            <summary>
+            Check if a table exists in the database
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Services.DatabaseMigrationService.IsDatabaseUpToDateAsync(System.String)">
+            <summary>
+            Check if database is up to date
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Services.DatabaseMigrationService.GetPendingMigrationsAsync(System.String)">
+            <summary>
+            Get pending migrations for a client
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Services.IClientDatabaseService.GenerateClientCodeAsync">
+            <summary>
+            Generates the next sequential client code (LS0001, LS0002, etc.)
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Services.IClientDatabaseService.CreateClientDatabaseAsync(System.String,System.String)">
+            <summary>
+            Creates a new client database with the given organization name and client code
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Services.IClientDatabaseService.ClientDatabaseExistsAsync(System.String)">
+            <summary>
+            Checks if a client database exists for the given client code
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Services.IClientDatabaseService.GetClientConnectionStringAsync(System.String)">
+            <summary>
+            Gets the connection string for a client database
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Services.IClientDatabaseService.GetAllClientCodesAsync">
+            <summary>
+            Gets all client codes from the master database
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Services.IDatabaseMigrationService.AddProductImageTableToClientAsync(System.String)">
+            <summary>
+            Add ProductImage table to existing client databases
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Services.IDatabaseMigrationService.AddProductImageTableToAllClientsAsync">
+            <summary>
+            Add ProductImage table to all existing client databases
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Services.IDatabaseMigrationService.AddReportingTablesToClientAsync(System.String)">
+            <summary>
+            Add reporting tables to existing client database
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Services.IDatabaseMigrationService.AddReportingTablesToAllClientsAsync">
+            <summary>
+            Add reporting tables to all existing client databases
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Services.InvoiceService.GetInvoicesByCustomerAsync(System.String,System.String)">
+            <summary>
+            Get invoices by customer name (partial match)
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Services.InvoiceService.GetInvoicesByPaymentMethodAsync(System.String,System.String)">
+            <summary>
+            Get invoices by payment method
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Services.InvoiceService.GetInvoiceByNumberAsync(System.String,System.String)">
+            <summary>
+            Get invoice by invoice number
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Services.InvoiceService.GetInvoiceCountByStatusAsync(System.String)">
+            <summary>
+            Get invoice count by status
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.Services.InvoiceCountDto">
+            <summary>
+            DTO for invoice count by status
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.Services.IReportingService">
+            <summary>
+            Interface for comprehensive reporting service
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.Services.ReportingService">
+            <summary>
+            Comprehensive reporting service for stock tracking, sales reporting, and daily balances
+            </summary>
+        </member>
+    </members>
+</doc>

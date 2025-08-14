@@ -1,0 +1,64 @@
+using System.ComponentModel.DataAnnotations;
+
+namespace RfidAppApi.Models
+{
+    public class User
+    {
+        [Key]
+        public int UserId { get; set; }
+
+        // Authentication
+        [Required]
+        [StringLength(100)]
+        public string UserName { get; set; } = string.Empty;
+        
+        [Required]
+        [StringLength(100)]
+        [EmailAddress]
+        public string Email { get; set; } = string.Empty;
+        
+        [Required]
+        [StringLength(255)]
+        public string PasswordHash { get; set; } = string.Empty;
+
+        // Personal Information
+        [StringLength(150)]
+        public string? FullName { get; set; }
+        
+        [StringLength(20)]
+        public string? MobileNumber { get; set; }
+        
+        [StringLength(50)]
+        public string? FaxNumber { get; set; }
+        
+        [StringLength(100)]
+        public string? City { get; set; }
+        
+        [StringLength(255)]
+        public string? Address { get; set; }
+        
+        [Required]
+        [StringLength(150)]
+        public string OrganisationName { get; set; } = string.Empty;
+        
+        [StringLength(100)]
+        public string? ShowroomType { get; set; }
+
+        // Organization Details
+        [Required]
+        [StringLength(50)]
+        public string ClientCode { get; set; } = string.Empty;
+
+        // Database Connection Details
+        [StringLength(255)]
+        public string? DatabaseName { get; set; }
+        
+        [StringLength(500)]
+        public string? ConnectionString { get; set; }
+
+        // Status
+        public bool IsActive { get; set; } = true;
+        
+        public DateTime CreatedOn { get; set; } = DateTime.UtcNow;
+    }
+} 

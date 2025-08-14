@@ -1,0 +1,13 @@
+# Ignore uploaded files but keep directory structure
+uploads/
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.bmp
+*.webp
+*.pdf
+*.doc
+*.docx
+*.xls
+*.xlsx

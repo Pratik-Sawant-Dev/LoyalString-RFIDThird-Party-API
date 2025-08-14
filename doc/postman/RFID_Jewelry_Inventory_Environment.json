@@ -1,0 +1,747 @@
+{
+	"id": "rfid-jewelry-environment-v2",
+	"name": "RFID Jewelry Inventory - Development Environment v2",
+	"values": [
+		{
+			"key": "baseUrl",
+			"value": "https://localhost:7107",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "authToken",
+			"value": "",
+			"type": "secret",
+			"enabled": true
+		},
+		{
+			"key": "clientCode",
+			"value": "",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "userId",
+			"value": "",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "productId",
+			"value": "",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "imageId",
+			"value": "",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testUsername",
+			"value": "admin@jewelrystore.com",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testPassword",
+			"value": "Admin@123",
+			"type": "secret",
+			"enabled": true
+		},
+		{
+			"key": "testFullName",
+			"value": "John Doe",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testMobileNumber",
+			"value": "+91-9876543210",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testCity",
+			"value": "Mumbai",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testAddress",
+			"value": "123 Jewelry Street, Mumbai, Maharashtra, India",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testOrganisationName",
+			"value": "Premium Jewelry Store",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testShowroomType",
+			"value": "Premium",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testItemCode",
+			"value": "JWL001",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testCategoryName",
+			"value": "Rings",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testBranchName",
+			"value": "Main Branch",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testCounterName",
+			"value": "Counter 1",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testProductName",
+			"value": "Diamond Ring",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testDesignName",
+			"value": "Classic",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testPurityName",
+			"value": "18K",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testRfidCode",
+			"value": "RFID001",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testGrossWeight",
+			"value": "5.5",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testNetWeight",
+			"value": "4.8",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testStoneWeight",
+			"value": "0.5",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testDiamondHeight",
+			"value": "2.5",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testBoxDetails",
+			"value": "Premium velvet box",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testSize",
+			"value": "18",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testStoneAmount",
+			"value": "15000",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testDiamondAmount",
+			"value": "25000",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testHallmarkAmount",
+			"value": "500",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testMakingPerGram",
+			"value": "100",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testMakingPercentage",
+			"value": "15",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testMakingFixedAmount",
+			"value": "2000",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testMrp",
+			"value": "65000",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testStatus",
+			"value": "Active",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testImageType",
+			"value": "Primary",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testDisplayOrder",
+			"value": "1",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testEpcValue",
+			"value": "RFID001",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testMinPrice",
+			"value": "50000",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testMaxPrice",
+			"value": "100000",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testUpdatedMrp",
+			"value": "70000",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testUpdatedBoxDetails",
+			"value": "Updated premium velvet box with certificate",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testUpdatedFullName",
+			"value": "John Doe Updated",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testUpdatedMobileNumber",
+			"value": "+91-9876543211",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testUpdatedCity",
+			"value": "Pune",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testUpdatedAddress",
+			"value": "456 Updated Street, Pune, Maharashtra, India",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testUpdatedOrganisationName",
+			"value": "Premium Jewelry Store Updated",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testUpdatedEpcValue",
+			"value": "RFID001_UPDATED",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testBulkItemCode1",
+			"value": "JWL003",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testBulkCategoryName1",
+			"value": "Earrings",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testBulkProductName1",
+			"value": "Diamond Earrings",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testBulkDesignName1",
+			"value": "Modern",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testBulkRfidCode1",
+			"value": "RFID003",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testBulkMrp1",
+			"value": "45000",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testBulkItemCode2",
+			"value": "JWL004",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testBulkCategoryName2",
+			"value": "Bracelets",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testBulkProductName2",
+			"value": "Gold Bracelet",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testBulkDesignName2",
+			"value": "Traditional",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testBulkRfidCode2",
+			"value": "RFID004",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testBulkMrp2",
+			"value": "55000",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testNewRfidCode",
+			"value": "RFID005",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testNewEpcValue",
+			"value": "RFID005",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testImageIds",
+			"value": "[1, 2, 3]",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testSecondaryImageType",
+			"value": "Secondary",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testSecondaryDisplayOrder",
+			"value": "2",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testThumbnailImageType",
+			"value": "Thumbnail",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testThumbnailDisplayOrder",
+			"value": "3",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testInvoiceNumber",
+			"value": "INV001",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testSellingPrice",
+			"value": "60000",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testDiscountAmount",
+			"value": "5000",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testFinalAmount",
+			"value": "55000",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testInvoiceType",
+			"value": "Sale",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testCustomerName",
+			"value": "Jane Smith",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testCustomerPhone",
+			"value": "+91-9876543212",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testCustomerAddress",
+			"value": "789 Customer Street, Delhi, India",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testPaymentMethod",
+			"value": "Card",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testPaymentReference",
+			"value": "TXN123456",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testInvoiceRemarks",
+			"value": "Premium customer - special discount applied",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testMovementType",
+			"value": "Addition",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testQuantity",
+			"value": "1",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testUnitPrice",
+			"value": "65000",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testTotalAmount",
+			"value": "65000",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testReferenceNumber",
+			"value": "REF001",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testReferenceType",
+			"value": "Invoice",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testMovementRemarks",
+			"value": "Initial stock addition",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testBalanceDate",
+			"value": "2024-01-15",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testOpeningQuantity",
+			"value": "0",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testClosingQuantity",
+			"value": "1",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testAddedQuantity",
+			"value": "1",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testSoldQuantity",
+			"value": "0",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testReturnedQuantity",
+			"value": "0",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testTransferredInQuantity",
+			"value": "0",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testTransferredOutQuantity",
+			"value": "0",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testOpeningValue",
+			"value": "0",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testClosingValue",
+			"value": "65000",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testAddedValue",
+			"value": "65000",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testSoldValue",
+			"value": "0",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testReturnedValue",
+			"value": "0",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testStartDate",
+			"value": "2024-01-01",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testEndDate",
+			"value": "2024-01-31",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testBranchId",
+			"value": "1",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testCounterId",
+			"value": "1",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testCategoryId",
+			"value": "1",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testInvoiceId",
+			"value": "1",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testStockMovementId",
+			"value": "1",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testDailyStockBalanceId",
+			"value": "1",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testSearchTerm",
+			"value": "Diamond",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testGroupBy",
+			"value": "Category",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testSortBy",
+			"value": "Date",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testSortOrder",
+			"value": "Descending",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testPageNumber",
+			"value": "1",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testPageSize",
+			"value": "10",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testRfidStatus",
+			"value": "Used",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testRfidUsagePercentage",
+			"value": "75.5",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testTotalRfidCount",
+			"value": "1000",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testUsedRfidCount",
+			"value": "755",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testUnusedRfidCount",
+			"value": "245",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testDatabaseConnectionString",
+			"value": "Server=.\\SQLEXPRESS;Database=RfidJewelryDB;Trusted_Connection=true;TrustServerCertificate=true;MultipleActiveResultSets=true;Connection Timeout=30;Max Pool Size=100;Min Pool Size=5",
+			"type": "secret",
+			"enabled": true
+		},
+		{
+			"key": "testJwtSecretKey",
+			"value": "RFID_Jewelry_Inventory_System_2024_Super_Secure_Key_For_Production_Use_Only_123456789012345678901234567890",
+			"type": "secret",
+			"enabled": true
+		},
+		{
+			"key": "testJwtIssuer",
+			"value": "RfidAppApi",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testJwtAudience",
+			"value": "RfidAppApi",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testJwtExpiryHours",
+			"value": "24",
+			"type": "default",
+			"enabled": true
+		}
+	],
+	"_postman_variable_scope": "environment",
+	"_postman_exported_at": "2024-01-01T00:00:00.000Z",
+	"_postman_exported_using": "Postman/10.0.0"
+}

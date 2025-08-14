@@ -1,0 +1,482 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>RfidAppApi</name>
+    </assembly>
+    <members>
+        <member name="M:RfidAppApi.Controllers.ProductController.CreateProduct(RfidAppApi.DTOs.UserFriendlyCreateProductDto)">
+            <summary>
+            Create a new product with user-friendly inputs
+            Users can simply enter text values like "Gold", "Pune", "Counter1" instead of knowing IDs
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ProductController.CreateBulkProducts(RfidAppApi.DTOs.BulkCreateProductsDto)">
+            <summary>
+            Create multiple products in bulk with user-friendly inputs
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ProductController.GetProduct(System.Int32)">
+            <summary>
+            Get a product by ID with user-friendly response
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ProductController.GetAllProducts">
+            <summary>
+            Get all products with user-friendly response
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ProductController.UpdateProduct(System.Int32,RfidAppApi.DTOs.UserFriendlyUpdateProductDto)">
+            <summary>
+            Update a product with user-friendly inputs
+            Users can update master data using text values instead of IDs
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ProductController.DeleteProduct(System.Int32)">
+            <summary>
+            Delete a product by ID
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ProductController.SearchProducts(System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.Nullable{System.Decimal},System.Nullable{System.Decimal})">
+            <summary>
+            Search products by various criteria
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ProductController.GetProductStats">
+            <summary>
+            Get product statistics
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.Controllers.RfidController">
+            <summary>
+            RFID management controller for handling RFID tag operations
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.RfidController.GetAllRfids">
+            <summary>
+            Get all RFID tags for the authenticated client
+            </summary>
+            <returns>List of all RFID tags for the client</returns>
+            <response code="200">RFID tags retrieved successfully</response>
+            <response code="400">Client code not found in token</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:RfidAppApi.Controllers.RfidController.GetRfidByCode(System.String)">
+            <summary>
+            Get RFID tag by code for the authenticated client
+            </summary>
+            <param name="rfidCode">RFID tag code</param>
+            <returns>RFID tag information</returns>
+            <response code="200">RFID tag found</response>
+            <response code="400">Client code not found in token</response>
+            <response code="404">RFID tag not found</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:RfidAppApi.Controllers.RfidController.CreateRfid(RfidAppApi.DTOs.CreateRfidDto)">
+            <summary>
+            Create a new RFID tag for the authenticated client
+            </summary>
+            <param name="createRfidDto">RFID tag creation details</param>
+            <returns>Created RFID tag information</returns>
+            <response code="201">RFID tag created successfully</response>
+            <response code="400">Invalid input or client code not found in token</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:RfidAppApi.Controllers.RfidController.UpdateRfid(System.String,RfidAppApi.DTOs.UpdateRfidDto)">
+            <summary>
+            Update an existing RFID tag for the authenticated client
+            </summary>
+            <param name="rfidCode">RFID tag code</param>
+            <param name="updateRfidDto">Updated RFID tag information</param>
+            <returns>Updated RFID tag information</returns>
+            <response code="200">RFID tag updated successfully</response>
+            <response code="400">Invalid input or client code not found in token</response>
+            <response code="404">RFID tag not found</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:RfidAppApi.Controllers.RfidController.DeleteRfid(System.String)">
+            <summary>
+            Delete an RFID tag for the authenticated client
+            </summary>
+            <param name="rfidCode">RFID tag code</param>
+            <returns>No content</returns>
+            <response code="204">RFID tag deleted successfully</response>
+            <response code="400">Client code not found in token</response>
+            <response code="404">RFID tag not found</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:RfidAppApi.Controllers.RfidController.GetAvailableRfids">
+            <summary>
+            Get available RFID tags (not assigned to any product) for the authenticated client
+            </summary>
+            <returns>List of available RFID tags</returns>
+            <response code="200">Available RFID tags retrieved successfully</response>
+            <response code="400">Client code not found in token</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:RfidAppApi.Controllers.RfidController.GetActiveRfids">
+            <summary>
+            Get active RFID tags for the authenticated client
+            </summary>
+            <returns>List of active RFID tags</returns>
+            <response code="200">Active RFID tags retrieved successfully</response>
+            <response code="400">Client code not found in token</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:RfidAppApi.Controllers.RfidController.GetRfidCount">
+            <summary>
+            Get RFID count for the authenticated client
+            </summary>
+            <returns>Total count of RFID tags</returns>
+            <response code="200">RFID count retrieved successfully</response>
+            <response code="400">Client code not found in token</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="T:RfidAppApi.Controllers.UserController">
+            <summary>
+            User management controller for handling user registration, authentication, and management
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.UserController.Register(RfidAppApi.DTOs.CreateUserDto)">
+            <summary>
+            Register a new client organization with automatic database creation
+            </summary>
+            <param name="createUserDto">User registration details</param>
+            <returns>Created user information with client code and database details</returns>
+            <response code="201">User successfully registered</response>
+            <response code="400">Invalid input or email already exists</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:RfidAppApi.Controllers.UserController.Login(RfidAppApi.DTOs.LoginDto)">
+            <summary>
+            Authenticate user and get JWT token
+            </summary>
+            <param name="loginDto">Login credentials</param>
+            <returns>JWT token and user information</returns>
+            <response code="200">Login successful</response>
+            <response code="400">Invalid input</response>
+            <response code="401">Invalid credentials</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:RfidAppApi.Controllers.UserController.GetUserById(System.Int32)">
+            <summary>
+            Get user by ID
+            </summary>
+            <param name="id">User ID</param>
+            <returns>User information</returns>
+            <response code="200">User found</response>
+            <response code="404">User not found</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:RfidAppApi.Controllers.UserController.GetUserByEmail(System.String)">
+            <summary>
+            Get user by email address
+            </summary>
+            <param name="email">Email address</param>
+            <returns>User information</returns>
+            <response code="200">User found</response>
+            <response code="404">User not found</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:RfidAppApi.Controllers.UserController.GetUserByClientCode(System.String)">
+            <summary>
+            Get user by client code
+            </summary>
+            <param name="clientCode">Client code (e.g., LS0001)</param>
+            <returns>User information</returns>
+            <response code="200">User found</response>
+            <response code="404">User not found</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:RfidAppApi.Controllers.UserController.GetAllUsers">
+            <summary>
+            Get all active users
+            </summary>
+            <returns>List of all active users</returns>
+            <response code="200">Users retrieved successfully</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:RfidAppApi.Controllers.UserController.UpdateUser(System.Int32,RfidAppApi.DTOs.UpdateUserDto)">
+            <summary>
+            Update user information
+            </summary>
+            <param name="id">User ID</param>
+            <param name="updateUserDto">Updated user information</param>
+            <returns>Updated user information</returns>
+            <response code="200">User updated successfully</response>
+            <response code="400">Invalid input</response>
+            <response code="404">User not found</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:RfidAppApi.Controllers.UserController.DeleteUser(System.Int32)">
+            <summary>
+            Delete user (soft delete - sets IsActive to false)
+            </summary>
+            <param name="id">User ID</param>
+            <returns>No content</returns>
+            <response code="204">User deleted successfully</response>
+            <response code="404">User not found</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="T:RfidAppApi.DTOs.UserDto">
+            <summary>
+            User data transfer object for API responses
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.UserDto.UserId">
+            <summary>
+            Unique identifier for the user
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.UserDto.UserName">
+            <summary>
+            Username for login
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.UserDto.Email">
+            <summary>
+            Email address (unique)
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.UserDto.FullName">
+            <summary>
+            Full name of the user
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.UserDto.MobileNumber">
+            <summary>
+            Mobile phone number
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.UserDto.FaxNumber">
+            <summary>
+            Fax number
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.UserDto.City">
+            <summary>
+            City where the user is located
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.UserDto.Address">
+            <summary>
+            Physical address
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.UserDto.OrganisationName">
+            <summary>
+            Organization/company name
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.UserDto.ShowroomType">
+            <summary>
+            Type of showroom (e.g., Premium, Standard)
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.UserDto.ClientCode">
+            <summary>
+            Unique client code (e.g., LS0001)
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.UserDto.DatabaseName">
+            <summary>
+            Database name for the client
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.UserDto.ConnectionString">
+            <summary>
+            Connection string for the client database
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.UserDto.IsActive">
+            <summary>
+            Whether the user is active
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.UserDto.CreatedOn">
+            <summary>
+            When the user was created
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.CreateUserDto">
+            <summary>
+            Data transfer object for creating a new user
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.CreateUserDto.UserName">
+            <summary>
+            Username for login (required)
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.CreateUserDto.Email">
+            <summary>
+            Email address (required, unique)
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.CreateUserDto.Password">
+            <summary>
+            Password (required)
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.CreateUserDto.FullName">
+            <summary>
+            Full name of the user
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.CreateUserDto.MobileNumber">
+            <summary>
+            Mobile phone number
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.CreateUserDto.FaxNumber">
+            <summary>
+            Fax number
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.CreateUserDto.City">
+            <summary>
+            City where the user is located
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.CreateUserDto.Address">
+            <summary>
+            Physical address
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.CreateUserDto.OrganisationName">
+            <summary>
+            Organization/company name (required)
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.CreateUserDto.ShowroomType">
+            <summary>
+            Type of showroom (e.g., Premium, Standard)
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.UpdateUserDto">
+            <summary>
+            Data transfer object for updating user information
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.UpdateUserDto.FullName">
+            <summary>
+            Full name of the user
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.UpdateUserDto.MobileNumber">
+            <summary>
+            Mobile phone number
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.UpdateUserDto.FaxNumber">
+            <summary>
+            Fax number
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.UpdateUserDto.City">
+            <summary>
+            City where the user is located
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.UpdateUserDto.Address">
+            <summary>
+            Physical address
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.UpdateUserDto.OrganisationName">
+            <summary>
+            Organization/company name
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.UpdateUserDto.ShowroomType">
+            <summary>
+            Type of showroom (e.g., Premium, Standard)
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.UpdateUserDto.IsActive">
+            <summary>
+            Whether the user is active
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.LoginDto">
+            <summary>
+            Data transfer object for user login
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.LoginDto.Email">
+            <summary>
+            Email address (required)
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.LoginDto.Password">
+            <summary>
+            Password (required)
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.LoginResponseDto">
+            <summary>
+            Data transfer object for login response
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.LoginResponseDto.Token">
+            <summary>
+            JWT authentication token
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.LoginResponseDto.User">
+            <summary>
+            User information
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.LoginResponseDto.ExpiresAt">
+            <summary>
+            When the token expires
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.UserFriendlyCreateProductDto">
+            <summary>
+            User-friendly DTO for creating products with text-based master data
+            Users can simply enter text values like "Gold", "Pune", "Counter1" instead of knowing IDs
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.UserFriendlyUpdateProductDto">
+            <summary>
+            User-friendly DTO for updating products
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.UserFriendlyProductResponseDto">
+            <summary>
+            Response DTO for user-friendly product operations
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.BulkCreateProductsDto">
+            <summary>
+            DTO for bulk product creation with user-friendly inputs
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.BulkProductResponseDto">
+            <summary>
+            Response for bulk operations
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Services.IClientDatabaseService.GenerateClientCodeAsync">
+            <summary>
+            Generates the next sequential client code (LS0001, LS0002, etc.)
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Services.IClientDatabaseService.CreateClientDatabaseAsync(System.String,System.String)">
+            <summary>
+            Creates a new client database with the given organization name and client code
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Services.IClientDatabaseService.ClientDatabaseExistsAsync(System.String)">
+            <summary>
+            Checks if a client database exists for the given client code
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Services.IClientDatabaseService.GetClientConnectionStringAsync(System.String)">
+            <summary>
+            Gets the connection string for a client database
+            </summary>
+        </member>
+    </members>
+</doc>
