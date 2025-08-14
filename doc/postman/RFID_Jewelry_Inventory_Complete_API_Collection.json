@@ -1452,6 +1452,42 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Get Used RFID Analysis",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/Rfid/used-analysis",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "Rfid", "used-analysis"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Unused RFID Analysis",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/Rfid/unused-analysis",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "Rfid", "unused-analysis"]
+						}
+					},
+					"response": []
 				}
 			]
 		},

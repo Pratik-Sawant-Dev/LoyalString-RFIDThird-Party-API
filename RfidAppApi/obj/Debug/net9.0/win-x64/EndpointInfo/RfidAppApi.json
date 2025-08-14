@@ -4618,6 +4618,74 @@
         }
       }
     },
+    "/api/Rfid/used-analysis": {
+      "get": {
+        "tags": [
+          "Rfid"
+        ],
+        "summary": "Get detailed analysis of used RFID tags (assigned to products) for the authenticated client",
+        "operationId": "Rfid_GetUsedRfidAnalysis",
+        "responses": {
+          "200": {
+            "description": "Used RFID analysis retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UsedRfidAnalysisDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client code not found in token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/api/Rfid/unused-analysis": {
+      "get": {
+        "tags": [
+          "Rfid"
+        ],
+        "summary": "Get detailed analysis of unused RFID tags (not assigned to products) for the authenticated client",
+        "operationId": "Rfid_GetUnusedRfidAnalysis",
+        "responses": {
+          "200": {
+            "description": "Unused RFID analysis retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnusedRfidAnalysisDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client code not found in token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
     "/api/User/register": {
       "post": {
         "tags": [
@@ -6471,6 +6539,106 @@
           "isActive": {
             "type": "boolean",
             "nullable": true
+          }
+        }
+      },
+      "UsedRfidAnalysisDto": {
+        "type": "object",
+        "description": "DTO for used RFID tag analysis - includes count and detailed RFID information",
+        "additionalProperties": false,
+        "properties": {
+          "totalUsedCount": {
+            "type": "integer",
+            "description": "Total count of used RFID tags",
+            "format": "int32"
+          },
+          "usedRfids": {
+            "type": "array",
+            "description": "List of used RFID tags with their details",
+            "items": {
+              "$ref": "#/components/schemas/UsedRfidDetailDto"
+            }
+          },
+          "summary": {
+            "type": "string",
+            "description": "Analysis summary"
+          }
+        }
+      },
+      "UsedRfidDetailDto": {
+        "type": "object",
+        "description": "DTO for individual used RFID tag details",
+        "additionalProperties": false,
+        "properties": {
+          "rfidCode": {
+            "type": "string",
+            "description": "RFID tag code"
+          },
+          "epcValue": {
+            "type": "string",
+            "description": "EPC value of the RFID tag"
+          },
+          "productId": {
+            "type": "integer",
+            "description": "Product ID this RFID is assigned to",
+            "format": "int32"
+          },
+          "assignedOn": {
+            "type": "string",
+            "description": "When the RFID was assigned to the product",
+            "format": "date-time"
+          },
+          "productInfo": {
+            "type": "string",
+            "description": "Product details (if available)",
+            "nullable": true
+          }
+        }
+      },
+      "UnusedRfidAnalysisDto": {
+        "type": "object",
+        "description": "DTO for unused RFID tag analysis - includes count and detailed RFID information",
+        "additionalProperties": false,
+        "properties": {
+          "totalUnusedCount": {
+            "type": "integer",
+            "description": "Total count of unused RFID tags",
+            "format": "int32"
+          },
+          "unusedRfids": {
+            "type": "array",
+            "description": "List of unused RFID tags with their details",
+            "items": {
+              "$ref": "#/components/schemas/UnusedRfidDetailDto"
+            }
+          },
+          "summary": {
+            "type": "string",
+            "description": "Analysis summary"
+          }
+        }
+      },
+      "UnusedRfidDetailDto": {
+        "type": "object",
+        "description": "DTO for individual unused RFID tag details",
+        "additionalProperties": false,
+        "properties": {
+          "rfidCode": {
+            "type": "string",
+            "description": "RFID tag code"
+          },
+          "epcValue": {
+            "type": "string",
+            "description": "EPC value of the RFID tag"
+          },
+          "createdOn": {
+            "type": "string",
+            "description": "When the RFID was created",
+            "format": "date-time"
+          },
+          "isActive": {
+            "type": "boolean",
+            "description": "Whether the RFID is active"
           }
         }
       },

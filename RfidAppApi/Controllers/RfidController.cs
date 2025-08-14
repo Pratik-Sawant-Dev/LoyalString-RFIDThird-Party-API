@@ -304,6 +304,66 @@ namespace RfidAppApi.Controllers
             }
         }
 
+        /// <summary>
+        /// Get detailed analysis of used RFID tags (assigned to products) for the authenticated client
+        /// </summary>
+        /// <returns>Used RFID analysis with count and detailed information</returns>
+        /// <response code="200">Used RFID analysis retrieved successfully</response>
+        /// <response code="400">Client code not found in token</response>
+        /// <response code="500">Internal server error</response>
+        [HttpGet("used-analysis")]
+        [ProducesResponseType(typeof(UsedRfidAnalysisDto), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<ActionResult<UsedRfidAnalysisDto>> GetUsedRfidAnalysis()
+        {
+            try
+            {
+                var clientCode = GetClientCodeFromToken();
+                if (string.IsNullOrEmpty(clientCode))
+                {
+                    return BadRequest(new { message = "Client code not found in token." });
+                }
+
+                var usedAnalysis = await _rfidService.GetUsedRfidAnalysisAsync(clientCode);
+                return Ok(usedAnalysis);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred while retrieving used RFID analysis.", error = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Get detailed analysis of unused RFID tags (not assigned to products) for the authenticated client
+        /// </summary>
+        /// <returns>Unused RFID analysis with count and detailed information</returns>
+        /// <response code="200">Unused RFID analysis retrieved successfully</response>
+        /// <response code="400">Client code not found in token</response>
+        /// <response code="500">Internal server error</response>
+        [HttpGet("unused-analysis")]
+        [ProducesResponseType(typeof(UnusedRfidAnalysisDto), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<ActionResult<UnusedRfidAnalysisDto>> GetUnusedRfidAnalysis()
+        {
+            try
+            {
+                var clientCode = GetClientCodeFromToken();
+                if (string.IsNullOrEmpty(clientCode))
+                {
+                    return BadRequest(new { message = "Client code not found in token." });
+                }
+
+                var unusedAnalysis = await _rfidService.GetUnusedRfidAnalysisAsync(clientCode);
+                return Ok(unusedAnalysis);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred while retrieving unused RFID analysis.", error = ex.Message });
+            }
+        }
+
         private string GetClientCodeFromToken()
         {
             var clientCodeClaim = User.Claims.FirstOrDefault(c => c.Type == "ClientCode");

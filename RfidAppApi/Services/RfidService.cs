@@ -145,6 +145,71 @@ namespace RfidAppApi.Services
                 .CountAsync();
         }
 
+        public async Task<UsedRfidAnalysisDto> GetUsedRfidAnalysisAsync(string clientCode)
+        {
+            using var clientContext = await _clientService.GetClientDbContextAsync(clientCode);
+            
+            // Get all RFID tags that are currently assigned to products
+            var usedRfids = await clientContext.ProductRfidAssignments
+                .Where(pr => pr.IsActive)
+                .Join(
+                    clientContext.Rfids,
+                    pr => pr.RFIDCode,
+                    r => r.RFIDCode,
+                    (pr, r) => new UsedRfidDetailDto
+                    {
+                        RFIDCode = r.RFIDCode,
+                        EPCValue = r.EPCValue,
+                        ProductId = pr.ProductId,
+                        AssignedOn = pr.AssignedOn,
+                        ProductInfo = $"Product ID: {pr.ProductId}"
+                    }
+                )
+                .ToListAsync();
+
+            var totalUsedCount = usedRfids.Count;
+            var summary = $"Found {totalUsedCount} used RFID tags out of total RFID inventory for client {clientCode}";
+
+            return new UsedRfidAnalysisDto
+            {
+                TotalUsedCount = totalUsedCount,
+                UsedRfids = usedRfids,
+                Summary = summary
+            };
+        }
+
+        public async Task<UnusedRfidAnalysisDto> GetUnusedRfidAnalysisAsync(string clientCode)
+        {
+            using var clientContext = await _clientService.GetClientDbContextAsync(clientCode);
+            
+            // Get all active RFID tags that are not assigned to any product
+            var assignedRfidCodes = await clientContext.ProductRfidAssignments
+                .Where(pr => pr.IsActive)
+                .Select(pr => pr.RFIDCode)
+                .ToListAsync();
+
+            var unusedRfids = await clientContext.Rfids
+                .Where(r => r.IsActive && !assignedRfidCodes.Contains(r.RFIDCode))
+                .Select(r => new UnusedRfidDetailDto
+                {
+                    RFIDCode = r.RFIDCode,
+                    EPCValue = r.EPCValue,
+                    CreatedOn = r.CreatedOn,
+                    IsActive = r.IsActive
+                })
+                .ToListAsync();
+
+            var totalUnusedCount = unusedRfids.Count;
+            var summary = $"Found {totalUnusedCount} unused RFID tags out of total RFID inventory for client {clientCode}";
+
+            return new UnusedRfidAnalysisDto
+            {
+                TotalUnusedCount = totalUnusedCount,
+                UnusedRfids = unusedRfids,
+                Summary = summary
+            };
+        }
+
         private static RfidDto MapToDto(Rfid rfid)
         {
             return new RfidDto

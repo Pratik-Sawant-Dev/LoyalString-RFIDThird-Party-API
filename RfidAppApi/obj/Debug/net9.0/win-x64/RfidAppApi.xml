@@ -631,6 +631,24 @@
             <response code="400">Client code not found in token</response>
             <response code="500">Internal server error</response>
         </member>
+        <member name="M:RfidAppApi.Controllers.RfidController.GetUsedRfidAnalysis">
+            <summary>
+            Get detailed analysis of used RFID tags (assigned to products) for the authenticated client
+            </summary>
+            <returns>Used RFID analysis with count and detailed information</returns>
+            <response code="200">Used RFID analysis retrieved successfully</response>
+            <response code="400">Client code not found in token</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:RfidAppApi.Controllers.RfidController.GetUnusedRfidAnalysis">
+            <summary>
+            Get detailed analysis of unused RFID tags (not assigned to products) for the authenticated client
+            </summary>
+            <returns>Unused RFID analysis with count and detailed information</returns>
+            <response code="200">Unused RFID analysis retrieved successfully</response>
+            <response code="400">Client code not found in token</response>
+            <response code="500">Internal server error</response>
+        </member>
         <member name="T:RfidAppApi.Controllers.UserController">
             <summary>
             User management controller for handling user registration, authentication, and management
@@ -815,6 +833,101 @@
         <member name="T:RfidAppApi.DTOs.RfidUsageByCounterDto">
             <summary>
             DTO for RFID usage summary by counter
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.UsedRfidAnalysisDto">
+            <summary>
+            DTO for used RFID tag analysis - includes count and detailed RFID information
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.UsedRfidAnalysisDto.TotalUsedCount">
+            <summary>
+            Total count of used RFID tags
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.UsedRfidAnalysisDto.UsedRfids">
+            <summary>
+            List of used RFID tags with their details
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.UsedRfidAnalysisDto.Summary">
+            <summary>
+            Analysis summary
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.UsedRfidDetailDto">
+            <summary>
+            DTO for individual used RFID tag details
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.UsedRfidDetailDto.RFIDCode">
+            <summary>
+            RFID tag code
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.UsedRfidDetailDto.EPCValue">
+            <summary>
+            EPC value of the RFID tag
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.UsedRfidDetailDto.ProductId">
+            <summary>
+            Product ID this RFID is assigned to
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.UsedRfidDetailDto.AssignedOn">
+            <summary>
+            When the RFID was assigned to the product
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.UsedRfidDetailDto.ProductInfo">
+            <summary>
+            Product details (if available)
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.UnusedRfidAnalysisDto">
+            <summary>
+            DTO for unused RFID tag analysis - includes count and detailed RFID information
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.UnusedRfidAnalysisDto.TotalUnusedCount">
+            <summary>
+            Total count of unused RFID tags
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.UnusedRfidAnalysisDto.UnusedRfids">
+            <summary>
+            List of unused RFID tags with their details
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.UnusedRfidAnalysisDto.Summary">
+            <summary>
+            Analysis summary
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.UnusedRfidDetailDto">
+            <summary>
+            DTO for individual unused RFID tag details
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.UnusedRfidDetailDto.RFIDCode">
+            <summary>
+            RFID tag code
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.UnusedRfidDetailDto.EPCValue">
+            <summary>
+            EPC value of the RFID tag
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.UnusedRfidDetailDto.CreatedOn">
+            <summary>
+            When the RFID was created
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.UnusedRfidDetailDto.IsActive">
+            <summary>
+            Whether the RFID is active
             </summary>
         </member>
         <member name="T:RfidAppApi.DTOs.UserDto">
@@ -1224,9 +1337,55 @@
             Interface for comprehensive reporting service
             </summary>
         </member>
+        <member name="M:RfidAppApi.Services.IRfidService.GetUsedRfidAnalysisAsync(System.String)">
+            <summary>
+            Get detailed analysis of used RFID tags (assigned to products) for a client
+            </summary>
+            <param name="clientCode">Client code to analyze</param>
+            <returns>Used RFID analysis with count and detailed information</returns>
+        </member>
+        <member name="M:RfidAppApi.Services.IRfidService.GetUnusedRfidAnalysisAsync(System.String)">
+            <summary>
+            Get detailed analysis of unused RFID tags (not assigned to products) for a client
+            </summary>
+            <param name="clientCode">Client code to analyze</param>
+            <returns>Unused RFID analysis with count and detailed information</returns>
+        </member>
         <member name="T:RfidAppApi.Services.ReportingService">
             <summary>
             Comprehensive reporting service for stock tracking, sales reporting, and daily balances
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Services.UserFriendlyProductService.CreateBulkProductsAsync(RfidAppApi.DTOs.BulkCreateProductsDto,System.String)">
+            <summary>
+            HIGHLY OPTIMIZED bulk product creation for large datasets (20k+ products)
+            Implements batch processing, master data caching, and bulk database operations
+            Expected performance: 20k products in 2-5 minutes instead of 14+ minutes
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Services.UserFriendlyProductService.PreloadMasterDataAsync(RfidAppApi.Data.ClientDbContext,System.Collections.Generic.List{RfidAppApi.DTOs.UserFriendlyCreateProductDto},System.String)">
+            <summary>
+            Pre-loads all master data into memory to avoid repeated database calls
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Services.UserFriendlyProductService.ValidateBulkProductsAsync(RfidAppApi.Data.ClientDbContext,System.Collections.Generic.List{RfidAppApi.DTOs.UserFriendlyCreateProductDto},RfidAppApi.Services.MasterDataCache)">
+            <summary>
+            Validates all products before processing to fail fast
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Services.UserFriendlyProductService.ProcessProductBatchAsync(RfidAppApi.Data.ClientDbContext,System.Collections.Generic.List{RfidAppApi.DTOs.UserFriendlyCreateProductDto},RfidAppApi.Services.MasterDataCache,RfidAppApi.DTOs.BulkProductResponseDto,System.String)">
+            <summary>
+            Processes a batch of products efficiently
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.Services.MasterDataCache">
+            <summary>
+            Cache for master data to avoid repeated database calls during bulk operations
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.Services.ValidationResult">
+            <summary>
+            Result of bulk validation
             </summary>
         </member>
     </members>
