@@ -27,5 +27,13 @@ namespace RfidAppApi.Services
         /// <param name="clientCode">Client code to analyze</param>
         /// <returns>Unused RFID analysis with count and detailed information</returns>
         Task<UnusedRfidAnalysisDto> GetUnusedRfidAnalysisAsync(string clientCode);
+
+        /// <summary>
+        /// Scan for products by EPC value - returns all products associated with the scanned EPC value(s)
+        /// </summary>
+        /// <param name="request">Scan request containing single EPC value or multiple EPC values</param>
+        /// <param name="clientCode">Client code to search in</param>
+        /// <returns>Scan response with all associated products grouped by EPC value</returns>
+        Task<RfidScanResponseDto> ScanProductsByEpcValueAsync(RfidScanRequestDto request, string clientCode);
     }
 } 

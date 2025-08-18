@@ -17,7 +17,12 @@ namespace RfidAppApi.DTOs
         public string PurityName { get; set; } = string.Empty;   // e.g., "24K", "22K", "18K"
         
         // RFID Code - optional, will be created if not exists
+        // Support both field names for flexibility
         public string? RfidCode { get; set; } = string.Empty;    // e.g., "RFID001", "RFID002"
+        public string? RFIDNumber { get; set; } = string.Empty;  // Alternative field name for compatibility
+        
+        // Computed property to get RFID code from either field
+        public string? GetRfidCode() => !string.IsNullOrWhiteSpace(RfidCode) ? RfidCode : RFIDNumber;
         
         // Product details
         public float? GrossWeight { get; set; }

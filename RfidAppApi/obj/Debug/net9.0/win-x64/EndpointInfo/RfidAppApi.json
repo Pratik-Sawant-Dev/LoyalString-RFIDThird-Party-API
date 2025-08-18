@@ -1031,6 +1031,10 @@
                     "type": "string",
                     "nullable": true
                   },
+                  "RFIDNumber": {
+                    "type": "string",
+                    "nullable": true
+                  },
                   "GrossWeight": {
                     "type": "number",
                     "format": "float",
@@ -4686,6 +4690,53 @@
         }
       }
     },
+    "/api/Rfid/scan": {
+      "post": {
+        "tags": [
+          "Rfid"
+        ],
+        "summary": "Scan for products by EPC value - returns all products associated with the scanned EPC value(s)",
+        "operationId": "Rfid_ScanProductsByEpcValue",
+        "requestBody": {
+          "x-name": "request",
+          "description": "Scan request containing single EPC value or multiple EPC values",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RfidScanRequestDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "Scan completed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RfidScanResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request or client code not found in token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
     "/api/User/register": {
       "post": {
         "tags": [
@@ -5494,6 +5545,10 @@
             "type": "string"
           },
           "rfidCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "rfidNumber": {
             "type": "string",
             "nullable": true
           },
@@ -6639,6 +6694,226 @@
           "isActive": {
             "type": "boolean",
             "description": "Whether the RFID is active"
+          }
+        }
+      },
+      "RfidScanResponseDto": {
+        "type": "object",
+        "description": "DTO for RFID scan response - returns all products associated with scanned EPC values",
+        "additionalProperties": false,
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the scan was successful"
+          },
+          "message": {
+            "type": "string",
+            "description": "Message describing the scan result"
+          },
+          "totalProductsFound": {
+            "type": "integer",
+            "description": "Total number of products found",
+            "format": "int32"
+          },
+          "scanResults": {
+            "type": "array",
+            "description": "List of scanned products grouped by EPC value",
+            "items": {
+              "$ref": "#/components/schemas/EpcScanResultDto"
+            }
+          },
+          "unmatchedEpcValues": {
+            "type": "array",
+            "description": "EPC values that were scanned but found no products",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "EpcScanResultDto": {
+        "type": "object",
+        "description": "DTO for individual EPC scan result",
+        "additionalProperties": false,
+        "properties": {
+          "epcValue": {
+            "type": "string",
+            "description": "The EPC value that was scanned"
+          },
+          "rfidCode": {
+            "type": "string",
+            "description": "RFID code associated with this EPC value"
+          },
+          "productCount": {
+            "type": "integer",
+            "description": "Number of products found for this EPC value",
+            "format": "int32"
+          },
+          "products": {
+            "type": "array",
+            "description": "List of products associated with this EPC value",
+            "items": {
+              "$ref": "#/components/schemas/ScannedProductDto"
+            }
+          }
+        }
+      },
+      "ScannedProductDto": {
+        "type": "object",
+        "description": "DTO for individual product found during RFID scan",
+        "additionalProperties": false,
+        "properties": {
+          "productId": {
+            "type": "integer",
+            "description": "Product ID",
+            "format": "int32"
+          },
+          "itemCode": {
+            "type": "string",
+            "description": "Product item code"
+          },
+          "rfidCode": {
+            "type": "string",
+            "description": "RFID code assigned to this product"
+          },
+          "epcValue": {
+            "type": "string",
+            "description": "EPC value of the RFID tag"
+          },
+          "assignedOn": {
+            "type": "string",
+            "description": "When the RFID was assigned to this product",
+            "format": "date-time"
+          },
+          "status": {
+            "type": "string",
+            "description": "Product status"
+          },
+          "categoryName": {
+            "type": "string",
+            "description": "Product category name"
+          },
+          "productName": {
+            "type": "string",
+            "description": "Product name"
+          },
+          "designName": {
+            "type": "string",
+            "description": "Design name"
+          },
+          "purityName": {
+            "type": "string",
+            "description": "Purity name"
+          },
+          "branchName": {
+            "type": "string",
+            "description": "Branch name where product is located"
+          },
+          "counterName": {
+            "type": "string",
+            "description": "Counter name where product is located"
+          },
+          "grossWeight": {
+            "type": "number",
+            "description": "Gross weight",
+            "format": "float",
+            "nullable": true
+          },
+          "netWeight": {
+            "type": "number",
+            "description": "Net weight",
+            "format": "float",
+            "nullable": true
+          },
+          "stoneWeight": {
+            "type": "number",
+            "description": "Stone weight",
+            "format": "float",
+            "nullable": true
+          },
+          "diamondHeight": {
+            "type": "number",
+            "description": "Diamond height",
+            "format": "float",
+            "nullable": true
+          },
+          "boxDetails": {
+            "type": "string",
+            "description": "Box details",
+            "nullable": true
+          },
+          "size": {
+            "type": "integer",
+            "description": "Product size",
+            "format": "int32",
+            "nullable": true
+          },
+          "stoneAmount": {
+            "type": "number",
+            "description": "Stone amount",
+            "format": "decimal",
+            "nullable": true
+          },
+          "diamondAmount": {
+            "type": "number",
+            "description": "Diamond amount",
+            "format": "decimal",
+            "nullable": true
+          },
+          "hallmarkAmount": {
+            "type": "number",
+            "description": "Hallmark amount",
+            "format": "decimal",
+            "nullable": true
+          },
+          "makingPerGram": {
+            "type": "number",
+            "description": "Making charge per gram",
+            "format": "decimal",
+            "nullable": true
+          },
+          "makingPercentage": {
+            "type": "number",
+            "description": "Making charge percentage",
+            "format": "decimal",
+            "nullable": true
+          },
+          "makingFixedAmount": {
+            "type": "number",
+            "description": "Fixed making charge amount",
+            "format": "decimal",
+            "nullable": true
+          },
+          "mrp": {
+            "type": "number",
+            "description": "MRP (Maximum Retail Price)",
+            "format": "decimal",
+            "nullable": true
+          },
+          "imageUrl": {
+            "type": "string",
+            "description": "Product image URL",
+            "nullable": true
+          }
+        }
+      },
+      "RfidScanRequestDto": {
+        "type": "object",
+        "description": "DTO for RFID scan request - user provides EPC value to scan",
+        "additionalProperties": false,
+        "properties": {
+          "epcValue": {
+            "type": "string",
+            "description": "Single EPC value to scan for (for backward compatibility)",
+            "nullable": true
+          },
+          "epcValues": {
+            "type": "array",
+            "description": "Multiple EPC values to scan for (new feature)",
+            "nullable": true,
+            "items": {
+              "type": "string"
+            }
           }
         }
       },

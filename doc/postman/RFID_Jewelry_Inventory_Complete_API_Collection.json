@@ -1488,6 +1488,33 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Scan Products by EPC Value",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"epcValue\": \"RFID001\",\n  \"epcValues\": [\"RFID001\", \"RFID002\", \"RFID003\"]\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/Rfid/scan",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "Rfid", "scan"]
+						},
+						"description": "Scan for products by EPC value(s). Supports both single EPC value (epcValue) and multiple EPC values (epcValues). You can use either field or both. Examples:\n\nSingle EPC: {\"epcValue\": \"RFID001\"}\nMultiple EPCs: {\"epcValues\": [\"RFID001\", \"RFID002\"]}\nBoth: {\"epcValue\": \"RFID001\", \"epcValues\": [\"RFID002\", \"RFID003\"]}\n\nNote: If both fields are provided, all unique EPC values will be scanned. Duplicates are automatically removed."
+					},
+					"response": []
 				}
 			]
 		},

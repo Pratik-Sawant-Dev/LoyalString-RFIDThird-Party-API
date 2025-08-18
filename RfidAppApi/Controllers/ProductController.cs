@@ -78,12 +78,38 @@ namespace RfidAppApi.Controllers
                 var clientCode = GetClientCodeFromToken();
                 var result = await _productService.CreateBulkProductsAsync(bulkDto, clientCode);
                 
-                return Ok(new
+                // Determine if the operation was truly successful
+                var isSuccessful = result.SuccessfullyCreated > 0 && result.Failed == 0;
+                var hasPartialSuccess = result.SuccessfullyCreated > 0 && result.Failed > 0;
+                
+                if (isSuccessful)
                 {
-                    success = true,
-                    message = $"Bulk product creation completed. {result.SuccessfullyCreated} created, {result.Failed} failed.",
-                    data = result
-                });
+                    return Ok(new
+                    {
+                        success = true,
+                        message = $"Bulk product creation completed successfully. {result.SuccessfullyCreated} products created.",
+                        data = result
+                    });
+                }
+                else if (hasPartialSuccess)
+                {
+                    return Ok(new
+                    {
+                        success = true,
+                        message = $"Bulk product creation completed with partial success. {result.SuccessfullyCreated} created, {result.Failed} failed.",
+                        data = result
+                    });
+                }
+                else
+                {
+                    // All products failed
+                    return StatusCode(500, new
+                    {
+                        success = false,
+                        message = $"Bulk product creation failed. {result.Failed} products failed to create.",
+                        data = result
+                    });
+                }
             }
             catch (Exception ex)
             {

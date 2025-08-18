@@ -364,6 +364,37 @@ namespace RfidAppApi.Controllers
             }
         }
 
+        /// <summary>
+        /// Scan for products by EPC value - returns all products associated with the scanned EPC value(s)
+        /// </summary>
+        /// <param name="request">Scan request containing single EPC value or multiple EPC values</param>
+        /// <returns>Scan response with all associated products grouped by EPC value</returns>
+        /// <response code="200">Scan completed successfully</response>
+        /// <response code="400">Invalid request or client code not found in token</response>
+        /// <response code="500">Internal server error</response>
+        [HttpPost("scan")]
+        [ProducesResponseType(typeof(RfidScanResponseDto), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<ActionResult<RfidScanResponseDto>> ScanProductsByEpcValue([FromBody] RfidScanRequestDto request)
+        {
+            try
+            {
+                var clientCode = GetClientCodeFromToken();
+                if (string.IsNullOrEmpty(clientCode))
+                {
+                    return BadRequest("Client code not found in token");
+                }
+
+                var result = await _rfidService.ScanProductsByEpcValueAsync(request, clientCode);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = ex.Message });
+            }
+        }
+
         private string GetClientCodeFromToken()
         {
             var clientCodeClaim = User.Claims.FirstOrDefault(c => c.Type == "ClientCode");

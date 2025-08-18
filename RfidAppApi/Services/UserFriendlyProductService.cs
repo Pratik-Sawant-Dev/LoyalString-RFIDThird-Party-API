@@ -350,38 +350,77 @@ namespace RfidAppApi.Services
         /// </summary>
         public async Task<BulkProductResponseDto> CreateBulkProductsAsync(BulkCreateProductsDto bulkDto, string clientCode)
         {
+            var startTime = DateTime.UtcNow;
             var response = new BulkProductResponseDto
             {
-                TotalProducts = bulkDto.Products.Count
+                TotalProducts = bulkDto.Products.Count,
+                SuccessfullyCreated = 0,
+                Failed = 0,
+                CreatedProducts = new List<UserFriendlyProductResponseDto>(),
+                Errors = new List<string>()
             };
 
             if (bulkDto.Products.Count == 0)
                 return response;
+
+            Console.WriteLine($"Starting bulk product creation for {bulkDto.Products.Count} products at {startTime:yyyy-MM-dd HH:mm:ss}");
 
             using var context = await _clientService.GetClientDbContextAsync(clientCode);
 
             try
             {
                 // STEP 1: Pre-load and cache all master data to avoid repeated database calls
+                Console.WriteLine("Step 1: Pre-loading master data...");
                 var masterDataCache = await PreloadMasterDataAsync(context, bulkDto.Products, clientCode);
+                Console.WriteLine($"Master data loaded: {masterDataCache.Categories.Count} categories, {masterDataCache.Branches.Count} branches, {masterDataCache.Counters.Count} counters");
+                
+                // STEP 1.5: Create ALL missing master data upfront to prevent batch conflicts
+                Console.WriteLine("Step 1.5: Creating missing master data...");
+                var missingMasterData = await CreateAllMissingMasterDataAsync(context, bulkDto.Products, masterDataCache, clientCode);
+                if (missingMasterData.Any())
+                {
+                    Console.WriteLine($"Created {missingMasterData.Count} new master data entries");
+                    // Update cache with new IDs
+                    UpdateMasterDataCache(masterDataCache, missingMasterData);
+                }
+                
+                // Validate that all required master data is now available
+                Console.WriteLine("Validating master data availability...");
+                var masterDataValidation = ValidateMasterDataAvailability(bulkDto.Products, masterDataCache);
+                if (!masterDataValidation.IsValid)
+                {
+                    response.Failed = bulkDto.Products.Count;
+                    response.Errors.AddRange(masterDataValidation.Errors);
+                    Console.WriteLine($"Master data validation failed: {masterDataValidation.Errors.Count} errors");
+                    return response;
+                }
+                Console.WriteLine("Master data validation passed");
                 
                 // STEP 2: Validate all products before processing (fail fast approach)
+                Console.WriteLine("Step 2: Validating products...");
                 var validationResults = await ValidateBulkProductsAsync(context, bulkDto.Products, masterDataCache);
                 
-                if (validationResults.HasErrors)
+                if (!validationResults.IsValid)
                 {
                     response.Failed = validationResults.Errors.Count;
                     response.Errors.AddRange(validationResults.Errors);
+                    Console.WriteLine($"Validation failed with {validationResults.Errors.Count} errors");
                     return response;
                 }
+
+                Console.WriteLine("Validation passed successfully");
 
                 // STEP 3: Process products in smaller batches to avoid memory issues
                 const int batchSize = 500; // Reduced batch size for better memory management
                 var totalBatches = (int)Math.Ceiling((double)bulkDto.Products.Count / batchSize);
                 
+                Console.WriteLine($"Step 3: Processing {totalBatches} batches with batch size {batchSize}");
+                
                 for (int batchIndex = 0; batchIndex < totalBatches; batchIndex++)
                 {
+                    var batchStartTime = DateTime.UtcNow;
                     List<UserFriendlyCreateProductDto> batchProducts = null;
+                    
                     try
                     {
                         batchProducts = bulkDto.Products
@@ -389,7 +428,18 @@ namespace RfidAppApi.Services
                             .Take(batchSize)
                             .ToList();
 
-                        await ProcessProductBatchAsync(context, batchProducts, masterDataCache, response, clientCode);
+                        Console.WriteLine($"Processing batch {batchIndex + 1}/{totalBatches} with {batchProducts.Count} products");
+                        
+                        var batchResult = await ProcessProductBatchAsync(context, batchProducts, masterDataCache, clientCode);
+                        
+                        // Update response with batch results
+                        response.SuccessfullyCreated += batchResult.SuccessfullyCreated;
+                        response.Failed += batchResult.Failed;
+                        response.CreatedProducts.AddRange(batchResult.CreatedProducts);
+                        response.Errors.AddRange(batchResult.Errors);
+                        
+                        var batchDuration = DateTime.UtcNow - batchStartTime;
+                        Console.WriteLine($"Batch {batchIndex + 1} completed in {batchDuration.TotalSeconds:F2}s - Created: {batchResult.SuccessfullyCreated}, Failed: {batchResult.Failed}");
                         
                         // Clear change tracker after each batch to prevent memory buildup
                         context.ChangeTracker.Clear();
@@ -403,12 +453,13 @@ namespace RfidAppApi.Services
                     }
                     catch (Exception batchEx)
                     {
-                        // If a batch fails, log the error but continue with remaining batches
+                        // If a batch fails, mark all products in that batch as failed
                         if (batchProducts != null)
                         {
                             response.Failed += batchProducts.Count;
-                        }
                         response.Errors.Add($"Batch {batchIndex + 1} failed: {batchEx.Message}");
+                            Console.WriteLine($"Batch {batchIndex + 1} failed: {batchEx.Message}");
+                        }
                         
                         // Clear the failed batch from change tracker
                         context.ChangeTracker.Clear();
@@ -418,12 +469,20 @@ namespace RfidAppApi.Services
                     }
                 }
                 
+                var totalDuration = DateTime.UtcNow - startTime;
+                Console.WriteLine($"Bulk product creation completed in {totalDuration.TotalSeconds:F2}s - Total: {response.TotalProducts}, Created: {response.SuccessfullyCreated}, Failed: {response.Failed}");
+                
                 return response;
             }
             catch (Exception ex)
             {
                 response.Failed = bulkDto.Products.Count;
+                response.SuccessfullyCreated = 0;
+                response.CreatedProducts.Clear();
                 response.Errors.Add($"Bulk operation failed: {ex.Message}");
+                
+                var totalDuration = DateTime.UtcNow - startTime;
+                Console.WriteLine($"Bulk product creation failed after {totalDuration.TotalSeconds:F2}s: {ex.Message}");
                 
                 // Log the full exception for debugging
                 Console.WriteLine($"Bulk Product Creation Error: {ex}");
@@ -555,36 +614,111 @@ namespace RfidAppApi.Services
                     result.Errors.Add($"Product '{product.ItemCode}': CounterName is required");
             }
 
-            result.HasErrors = result.Errors.Count > 0;
+            result.IsValid = result.Errors.Count == 0;
+            return result;
+        }
+
+        /// <summary>
+        /// Validates that all required master data is available in the cache
+        /// </summary>
+        private ValidationResult ValidateMasterDataAvailability(List<UserFriendlyCreateProductDto> products, MasterDataCache cache)
+        {
+            var result = new ValidationResult { IsValid = true, Errors = new List<string>() };
+            
+            foreach (var product in products)
+            {
+                var categoryName = product.CategoryName?.Trim().ToLower();
+                var branchName = product.BranchName?.Trim().ToLower();
+                var counterName = product.CounterName?.Trim().ToLower();
+                var productName = product.ProductName?.Trim().ToLower();
+                var designName = product.DesignName?.Trim().ToLower();
+                var purityName = product.PurityName?.Trim().ToLower();
+                
+                if (!string.IsNullOrEmpty(categoryName) && !cache.Categories.ContainsKey(categoryName))
+                {
+                    result.IsValid = false;
+                    result.Errors.Add($"Product '{product.ItemCode}': Category '{product.CategoryName}' not found in master data");
+                }
+                
+                if (!string.IsNullOrEmpty(branchName) && !cache.Branches.ContainsKey(branchName))
+                {
+                    result.IsValid = false;
+                    result.Errors.Add($"Product '{product.ItemCode}': Branch '{product.BranchName}' not found in master data");
+                }
+                
+                if (!string.IsNullOrEmpty(counterName) && !cache.Counters.ContainsKey(counterName))
+                {
+                    result.IsValid = false;
+                    result.Errors.Add($"Product '{product.ItemCode}': Counter '{product.CounterName}' not found in master data");
+                }
+                
+                if (!string.IsNullOrEmpty(productName) && !cache.Products.ContainsKey(productName))
+                {
+                    result.IsValid = false;
+                    result.Errors.Add($"Product '{product.ItemCode}': Product type '{product.ProductName}' not found in master data");
+                }
+                
+                if (!string.IsNullOrEmpty(designName) && !cache.Designs.ContainsKey(designName))
+                {
+                    result.IsValid = false;
+                    result.Errors.Add($"Product '{product.ItemCode}': Design '{product.DesignName}' not found in master data");
+                }
+                
+                if (!string.IsNullOrEmpty(purityName) && !cache.Purities.ContainsKey(purityName))
+                {
+                    result.IsValid = false;
+                    result.Errors.Add($"Product '{product.ItemCode}': Purity '{product.PurityName}' not found in master data");
+                }
+            }
+            
             return result;
         }
 
         /// <summary>
         /// Processes a batch of products efficiently
         /// </summary>
-        private async Task ProcessProductBatchAsync(
+        private async Task<BulkProductResponseDto> ProcessProductBatchAsync(
             ClientDbContext context, 
             List<UserFriendlyCreateProductDto> batchProducts, 
             MasterDataCache masterDataCache, 
-            BulkProductResponseDto response, 
             string clientCode)
         {
+            var response = new BulkProductResponseDto
+            {
+                SuccessfullyCreated = 0,
+                Failed = 0,
+                CreatedProducts = new List<UserFriendlyProductResponseDto>(),
+                Errors = new List<string>()
+            };
+
             var productsToAdd = new List<ProductDetails>();
             var rfidAssignmentsToAdd = new List<ProductRfidAssignment>();
-            var newMasterDataToAdd = new List<object>();
 
             // Process each product in the batch
             foreach (var productDto in batchProducts)
             {
                 try
                 {
-                    // Get or create master data IDs using cache
-                    var categoryId = await GetOrCreateCategoryFromCacheAsync(context, productDto.CategoryName, masterDataCache, newMasterDataToAdd);
-                    var branchId = await GetOrCreateBranchFromCacheAsync(context, productDto.BranchName, clientCode, masterDataCache, newMasterDataToAdd);
-                    var counterId = await GetOrCreateCounterFromCacheAsync(context, productDto.CounterName, branchId, clientCode, masterDataCache, newMasterDataToAdd);
-                    var productId = await GetOrCreateProductFromCacheAsync(context, productDto.ProductName, masterDataCache, newMasterDataToAdd);
-                    var designId = await GetOrCreateDesignFromCacheAsync(context, productDto.DesignName, masterDataCache, newMasterDataToAdd);
-                    var purityId = await GetOrCreatePurityFromCacheAsync(context, productDto.PurityName, masterDataCache, newMasterDataToAdd);
+                    Console.WriteLine($"Processing product: {productDto.ItemCode}");
+                    Console.WriteLine($"  RFID from RfidCode: '{productDto.RfidCode}'");
+                    Console.WriteLine($"  RFID from RFIDNumber: '{productDto.RFIDNumber}'");
+                    Console.WriteLine($"  Computed RFID: '{productDto.GetRfidCode()}'");
+                    
+                    // Get master data IDs from cache (all should exist now)
+                    var categoryId = GetCategoryIdFromCache(masterDataCache, productDto.CategoryName);
+                    var branchId = GetBranchIdFromCache(masterDataCache, productDto.BranchName, clientCode);
+                    var counterId = GetCounterIdFromCache(masterDataCache, productDto.CounterName, branchId, clientCode);
+                    var productId = GetProductIdFromCache(masterDataCache, productDto.ProductName);
+                    var designId = GetDesignIdFromCache(masterDataCache, productDto.DesignName);
+                    var purityId = GetPurityIdFromCache(masterDataCache, productDto.PurityName);
+
+                    // Validate that all required master data exists
+                    if (categoryId <= 0 || branchId <= 0 || counterId <= 0 || productId <= 0 || designId <= 0 || purityId <= 0)
+                    {
+                        response.Failed++;
+                        response.Errors.Add($"Product '{productDto.ItemCode}': Required master data not found. Category: {categoryId}, Branch: {branchId}, Counter: {counterId}, Product: {productId}, Design: {designId}, Purity: {purityId}");
+                        continue;
+                    }
 
                     // Create product entity
                     var product = new ProductDetails
@@ -618,25 +752,35 @@ namespace RfidAppApi.Services
                     productsToAdd.Add(product);
 
                     // Handle RFID if provided
-                    if (!string.IsNullOrWhiteSpace(productDto.RfidCode))
+                    var rfidCode = productDto.GetRfidCode();
+                    if (!string.IsNullOrWhiteSpace(rfidCode))
                     {
-                        var rfidCode = await GetOrCreateRfidFromCacheAsync(context, productDto.RfidCode, clientCode, masterDataCache, newMasterDataToAdd);
-                        
+                        Console.WriteLine($"Processing RFID '{rfidCode}' for product '{productDto.ItemCode}'");
+                        var cachedRfidCode = GetRfidCodeFromCache(masterDataCache, rfidCode, clientCode);
+                        if (!string.IsNullOrEmpty(cachedRfidCode))
+                        {
+                            Console.WriteLine($"RFID '{rfidCode}' found in cache, will create assignment");
                         // We'll create RFID assignments after products are saved (to get their IDs)
                         rfidAssignmentsToAdd.Add(new ProductRfidAssignment
                         {
-                            RFIDCode = rfidCode,
+                                RFIDCode = cachedRfidCode,
                             AssignedOn = DateTime.UtcNow,
                             IsActive = true
                         });
                     }
                     else
                     {
+                            Console.WriteLine($"Warning: RFID code '{rfidCode}' not found in master data for product '{productDto.ItemCode}'");
+                            response.Errors.Add($"Warning: RFID code '{rfidCode}' not found in master data for product '{productDto.ItemCode}'");
+                            rfidAssignmentsToAdd.Add(null);
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine($"No RFID code provided for product '{productDto.ItemCode}'");
                         // Add null placeholder for products without RFID
                         rfidAssignmentsToAdd.Add(null);
                     }
-
-                    response.SuccessfullyCreated++;
                 }
                 catch (Exception ex)
                 {
@@ -645,41 +789,40 @@ namespace RfidAppApi.Services
                 }
             }
 
-            // STEP 1: Add all new master data first and save immediately
-            if (newMasterDataToAdd.Any())
-            {
-                try
-                {
-                    foreach (var entity in newMasterDataToAdd)
-                    {
-                        context.Add(entity);
-                    }
-                    await context.SaveChangesAsync();
-                    
-                    // Update cache with new IDs
-                    UpdateMasterDataCache(masterDataCache, newMasterDataToAdd);
-                }
-                catch (Exception ex)
-                {
-                    throw new InvalidOperationException($"Failed to save master data: {ex.Message}", ex);
-                }
-            }
-
-            // STEP 2: Add all products and save immediately
+            // Add all products and save immediately
             if (productsToAdd.Any())
             {
                 try
                 {
                     context.ProductDetails.AddRange(productsToAdd);
                     await context.SaveChangesAsync();
+                    
+                    // Only after successful save, mark products as created and add to response
+                    foreach (var product in productsToAdd)
+                    {
+                        response.SuccessfullyCreated++;
+                        try
+                        {
+                            var productResponse = await MapToUserFriendlyResponseAsync(context, product);
+                            response.CreatedProducts.Add(productResponse);
+                        }
+                        catch (Exception mapEx)
+                        {
+                            // If mapping fails, still count as created but log the mapping error
+                            response.Errors.Add($"Warning: Product {product.ItemCode} created but failed to map to response: {mapEx.Message}");
+                        }
+                    }
                 }
                 catch (Exception ex)
                 {
-                    throw new InvalidOperationException($"Failed to save products: {ex.Message}", ex);
+                    // Mark all products in this batch as failed
+                    response.Failed += productsToAdd.Count;
+                    response.Errors.Add($"Failed to save products: {ex.Message}");
+                    return response;
                 }
             }
 
-            // STEP 3: Create RFID assignments for products that have them
+            // Create RFID assignments for products that have them
             if (rfidAssignmentsToAdd.Any())
             {
                 try
@@ -693,24 +836,209 @@ namespace RfidAppApi.Services
                             var assignment = rfidAssignmentsToAdd[i];
                             assignment.ProductId = productsToAdd[i].Id;
                             validRfidAssignments.Add(assignment);
+                            
+                            Console.WriteLine($"Creating RFID assignment: Product {productsToAdd[i].ItemCode} (ID: {productsToAdd[i].Id}) -> RFID: {assignment.RFIDCode}");
                         }
                     }
 
                     if (validRfidAssignments.Any())
                     {
+                        Console.WriteLine($"Saving {validRfidAssignments.Count} RFID assignments...");
                         context.ProductRfidAssignments.AddRange(validRfidAssignments);
                         await context.SaveChangesAsync();
+                        Console.WriteLine("RFID assignments saved successfully");
+                    }
+                    else
+                    {
+                        Console.WriteLine("No valid RFID assignments to save");
                     }
                 }
                 catch (Exception ex)
                 {
-                    throw new InvalidOperationException($"Failed to save RFID assignments: {ex.Message}", ex);
+                    // RFID assignment failure doesn't affect product creation success
+                    response.Errors.Add($"Warning: Failed to save RFID assignments: {ex.Message}");
+                    Console.WriteLine($"Error saving RFID assignments: {ex.Message}");
                 }
             }
+
+            return response;
+        }
+
+        /// <summary>
+        /// Creates all missing master data upfront to prevent batch conflicts
+        /// </summary>
+        private async Task<List<object>> CreateAllMissingMasterDataAsync(ClientDbContext context, List<UserFriendlyCreateProductDto> products, MasterDataCache cache, string clientCode)
+        {
+            var newMasterDataToAdd = new List<object>();
+            
+            try
+            {
+                // Extract all unique values from all products
+                var uniqueCategories = products.Select(p => p.CategoryName?.Trim()).Where(x => !string.IsNullOrEmpty(x)).Distinct().ToList();
+                var uniqueBranches = products.Select(p => p.BranchName?.Trim()).Where(x => !string.IsNullOrEmpty(x)).Distinct().ToList();
+                var uniqueCounters = products.Select(p => p.CounterName?.Trim()).Where(x => !string.IsNullOrEmpty(x)).Distinct().ToList();
+                var uniqueProductNames = products.Select(p => p.ProductName?.Trim()).Where(x => !string.IsNullOrEmpty(x)).Distinct().ToList();
+                var uniqueDesigns = products.Select(p => p.DesignName?.Trim()).Where(x => !string.IsNullOrEmpty(x)).Distinct().ToList();
+                var uniquePurities = products.Select(p => p.PurityName?.Trim()).Where(x => !string.IsNullOrEmpty(x)).Distinct().ToList();
+                var uniqueRfids = products.Select(p => p.GetRfidCode()?.Trim()).Where(x => !string.IsNullOrEmpty(x)).Distinct().ToList();
+
+                Console.WriteLine($"Extracted unique values:");
+                Console.WriteLine($"  Categories: {string.Join(", ", uniqueCategories)}");
+                Console.WriteLine($"  Branches: {string.Join(", ", uniqueBranches)}");
+                Console.WriteLine($"  Counters: {string.Join(", ", uniqueCounters)}");
+                Console.WriteLine($"  Product Names: {string.Join(", ", uniqueProductNames)}");
+                Console.WriteLine($"  Designs: {string.Join(", ", uniqueDesigns)}");
+                Console.WriteLine($"  Purities: {string.Join(", ", uniquePurities)}");
+                Console.WriteLine($"  RFIDs: {string.Join(", ", uniqueRfids)}");
+
+                // Process categories
+                foreach (var categoryName in uniqueCategories)
+                {
+                    if (!cache.Categories.ContainsKey(categoryName.ToLower()))
+                    {
+                        var category = new CategoryMaster { CategoryName = categoryName };
+                        newMasterDataToAdd.Add(category);
+                        cache.Categories[categoryName.ToLower()] = -1; // Mark as new
+                    }
+                }
+
+                // Process branches
+                foreach (var branchName in uniqueBranches)
+                {
+                    if (!cache.Branches.ContainsKey(branchName.ToLower()))
+                    {
+                        var branch = new BranchMaster { BranchName = branchName, ClientCode = clientCode };
+                        newMasterDataToAdd.Add(branch);
+                        cache.Branches[branchName.ToLower()] = -1; // Mark as new
+                    }
+                }
+
+                // Process product names
+                foreach (var productName in uniqueProductNames)
+                {
+                    if (!cache.Products.ContainsKey(productName.ToLower()))
+                    {
+                        var product = new ProductMaster { ProductName = productName };
+                        newMasterDataToAdd.Add(product);
+                        cache.Products[productName.ToLower()] = -1; // Mark as new
+                    }
+                }
+
+                // Process designs
+                foreach (var designName in uniqueDesigns)
+                {
+                    if (!cache.Designs.ContainsKey(designName.ToLower()))
+                    {
+                        var design = new DesignMaster { DesignName = designName };
+                        newMasterDataToAdd.Add(design);
+                        cache.Designs[designName.ToLower()] = -1; // Mark as new
+                    }
+                }
+
+                // Process purities
+                foreach (var purityName in uniquePurities)
+                {
+                    if (!cache.Purities.ContainsKey(purityName.ToLower()))
+                    {
+                        var purity = new PurityMaster { PurityName = purityName };
+                        newMasterDataToAdd.Add(purity);
+                        cache.Purities[purityName.ToLower()] = -1; // Mark as new
+                    }
+                }
+
+                // Process RFIDs
+                foreach (var rfidCode in uniqueRfids)
+                {
+                    if (!cache.Rfids.ContainsKey(rfidCode))
+                    {
+                        Console.WriteLine($"Creating new RFID entry: {rfidCode}");
+                        var rfid = new Rfid
+                        {
+                            RFIDCode = rfidCode,
+                            EPCValue = rfidCode,
+                            ClientCode = clientCode,
+                            IsActive = true,
+                            CreatedOn = DateTime.UtcNow
+                        };
+                        newMasterDataToAdd.Add(rfid);
+                        cache.Rfids[rfidCode] = "NEW"; // Mark as new (will be updated after save)
+                    }
+                    else
+                    {
+                        Console.WriteLine($"RFID {rfidCode} already exists in cache");
+                    }
+                }
+
+                // Save all new master data at once (except counters which depend on branches)
+                if (newMasterDataToAdd.Any())
+                {
+                    Console.WriteLine($"Saving {newMasterDataToAdd.Count} new master data entries...");
+                    
+                    foreach (var entity in newMasterDataToAdd)
+                    {
+                        context.Add(entity);
+                    }
+                    
+                    await context.SaveChangesAsync();
+                    Console.WriteLine("Master data saved successfully");
+                    
+                    // Update cache with new IDs
+                    UpdateMasterDataCache(cache, newMasterDataToAdd);
+                }
+
+                // Now process counters after branches have been created and have IDs
+                var countersToAdd = new List<object>();
+                foreach (var counterName in uniqueCounters)
+                {
+                    if (!cache.Counters.ContainsKey(counterName.ToLower()))
+                    {
+                        // Find the branch for this counter
+                        var productWithCounter = products.FirstOrDefault(p => p.CounterName?.Trim() == counterName);
+                        if (productWithCounter != null)
+                        {
+                            var branchName = productWithCounter.BranchName?.Trim();
+                            if (!string.IsNullOrEmpty(branchName) && cache.Branches.ContainsKey(branchName.ToLower()))
+                            {
+                                var branchId = cache.Branches[branchName.ToLower()];
+                                if (branchId > 0) // Only if branch exists and has a valid ID
+                                {
+                                    var counter = new CounterMaster { CounterName = counterName, BranchId = branchId, ClientCode = clientCode };
+                                    countersToAdd.Add(counter);
+                                    cache.Counters[counterName.ToLower()] = -1; // Mark as new
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // Save counters separately
+                if (countersToAdd.Any())
+                {
+                    Console.WriteLine($"Saving {countersToAdd.Count} new counter entries...");
+                    
+                    foreach (var entity in countersToAdd)
+                    {
+                        context.Add(entity);
+                    }
+                    
+                    await context.SaveChangesAsync();
+                    Console.WriteLine("Counters saved successfully");
+                    
+                    // Update cache with new counter IDs
+                    UpdateMasterDataCache(cache, countersToAdd);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error creating master data: {ex.Message}");
+                throw new InvalidOperationException($"Failed to create master data: {ex.Message}", ex);
+            }
+            
+            return newMasterDataToAdd;
         }
 
         // Cache-aware master data methods
-        private async Task<int> GetOrCreateCategoryFromCacheAsync(ClientDbContext context, string categoryName, MasterDataCache cache, List<object> newEntities)
+        private int GetCategoryIdFromCache(MasterDataCache cache, string categoryName)
         {
             var key = categoryName?.Trim().ToLower();
             if (string.IsNullOrEmpty(key)) return 0;
@@ -718,13 +1046,10 @@ namespace RfidAppApi.Services
             if (cache.Categories.TryGetValue(key, out int existingId) && existingId > 0)
                 return existingId;
 
-            var category = new CategoryMaster { CategoryName = categoryName.Trim() };
-            newEntities.Add(category);
-            cache.Categories[key] = -1; // Temporary negative ID to mark as new
-            return -1;
+            return -1; // Indicate not found
         }
 
-        private async Task<int> GetOrCreateBranchFromCacheAsync(ClientDbContext context, string branchName, string clientCode, MasterDataCache cache, List<object> newEntities)
+        private int GetBranchIdFromCache(MasterDataCache cache, string branchName, string clientCode)
         {
             var key = branchName?.Trim().ToLower();
             if (string.IsNullOrEmpty(key)) return 0;
@@ -732,13 +1057,10 @@ namespace RfidAppApi.Services
             if (cache.Branches.TryGetValue(key, out int existingId) && existingId > 0)
                 return existingId;
 
-            var branch = new BranchMaster { BranchName = branchName.Trim(), ClientCode = clientCode };
-            newEntities.Add(branch);
-            cache.Branches[key] = -1; // Temporary negative ID to mark as new
-            return -1;
+            return -1; // Indicate not found
         }
 
-        private async Task<int> GetOrCreateCounterFromCacheAsync(ClientDbContext context, string counterName, int branchId, string clientCode, MasterDataCache cache, List<object> newEntities)
+        private int GetCounterIdFromCache(MasterDataCache cache, string counterName, int branchId, string clientCode)
         {
             var key = counterName?.Trim().ToLower();
             if (string.IsNullOrEmpty(key)) return 0;
@@ -746,13 +1068,10 @@ namespace RfidAppApi.Services
             if (cache.Counters.TryGetValue(key, out int existingId) && existingId > 0)
                 return existingId;
 
-            var counter = new CounterMaster { CounterName = counterName.Trim(), BranchId = branchId, ClientCode = clientCode };
-            newEntities.Add(counter);
-            cache.Counters[key] = -1; // Temporary negative ID to mark as new
-            return -1;
+            return -1; // Indicate not found
         }
 
-        private async Task<int> GetOrCreateProductFromCacheAsync(ClientDbContext context, string productName, MasterDataCache cache, List<object> newEntities)
+        private int GetProductIdFromCache(MasterDataCache cache, string productName)
         {
             var key = productName?.Trim().ToLower();
             if (string.IsNullOrEmpty(key)) return 0;
@@ -760,13 +1079,10 @@ namespace RfidAppApi.Services
             if (cache.Products.TryGetValue(key, out int existingId) && existingId > 0)
                 return existingId;
 
-            var product = new ProductMaster { ProductName = productName.Trim() };
-            newEntities.Add(product);
-            cache.Products[key] = -1; // Temporary negative ID to mark as new
-            return -1;
+            return -1; // Indicate not found
         }
 
-        private async Task<int> GetOrCreateDesignFromCacheAsync(ClientDbContext context, string designName, MasterDataCache cache, List<object> newEntities)
+        private int GetDesignIdFromCache(MasterDataCache cache, string designName)
         {
             var key = designName?.Trim().ToLower();
             if (string.IsNullOrEmpty(key)) return 0;
@@ -774,13 +1090,10 @@ namespace RfidAppApi.Services
             if (cache.Designs.TryGetValue(key, out int existingId) && existingId > 0)
                 return existingId;
 
-            var design = new DesignMaster { DesignName = designName.Trim() };
-            newEntities.Add(design);
-            cache.Designs[key] = -1; // Temporary negative ID to mark as new
-            return -1;
+            return -1; // Indicate not found
         }
 
-        private async Task<int> GetOrCreatePurityFromCacheAsync(ClientDbContext context, string purityName, MasterDataCache cache, List<object> newEntities)
+        private int GetPurityIdFromCache(MasterDataCache cache, string purityName)
         {
             var key = purityName?.Trim().ToLower();
             if (string.IsNullOrEmpty(key)) return 0;
@@ -788,30 +1101,35 @@ namespace RfidAppApi.Services
             if (cache.Purities.TryGetValue(key, out int existingId) && existingId > 0)
                 return existingId;
 
-            var purity = new PurityMaster { PurityName = purityName.Trim() };
-            newEntities.Add(purity);
-            cache.Purities[key] = -1; // Temporary negative ID to mark as new
-            return -1;
+            return -1; // Indicate not found
         }
 
-        private async Task<string> GetOrCreateRfidFromCacheAsync(ClientDbContext context, string rfidCode, string clientCode, MasterDataCache cache, List<object> newEntities)
+        private string GetRfidCodeFromCache(MasterDataCache cache, string rfidCode, string clientCode)
         {
             if (string.IsNullOrEmpty(rfidCode)) return string.Empty;
             
+            Console.WriteLine($"Looking up RFID '{rfidCode}' in cache. Cache contains {cache.Rfids.Count} entries");
+            
             if (cache.Rfids.TryGetValue(rfidCode, out string existingCode))
-                return existingCode;
-
-            var rfid = new Rfid
             {
-                RFIDCode = rfidCode.Trim(),
-                EPCValue = rfidCode.Trim(),
-                ClientCode = clientCode,
-                IsActive = true,
-                CreatedOn = DateTime.UtcNow
-            };
-            newEntities.Add(rfid);
-            cache.Rfids[rfidCode] = rfidCode;
-            return rfidCode;
+                Console.WriteLine($"RFID '{rfidCode}' found in cache with value: '{existingCode}'");
+                // If the code exists and is not marked as new ("NEW"), return it
+                if (existingCode != "NEW" && !string.IsNullOrEmpty(existingCode))
+                {
+                    Console.WriteLine($"Returning valid RFID code: {existingCode}");
+                return existingCode;
+                }
+                else
+                {
+                    Console.WriteLine($"RFID '{rfidCode}' is marked as new or empty, not ready yet");
+                }
+            }
+            else
+            {
+                Console.WriteLine($"RFID '{rfidCode}' not found in cache");
+            }
+
+            return string.Empty; // Indicate not found
         }
 
         private void UpdateMasterDataCache(MasterDataCache cache, List<object> newEntities)
@@ -849,6 +1167,14 @@ namespace RfidAppApi.Services
                         var purityKey = purity.PurityName.ToLower();
                         if (cache.Purities.ContainsKey(purityKey) && cache.Purities[purityKey] == -1)
                             cache.Purities[purityKey] = purity.PurityId;
+                        break;
+                    case Rfid rfid:
+                        // Update RFID cache with the actual RFID code
+                        if (cache.Rfids.ContainsKey(rfid.RFIDCode))
+                        {
+                            cache.Rfids[rfid.RFIDCode] = rfid.RFIDCode;
+                            Console.WriteLine($"Updated RFID cache: {rfid.RFIDCode} -> {rfid.RFIDCode}");
+                        }
                         break;
                 }
             }
@@ -1105,7 +1431,7 @@ namespace RfidAppApi.Services
     /// </summary>
     public class ValidationResult
     {
-        public bool HasErrors { get; set; }
+        public bool IsValid { get; set; }
         public List<string> Errors { get; set; } = new();
         }
 

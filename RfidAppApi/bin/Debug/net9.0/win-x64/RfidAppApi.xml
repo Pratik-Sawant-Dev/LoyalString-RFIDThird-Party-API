@@ -649,6 +649,16 @@
             <response code="400">Client code not found in token</response>
             <response code="500">Internal server error</response>
         </member>
+        <member name="M:RfidAppApi.Controllers.RfidController.ScanProductsByEpcValue(RfidAppApi.DTOs.RfidScanRequestDto)">
+            <summary>
+            Scan for products by EPC value - returns all products associated with the scanned EPC value(s)
+            </summary>
+            <param name="request">Scan request containing single EPC value or multiple EPC values</param>
+            <returns>Scan response with all associated products grouped by EPC value</returns>
+            <response code="200">Scan completed successfully</response>
+            <response code="400">Invalid request or client code not found in token</response>
+            <response code="500">Internal server error</response>
+        </member>
         <member name="T:RfidAppApi.Controllers.UserController">
             <summary>
             User management controller for handling user registration, authentication, and management
@@ -928,6 +938,211 @@
         <member name="P:RfidAppApi.DTOs.UnusedRfidDetailDto.IsActive">
             <summary>
             Whether the RFID is active
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.RfidScanRequestDto">
+            <summary>
+            DTO for RFID scan request - user provides EPC value to scan
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.RfidScanRequestDto.EpcValue">
+            <summary>
+            Single EPC value to scan for (for backward compatibility)
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.RfidScanRequestDto.EpcValues">
+            <summary>
+            Multiple EPC values to scan for (new feature)
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.RfidScanResponseDto">
+            <summary>
+            DTO for RFID scan response - returns all products associated with scanned EPC values
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.RfidScanResponseDto.Success">
+            <summary>
+            Whether the scan was successful
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.RfidScanResponseDto.Message">
+            <summary>
+            Message describing the scan result
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.RfidScanResponseDto.TotalProductsFound">
+            <summary>
+            Total number of products found
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.RfidScanResponseDto.ScanResults">
+            <summary>
+            List of scanned products grouped by EPC value
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.RfidScanResponseDto.UnmatchedEpcValues">
+            <summary>
+            EPC values that were scanned but found no products
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.EpcScanResultDto">
+            <summary>
+            DTO for individual EPC scan result
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.EpcScanResultDto.EpcValue">
+            <summary>
+            The EPC value that was scanned
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.EpcScanResultDto.RfidCode">
+            <summary>
+            RFID code associated with this EPC value
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.EpcScanResultDto.ProductCount">
+            <summary>
+            Number of products found for this EPC value
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.EpcScanResultDto.Products">
+            <summary>
+            List of products associated with this EPC value
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.ScannedProductDto">
+            <summary>
+            DTO for individual product found during RFID scan
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.ScannedProductDto.ProductId">
+            <summary>
+            Product ID
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.ScannedProductDto.ItemCode">
+            <summary>
+            Product item code
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.ScannedProductDto.RFIDCode">
+            <summary>
+            RFID code assigned to this product
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.ScannedProductDto.EPCValue">
+            <summary>
+            EPC value of the RFID tag
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.ScannedProductDto.AssignedOn">
+            <summary>
+            When the RFID was assigned to this product
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.ScannedProductDto.Status">
+            <summary>
+            Product status
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.ScannedProductDto.CategoryName">
+            <summary>
+            Product category name
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.ScannedProductDto.ProductName">
+            <summary>
+            Product name
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.ScannedProductDto.DesignName">
+            <summary>
+            Design name
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.ScannedProductDto.PurityName">
+            <summary>
+            Purity name
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.ScannedProductDto.BranchName">
+            <summary>
+            Branch name where product is located
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.ScannedProductDto.CounterName">
+            <summary>
+            Counter name where product is located
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.ScannedProductDto.GrossWeight">
+            <summary>
+            Gross weight
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.ScannedProductDto.NetWeight">
+            <summary>
+            Net weight
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.ScannedProductDto.StoneWeight">
+            <summary>
+            Stone weight
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.ScannedProductDto.DiamondHeight">
+            <summary>
+            Diamond height
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.ScannedProductDto.BoxDetails">
+            <summary>
+            Box details
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.ScannedProductDto.Size">
+            <summary>
+            Product size
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.ScannedProductDto.StoneAmount">
+            <summary>
+            Stone amount
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.ScannedProductDto.DiamondAmount">
+            <summary>
+            Diamond amount
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.ScannedProductDto.HallmarkAmount">
+            <summary>
+            Hallmark amount
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.ScannedProductDto.MakingPerGram">
+            <summary>
+            Making charge per gram
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.ScannedProductDto.MakingPercentage">
+            <summary>
+            Making charge percentage
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.ScannedProductDto.MakingFixedAmount">
+            <summary>
+            Fixed making charge amount
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.ScannedProductDto.Mrp">
+            <summary>
+            MRP (Maximum Retail Price)
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.ScannedProductDto.ImageUrl">
+            <summary>
+            Product image URL
             </summary>
         </member>
         <member name="T:RfidAppApi.DTOs.UserDto">
@@ -1351,6 +1566,14 @@
             <param name="clientCode">Client code to analyze</param>
             <returns>Unused RFID analysis with count and detailed information</returns>
         </member>
+        <member name="M:RfidAppApi.Services.IRfidService.ScanProductsByEpcValueAsync(RfidAppApi.DTOs.RfidScanRequestDto,System.String)">
+            <summary>
+            Scan for products by EPC value - returns all products associated with the scanned EPC value(s)
+            </summary>
+            <param name="request">Scan request containing single EPC value or multiple EPC values</param>
+            <param name="clientCode">Client code to search in</param>
+            <returns>Scan response with all associated products grouped by EPC value</returns>
+        </member>
         <member name="T:RfidAppApi.Services.ReportingService">
             <summary>
             Comprehensive reporting service for stock tracking, sales reporting, and daily balances
@@ -1373,9 +1596,19 @@
             Validates all products before processing to fail fast
             </summary>
         </member>
-        <member name="M:RfidAppApi.Services.UserFriendlyProductService.ProcessProductBatchAsync(RfidAppApi.Data.ClientDbContext,System.Collections.Generic.List{RfidAppApi.DTOs.UserFriendlyCreateProductDto},RfidAppApi.Services.MasterDataCache,RfidAppApi.DTOs.BulkProductResponseDto,System.String)">
+        <member name="M:RfidAppApi.Services.UserFriendlyProductService.ValidateMasterDataAvailability(System.Collections.Generic.List{RfidAppApi.DTOs.UserFriendlyCreateProductDto},RfidAppApi.Services.MasterDataCache)">
+            <summary>
+            Validates that all required master data is available in the cache
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Services.UserFriendlyProductService.ProcessProductBatchAsync(RfidAppApi.Data.ClientDbContext,System.Collections.Generic.List{RfidAppApi.DTOs.UserFriendlyCreateProductDto},RfidAppApi.Services.MasterDataCache,System.String)">
             <summary>
             Processes a batch of products efficiently
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Services.UserFriendlyProductService.CreateAllMissingMasterDataAsync(RfidAppApi.Data.ClientDbContext,System.Collections.Generic.List{RfidAppApi.DTOs.UserFriendlyCreateProductDto},RfidAppApi.Services.MasterDataCache,System.String)">
+            <summary>
+            Creates all missing master data upfront to prevent batch conflicts
             </summary>
         </member>
         <member name="T:RfidAppApi.Services.MasterDataCache">

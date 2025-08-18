@@ -182,7 +182,7 @@ namespace RfidAppApi.Services
         {
             using var clientContext = await _clientService.GetClientDbContextAsync(clientCode);
             
-            // Get all active RFID tags that are not assigned to any product
+            // Get all RFID tags that are not currently assigned to products
             var assignedRfidCodes = await clientContext.ProductRfidAssignments
                 .Where(pr => pr.IsActive)
                 .Select(pr => pr.RFIDCode)
@@ -190,13 +190,6 @@ namespace RfidAppApi.Services
 
             var unusedRfids = await clientContext.Rfids
                 .Where(r => r.IsActive && !assignedRfidCodes.Contains(r.RFIDCode))
-                .Select(r => new UnusedRfidDetailDto
-                {
-                    RFIDCode = r.RFIDCode,
-                    EPCValue = r.EPCValue,
-                    CreatedOn = r.CreatedOn,
-                    IsActive = r.IsActive
-                })
                 .ToListAsync();
 
             var totalUnusedCount = unusedRfids.Count;
@@ -205,9 +198,161 @@ namespace RfidAppApi.Services
             return new UnusedRfidAnalysisDto
             {
                 TotalUnusedCount = totalUnusedCount,
-                UnusedRfids = unusedRfids,
+                UnusedRfids = unusedRfids.Select(r => new UnusedRfidDetailDto
+                {
+                    RFIDCode = r.RFIDCode,
+                    EPCValue = r.EPCValue,
+                    CreatedOn = r.CreatedOn,
+                    IsActive = r.IsActive
+                }).ToList(),
                 Summary = summary
             };
+        }
+
+        public async Task<RfidScanResponseDto> ScanProductsByEpcValueAsync(RfidScanRequestDto request, string clientCode)
+        {
+            using var clientContext = await _clientService.GetClientDbContextAsync(clientCode);
+            
+            var response = new RfidScanResponseDto();
+            var allEpcValues = new List<string>();
+            
+            // Collect all EPC values to scan
+            if (!string.IsNullOrWhiteSpace(request.EpcValue))
+            {
+                allEpcValues.Add(request.EpcValue.Trim());
+            }
+            
+            if (request.EpcValues != null && request.EpcValues.Any())
+            {
+                allEpcValues.AddRange(request.EpcValues.Where(x => !string.IsNullOrWhiteSpace(x)).Select(x => x.Trim()));
+            }
+            
+            // Remove duplicates
+            allEpcValues = allEpcValues.Distinct().ToList();
+            
+            if (!allEpcValues.Any())
+            {
+                response.Success = false;
+                response.Message = "No EPC values provided for scanning";
+                return response;
+            }
+            
+            Console.WriteLine($"Scanning {allEpcValues.Count} EPC values: {string.Join(", ", allEpcValues)}");
+            
+            var scanResults = new List<EpcScanResultDto>();
+            var unmatchedEpcValues = new List<string>();
+            var totalProductsFound = 0;
+            
+            foreach (var epcValue in allEpcValues)
+            {
+                Console.WriteLine($"Processing EPC value: {epcValue}");
+                
+                // Find RFID tag with this EPC value
+                var rfid = await clientContext.Rfids
+                    .FirstOrDefaultAsync(r => r.EPCValue == epcValue && r.IsActive);
+                
+                if (rfid == null)
+                {
+                    Console.WriteLine($"No RFID found for EPC value: {epcValue}");
+                    unmatchedEpcValues.Add(epcValue);
+                    continue;
+                }
+                
+                Console.WriteLine($"Found RFID {rfid.RFIDCode} for EPC value: {epcValue}");
+                
+                // Find all products assigned to this RFID code
+                var productAssignments = await clientContext.ProductRfidAssignments
+                    .Where(pr => pr.RFIDCode == rfid.RFIDCode && pr.IsActive)
+                    .Include(pr => pr.Product)
+                        .ThenInclude(p => p.Category)
+                    .Include(pr => pr.Product)
+                        .ThenInclude(p => p.Product)
+                    .Include(pr => pr.Product)
+                        .ThenInclude(p => p.Design)
+                    .Include(pr => pr.Product)
+                        .ThenInclude(p => p.Purity)
+                    .Include(pr => pr.Product)
+                        .ThenInclude(p => p.Branch)
+                    .Include(pr => pr.Product)
+                        .ThenInclude(p => p.Counter)
+                    .ToListAsync();
+                
+                if (!productAssignments.Any())
+                {
+                    Console.WriteLine($"No products found for RFID {rfid.RFIDCode}");
+                    unmatchedEpcValues.Add(epcValue);
+                    continue;
+                }
+                
+                Console.WriteLine($"Found {productAssignments.Count} products for RFID {rfid.RFIDCode}");
+                
+                // Map the products to the response DTO
+                var scannedProducts = productAssignments.Select(pa => new ScannedProductDto
+                {
+                    ProductId = pa.Product.Id,
+                    ItemCode = pa.Product.ItemCode,
+                    RFIDCode = pa.RFIDCode,
+                    EPCValue = rfid.EPCValue,
+                    AssignedOn = pa.AssignedOn,
+                    Status = pa.Product.Status,
+                    CategoryName = pa.Product.Category?.CategoryName ?? "Unknown",
+                    ProductName = pa.Product.Product?.ProductName ?? "Unknown",
+                    DesignName = pa.Product.Design?.DesignName ?? "Unknown",
+                    PurityName = pa.Product.Purity?.PurityName ?? "Unknown",
+                    BranchName = pa.Product.Branch?.BranchName ?? "Unknown",
+                    CounterName = pa.Product.Counter?.CounterName ?? "Unknown",
+                    GrossWeight = pa.Product.GrossWeight,
+                    NetWeight = pa.Product.NetWeight,
+                    StoneWeight = pa.Product.StoneWeight,
+                    DiamondHeight = pa.Product.DiamondHeight,
+                    BoxDetails = pa.Product.BoxDetails,
+                    Size = pa.Product.Size,
+                    StoneAmount = pa.Product.StoneAmount,
+                    DiamondAmount = pa.Product.DiamondAmount,
+                    HallmarkAmount = pa.Product.HallmarkAmount,
+                    MakingPerGram = pa.Product.MakingPerGram,
+                    MakingPercentage = pa.Product.MakingPercentage,
+                    MakingFixedAmount = pa.Product.MakingFixedAmount,
+                    Mrp = pa.Product.Mrp,
+                    ImageUrl = pa.Product.ImageUrl
+                }).ToList();
+                
+                var epcResult = new EpcScanResultDto
+                {
+                    EpcValue = epcValue,
+                    RfidCode = rfid.RFIDCode,
+                    ProductCount = scannedProducts.Count,
+                    Products = scannedProducts
+                };
+                
+                scanResults.Add(epcResult);
+                totalProductsFound += scannedProducts.Count;
+                
+                Console.WriteLine($"Added {scannedProducts.Count} products for EPC {epcValue}");
+            }
+            
+            // Build final response
+            response.Success = true;
+            response.TotalProductsFound = totalProductsFound;
+            response.ScanResults = scanResults;
+            response.UnmatchedEpcValues = unmatchedEpcValues;
+            
+            if (totalProductsFound > 0)
+            {
+                response.Message = $"Scan completed successfully. Found {totalProductsFound} products across {scanResults.Count} EPC values.";
+                if (unmatchedEpcValues.Any())
+                {
+                    response.Message += $" {unmatchedEpcValues.Count} EPC values had no associated products.";
+                }
+            }
+            else
+            {
+                response.Message = "Scan completed but no products found for any of the provided EPC values.";
+            }
+            
+            Console.WriteLine($"Scan completed. Total products found: {totalProductsFound}, Unmatched EPCs: {unmatchedEpcValues.Count}");
+            
+            return response;
         }
 
         private static RfidDto MapToDto(Rfid rfid)
