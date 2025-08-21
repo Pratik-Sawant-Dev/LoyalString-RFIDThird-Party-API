@@ -4275,6 +4275,643 @@
 					]
 				}
 			]
+		},
+		{
+			"name": "📊 Stock Verification Management",
+			"item": [
+				{
+					"name": "Create Stock Verification Session",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"verificationSessionName\": \"Morning Stock Check\",\n  \"description\": \"Daily morning stock verification for Gold category\",\n  \"verificationDate\": \"2024-01-15T00:00:00Z\",\n  \"verificationTime\": \"09:00:00\",\n  \"branchName\": \"Main Branch\",\n  \"counterName\": \"Counter 1\",\n  \"categoryId\": 1,\n  \"verifiedBy\": \"John Doe\",\n  \"remarks\": \"Regular morning verification\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/StockVerification/create-session",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "StockVerification", "create-session"]
+						},
+						"description": "Create a new stock verification session for tracking scanned items, matched/unmatched products, and generating reports. Use branchName and counterName instead of IDs for better user experience."
+					},
+					"response": []
+				},
+				{
+					"name": "Submit Stock Verification",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"stockVerificationId\": 1,\n  \"matchedItemCodes\": [\"GPD1\", \"GPD2\", \"GPD3\"],\n  \"unmatchedItemCodes\": [\"GPD4\", \"GPD5\"],\n  \"scannedBy\": \"Jane Smith\",\n  \"remarks\": \"Scanned items from counter 1\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/StockVerification/submit-verification",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "StockVerification", "submit-verification"]
+						},
+						"description": "Submit scanned items for verification. Separate matched and unmatched item codes. The system will automatically calculate missing items and values."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Stock Verification by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/StockVerification/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "StockVerification", "1"]
+						},
+						"description": "Get detailed information about a specific stock verification session including all scanned items and their status."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Stock Verifications List",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/StockVerification/list?startDate=2024-01-01&endDate=2024-01-31&branchName=Main Branch&status=Completed&pageNumber=1&pageSize=20",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "StockVerification", "list"],
+							"query": [
+								{
+									"key": "startDate",
+									"value": "2024-01-01"
+								},
+								{
+									"key": "endDate",
+									"value": "2024-01-31"
+								},
+								{
+									"key": "branchName",
+									"value": "Main Branch"
+								},
+								{
+									"key": "status",
+									"value": "Completed"
+								},
+								{
+									"key": "pageNumber",
+									"value": "1"
+								},
+								{
+									"key": "pageSize",
+									"value": "20"
+								}
+							]
+						},
+						"description": "Get paginated list of stock verification sessions with filters for date range, branch name, counter name, category, status, and verified by. Use branchName and counterName instead of IDs for better user experience."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Stock Verification Summary",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/StockVerification/summary",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "StockVerification", "summary"]
+						},
+						"description": "Get overall summary statistics of all stock verification sessions including total counts, values, and recent sessions."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Date-wise Stock Verification Report",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/StockVerification/date-wise-report?startDate=2024-01-01&endDate=2024-01-31",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "StockVerification", "date-wise-report"],
+							"query": [
+								{
+									"key": "startDate",
+									"value": "2024-01-01"
+								},
+								{
+									"key": "endDate",
+									"value": "2024-01-31"
+								}
+							]
+						},
+						"description": "Get comprehensive date-wise stock verification report showing daily statistics, sessions, and item counts for the specified date range."
+					},
+					"response": []
+				},
+				{
+					"name": "Complete Stock Verification Session",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/StockVerification/1/complete",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "StockVerification", "1", "complete"]
+						},
+						"description": "Mark a stock verification session as completed. This will finalize the session and prevent further modifications."
+					},
+					"response": []
+				},
+				{
+					"name": "Cancel Stock Verification Session",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/StockVerification/1/cancel",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "StockVerification", "1", "cancel"]
+						},
+						"description": "Cancel a stock verification session. This will mark the session as cancelled and prevent further modifications."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Verification Details by Status",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/StockVerification/1/details/Matched",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "StockVerification", "1", "details", "Matched"]
+						},
+						"description": "Get verification details filtered by status. Valid statuses: Matched, Unmatched, Missing. For matched items, includes full product details."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "🔄 Stock Transfer Management",
+			"item": [
+				{
+					"name": "Create Stock Transfer",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"productId\": 123,\n  \"rfidCode\": \"RFID001\",\n  \"transferType\": \"Branch\",\n  \"sourceBranchId\": 1,\n  \"sourceCounterId\": 5,\n  \"sourceBoxId\": 10,\n  \"destinationBranchId\": 2,\n  \"destinationCounterId\": 8,\n  \"destinationBoxId\": 15,\n  \"reason\": \"Inventory rebalancing\",\n  \"remarks\": \"Moving to high-demand location\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/StockTransfer",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "StockTransfer"]
+						},
+						"description": "Create a new stock transfer between branches, counters, or boxes. Transfer types: Branch, Counter, Box, Mixed."
+					},
+					"response": []
+				},
+				{
+					"name": "Create Bulk Stock Transfers",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"transfers\": [\n    {\n      \"productId\": 123,\n      \"sourceBranchId\": 1,\n      \"sourceCounterId\": 5,\n      \"destinationBranchId\": 2,\n      \"destinationCounterId\": 8\n    },\n    {\n      \"productId\": 124,\n      \"sourceBranchId\": 1,\n      \"sourceCounterId\": 5,\n      \"destinationBranchId\": 2,\n      \"destinationCounterId\": 8\n    }\n  ],\n  \"commonReason\": \"Monthly inventory rebalancing\",\n  \"commonRemarks\": \"Standard monthly transfer process\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/StockTransfer/bulk",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "StockTransfer", "bulk"]
+						},
+						"description": "Create multiple stock transfers in bulk with common reason and remarks."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Transfer by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/StockTransfer/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "StockTransfer", "1"]
+						},
+						"description": "Get a specific transfer by its ID with complete details including source/destination locations and product information."
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Transfers",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/StockTransfer?status=Pending&page=1&pageSize=20",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "StockTransfer"],
+							"query": [
+								{
+									"key": "status",
+									"value": "Pending",
+									"description": "Filter by transfer status"
+								},
+								{
+									"key": "page",
+									"value": "1",
+									"description": "Page number for pagination"
+								},
+								{
+									"key": "pageSize",
+									"value": "20",
+									"description": "Number of items per page"
+								}
+							]
+						},
+						"description": "Get all transfers with optional filtering by status, location, dates, and pagination."
+					},
+					"response": []
+				},
+				{
+					"name": "Approve Transfer",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"approvedBy\": \"manager@company.com\",\n  \"remarks\": \"Approved for inventory rebalancing\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/StockTransfer/1/approve",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "StockTransfer", "1", "approve"]
+						},
+						"description": "Approve a pending transfer. Changes status from Pending to In Transit."
+					},
+					"response": []
+				},
+				{
+					"name": "Reject Transfer",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"rejectedBy\": \"manager@company.com\",\n  \"rejectionReason\": \"Insufficient stock at source\",\n  \"remarks\": \"Source location has low inventory\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/StockTransfer/1/reject",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "StockTransfer", "1", "reject"]
+						},
+						"description": "Reject a pending transfer with reason. Changes status to Rejected."
+					},
+					"response": []
+				},
+				{
+					"name": "Complete Transfer",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/StockTransfer/1/complete?completedBy=staff@company.com",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "StockTransfer", "1", "complete"],
+							"query": [
+								{
+									"key": "completedBy",
+									"value": "staff@company.com",
+									"description": "User who completed the transfer"
+								}
+							]
+						},
+						"description": "Complete a transfer in In Transit status. Moves product to destination and updates status to Completed."
+					},
+					"response": []
+				},
+				{
+					"name": "Cancel Transfer",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/StockTransfer/1/cancel?cancelledBy=user@company.com",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "StockTransfer", "1", "cancel"],
+							"query": [
+								{
+									"key": "cancelledBy",
+									"value": "user@company.com",
+									"description": "User who cancelled the transfer"
+								}
+							]
+						},
+						"description": "Cancel a pending or in-transit transfer. Changes status to Cancelled."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Transfer Summary",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/StockTransfer/summary?fromDate=2024-01-01&toDate=2024-01-31",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "StockTransfer", "summary"],
+							"query": [
+								{
+									"key": "fromDate",
+									"value": "2024-01-01",
+									"description": "Start date for summary (YYYY-MM-DD)"
+								},
+								{
+									"key": "toDate",
+									"value": "2024-01-31",
+									"description": "End date for summary (YYYY-MM-DD)"
+								}
+							]
+						},
+						"description": "Get comprehensive transfer summary including counts by status, transfer types, and branch summaries."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Transfers by Product",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/StockTransfer/product/123",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "StockTransfer", "product", "123"]
+						},
+						"description": "Get all transfer history for a specific product ID."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Transfers by RFID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/StockTransfer/rfid/RFID001",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "StockTransfer", "rfid", "RFID001"]
+						},
+						"description": "Get all transfer history for a specific RFID code."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Pending Transfers by Location",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/StockTransfer/pending?branchId=1&counterId=5&boxId=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "StockTransfer", "pending"],
+							"query": [
+								{
+									"key": "branchId",
+									"value": "1",
+									"description": "Source branch ID"
+								},
+								{
+									"key": "counterId",
+									"value": "5",
+									"description": "Source counter ID"
+								},
+								{
+									"key": "boxId",
+									"value": "10",
+									"description": "Source box ID (optional)"
+								}
+							]
+						},
+						"description": "Get all pending transfers for a specific location (branch, counter, box)."
+					},
+					"response": []
+				},
+				{
+					"name": "Validate Transfer",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"productId\": 123,\n  \"sourceBranchId\": 1,\n  \"sourceCounterId\": 5,\n  \"destinationBranchId\": 2,\n  \"destinationCounterId\": 8\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/StockTransfer/validate",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "StockTransfer", "validate"]
+						},
+						"description": "Validate if a transfer is possible before creating it. Checks product existence, location validity, and no pending transfers."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Transfer Types",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/StockTransfer/types",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "StockTransfer", "types"]
+						},
+						"description": "Get available transfer types: Branch, Counter, Box, Mixed."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Transfer Statuses",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/StockTransfer/statuses",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "StockTransfer", "statuses"]
+						},
+						"description": "Get available transfer statuses: Pending, In Transit, Completed, Cancelled, Rejected."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Product Transfer History",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/StockTransfer/history/123",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "StockTransfer", "history", "123"]
+						},
+						"description": "Get complete transfer history for a product including all statuses and locations."
+					},
+					"response": []
+				}
+			]
 		}
 	],
 	"event": [
@@ -4350,6 +4987,11 @@
 		},
 		{
 			"key": "invoiceId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "transferId",
 			"value": "",
 			"type": "string"
 		}

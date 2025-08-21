@@ -29,7 +29,7 @@ namespace RfidAppApi.DTOs
         public float? StoneWeight { get; set; }
         public float? DiamondHeight { get; set; }
         public float? NetWeight { get; set; }
-        public string? BoxDetails { get; set; }
+        public string? BoxDetails { get; set; } // e.g., "Box A", "Box B", "Premium Box"
         public int? Size { get; set; }
         public decimal? StoneAmount { get; set; }
         public decimal? DiamondAmount { get; set; }
@@ -54,6 +54,9 @@ namespace RfidAppApi.DTOs
         public string? DesignName { get; set; }
         public string? PurityName { get; set; }
         
+        // Box Details - optional for updates
+        public string? BoxDetails { get; set; }
+        
         // RFID Code - optional for updates
         public string? RfidCode { get; set; }
         
@@ -62,7 +65,6 @@ namespace RfidAppApi.DTOs
         public float? StoneWeight { get; set; }
         public float? DiamondHeight { get; set; }
         public float? NetWeight { get; set; }
-        public string? BoxDetails { get; set; }
         public int? Size { get; set; }
         public decimal? StoneAmount { get; set; }
         public decimal? DiamondAmount { get; set; }
@@ -92,6 +94,9 @@ namespace RfidAppApi.DTOs
         public string DesignName { get; set; } = string.Empty;
         public string PurityName { get; set; } = string.Empty;
         
+        // Box Details
+        public string? BoxDetails { get; set; } = string.Empty;
+        
         // RFID Code
         public string? RfidCode { get; set; }
         
@@ -100,7 +105,6 @@ namespace RfidAppApi.DTOs
         public float? StoneWeight { get; set; }
         public float? DiamondHeight { get; set; }
         public float? NetWeight { get; set; }
-        public string? BoxDetails { get; set; }
         public int? Size { get; set; }
         public decimal? StoneAmount { get; set; }
         public decimal? DiamondAmount { get; set; }

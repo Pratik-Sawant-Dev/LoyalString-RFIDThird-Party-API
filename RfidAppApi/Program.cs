@@ -60,6 +60,8 @@ builder.Services.AddScoped<IUserFriendlyProductService, UserFriendlyProductServi
 builder.Services.AddScoped<IInvoiceService, InvoiceService>();
 builder.Services.AddScoped<IImageService, ImageService>();
 builder.Services.AddScoped<IReportingService, ReportingService>();
+builder.Services.AddScoped<IStockVerificationService, StockVerificationService>();
+builder.Services.AddScoped<IStockTransferService, StockTransferService>();
 
 // Configure JWT Authentication
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");

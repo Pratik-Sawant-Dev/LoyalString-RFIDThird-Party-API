@@ -11,11 +11,11 @@ namespace RfidAppApi.DTOs
         public int ProductId { get; set; }
         public int DesignId { get; set; }
         public int PurityId { get; set; }
+        public int? BoxId { get; set; }
         public float? GrossWeight { get; set; }
         public float? StoneWeight { get; set; }
         public float? DiamondHeight { get; set; }
         public float? NetWeight { get; set; }
-        public string? BoxDetails { get; set; }
         public int? Size { get; set; }
         public decimal? StoneAmount { get; set; }
         public decimal? DiamondAmount { get; set; }
@@ -35,6 +35,7 @@ namespace RfidAppApi.DTOs
         public string? PurityName { get; set; }
         public string? BranchName { get; set; }
         public string? CounterName { get; set; }
+        public string? BoxDetails { get; set; }
     }
 
     public class CreateProductDetailsDto
@@ -47,11 +48,11 @@ namespace RfidAppApi.DTOs
         public int ProductId { get; set; }
         public int DesignId { get; set; }
         public int PurityId { get; set; }
+        public int? BoxId { get; set; }
         public float? GrossWeight { get; set; }
         public float? StoneWeight { get; set; }
         public float? DiamondHeight { get; set; }
         public float? NetWeight { get; set; }
-        public string? BoxDetails { get; set; }
         public int? Size { get; set; }
         public decimal? StoneAmount { get; set; }
         public decimal? DiamondAmount { get; set; }
@@ -70,11 +71,11 @@ namespace RfidAppApi.DTOs
         public int? ProductId { get; set; }
         public int? DesignId { get; set; }
         public int? PurityId { get; set; }
+        public int? BoxId { get; set; }
         public float? GrossWeight { get; set; }
         public float? StoneWeight { get; set; }
         public float? DiamondHeight { get; set; }
         public float? NetWeight { get; set; }
-        public string? BoxDetails { get; set; }
         public int? Size { get; set; }
         public decimal? StoneAmount { get; set; }
         public decimal? DiamondAmount { get; set; }

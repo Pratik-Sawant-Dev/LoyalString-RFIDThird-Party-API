@@ -35,15 +35,16 @@ namespace RfidAppApi.Models
         [Required]
         public int PurityId { get; set; }
 
+        // Box Reference (replacing the old BoxDetails string)
+        public int? BoxId { get; set; }
+
         // Weight Details
         public float? GrossWeight { get; set; }
         public float? StoneWeight { get; set; }
         public float? DiamondHeight { get; set; }
         public float? NetWeight { get; set; }
 
-        // Product Details
-        [StringLength(100)]
-        public string? BoxDetails { get; set; }
+        // Product Details (removed BoxDetails string, now using BoxId)
         public int? Size { get; set; }
 
         // Pricing Details
@@ -84,5 +85,6 @@ namespace RfidAppApi.Models
         public virtual PurityMaster Purity { get; set; } = null!;
         public virtual BranchMaster Branch { get; set; } = null!;
         public virtual CounterMaster Counter { get; set; } = null!;
+        public virtual BoxMaster? Box { get; set; } // New navigation property for BoxMaster
     }
 } 

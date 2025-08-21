@@ -69,6 +69,13 @@ namespace RfidAppApi.Services
                 rfidCode = await GetOrCreateRfidAsync(context, createDto.RfidCode, clientCode);
             }
 
+            // Handle BoxDetails if provided
+            int? boxId = null;
+            if (!string.IsNullOrWhiteSpace(createDto.BoxDetails))
+            {
+                boxId = await GetOrCreateBoxAsync(context, createDto.BoxDetails);
+            }
+
             // Create the product
             var product = new ProductDetails
             {
@@ -84,7 +91,7 @@ namespace RfidAppApi.Services
                 StoneWeight = createDto.StoneWeight,
                 DiamondHeight = createDto.DiamondHeight,
                 NetWeight = createDto.NetWeight,
-                BoxDetails = createDto.BoxDetails,
+                BoxId = boxId,
                 Size = createDto.Size,
                 StoneAmount = createDto.StoneAmount,
                 DiamondAmount = createDto.DiamondAmount,
@@ -136,7 +143,6 @@ namespace RfidAppApi.Services
                 StoneWeight = createDto.StoneWeight,
                 DiamondHeight = createDto.DiamondHeight,
                 NetWeight = createDto.NetWeight,
-                BoxDetails = createDto.BoxDetails,
                 Size = createDto.Size,
                 StoneAmount = createDto.StoneAmount,
                 DiamondAmount = createDto.DiamondAmount,
@@ -200,6 +206,9 @@ namespace RfidAppApi.Services
             if (!string.IsNullOrWhiteSpace(updateDto.PurityName))
                 product.PurityId = await GetOrCreatePurityAsync(context, updateDto.PurityName);
 
+            if (!string.IsNullOrWhiteSpace(updateDto.BoxDetails))
+                product.BoxId = await GetOrCreateBoxAsync(context, updateDto.BoxDetails);
+
             // Handle RFID code update if provided
             if (!string.IsNullOrWhiteSpace(updateDto.RfidCode))
             {
@@ -241,7 +250,6 @@ namespace RfidAppApi.Services
             if (updateDto.StoneWeight.HasValue) product.StoneWeight = updateDto.StoneWeight;
             if (updateDto.DiamondHeight.HasValue) product.DiamondHeight = updateDto.DiamondHeight;
             if (updateDto.NetWeight.HasValue) product.NetWeight = updateDto.NetWeight;
-            if (updateDto.BoxDetails != null) product.BoxDetails = updateDto.BoxDetails;
             if (updateDto.Size.HasValue) product.Size = updateDto.Size;
             if (updateDto.StoneAmount.HasValue) product.StoneAmount = updateDto.StoneAmount;
             if (updateDto.DiamondAmount.HasValue) product.DiamondAmount = updateDto.DiamondAmount;
@@ -274,7 +282,6 @@ namespace RfidAppApi.Services
                 StoneWeight = updateDto.StoneWeight,
                 DiamondHeight = updateDto.DiamondHeight,
                 NetWeight = updateDto.NetWeight,
-                BoxDetails = updateDto.BoxDetails,
                 Size = updateDto.Size,
                 StoneAmount = updateDto.StoneAmount,
                 DiamondAmount = updateDto.DiamondAmount,
@@ -711,6 +718,7 @@ namespace RfidAppApi.Services
                     var productId = GetProductIdFromCache(masterDataCache, productDto.ProductName);
                     var designId = GetDesignIdFromCache(masterDataCache, productDto.DesignName);
                     var purityId = GetPurityIdFromCache(masterDataCache, productDto.PurityName);
+                    var boxId = GetBoxIdFromCache(masterDataCache, productDto.BoxDetails);
 
                     // Validate that all required master data exists
                     if (categoryId <= 0 || branchId <= 0 || counterId <= 0 || productId <= 0 || designId <= 0 || purityId <= 0)
@@ -735,7 +743,7 @@ namespace RfidAppApi.Services
                         StoneWeight = productDto.StoneWeight,
                         DiamondHeight = productDto.DiamondHeight,
                         NetWeight = productDto.NetWeight,
-                        BoxDetails = productDto.BoxDetails,
+                        BoxId = boxId,
                         Size = productDto.Size,
                         StoneAmount = productDto.StoneAmount,
                         DiamondAmount = productDto.DiamondAmount,
@@ -880,6 +888,7 @@ namespace RfidAppApi.Services
                 var uniqueProductNames = products.Select(p => p.ProductName?.Trim()).Where(x => !string.IsNullOrEmpty(x)).Distinct().ToList();
                 var uniqueDesigns = products.Select(p => p.DesignName?.Trim()).Where(x => !string.IsNullOrEmpty(x)).Distinct().ToList();
                 var uniquePurities = products.Select(p => p.PurityName?.Trim()).Where(x => !string.IsNullOrEmpty(x)).Distinct().ToList();
+                var uniqueBoxNames = products.Select(p => p.BoxDetails?.Trim()).Where(x => !string.IsNullOrEmpty(x)).Distinct().ToList();
                 var uniqueRfids = products.Select(p => p.GetRfidCode()?.Trim()).Where(x => !string.IsNullOrEmpty(x)).Distinct().ToList();
 
                 Console.WriteLine($"Extracted unique values:");
@@ -889,6 +898,7 @@ namespace RfidAppApi.Services
                 Console.WriteLine($"  Product Names: {string.Join(", ", uniqueProductNames)}");
                 Console.WriteLine($"  Designs: {string.Join(", ", uniqueDesigns)}");
                 Console.WriteLine($"  Purities: {string.Join(", ", uniquePurities)}");
+                Console.WriteLine($"  Box Names: {string.Join(", ", uniqueBoxNames)}");
                 Console.WriteLine($"  RFIDs: {string.Join(", ", uniqueRfids)}");
 
                 // Process categories
@@ -943,6 +953,17 @@ namespace RfidAppApi.Services
                         var purity = new PurityMaster { PurityName = purityName };
                         newMasterDataToAdd.Add(purity);
                         cache.Purities[purityName.ToLower()] = -1; // Mark as new
+                    }
+                }
+
+                // Process box names
+                foreach (var boxName in uniqueBoxNames)
+                {
+                    if (!cache.Boxes.ContainsKey(boxName.ToLower()))
+                    {
+                        var box = new BoxMaster { BoxName = boxName };
+                        newMasterDataToAdd.Add(box);
+                        cache.Boxes[boxName.ToLower()] = -1; // Mark as new
                     }
                 }
 
@@ -1104,6 +1125,38 @@ namespace RfidAppApi.Services
             return -1; // Indicate not found
         }
 
+        private int GetBoxIdFromCache(MasterDataCache cache, string boxName)
+        {
+            var key = boxName?.Trim().ToLower();
+            if (string.IsNullOrEmpty(key)) return 0;
+            
+            if (cache.Boxes.TryGetValue(key, out int existingId) && existingId > 0)
+                return existingId;
+
+            return -1; // Indicate not found
+        }
+
+        private async Task<int> GetOrCreateBoxAsync(ClientDbContext context, string boxName)
+        {
+            if (string.IsNullOrWhiteSpace(boxName))
+                throw new ArgumentException("BoxName cannot be empty");
+
+            var box = await context.BoxMasters
+                .FirstOrDefaultAsync(b => b.BoxName.ToLower() == boxName.ToLower());
+
+            if (box == null)
+            {
+                box = new BoxMaster
+                {
+                    BoxName = boxName.Trim()
+                };
+                context.BoxMasters.Add(box);
+                await context.SaveChangesAsync();
+            }
+
+            return box.BoxId;
+        }
+
         private string GetRfidCodeFromCache(MasterDataCache cache, string rfidCode, string clientCode)
         {
             if (string.IsNullOrEmpty(rfidCode)) return string.Empty;
@@ -1175,6 +1228,11 @@ namespace RfidAppApi.Services
                             cache.Rfids[rfid.RFIDCode] = rfid.RFIDCode;
                             Console.WriteLine($"Updated RFID cache: {rfid.RFIDCode} -> {rfid.RFIDCode}");
                         }
+                        break;
+                    case BoxMaster box:
+                        var boxKey = box.BoxName.ToLower();
+                        if (cache.Boxes.ContainsKey(boxKey) && cache.Boxes[boxKey] == -1)
+                            cache.Boxes[boxKey] = box.BoxId;
                         break;
                 }
             }
@@ -1355,6 +1413,7 @@ namespace RfidAppApi.Services
             var productMaster = await context.ProductMasters.FirstOrDefaultAsync(p => p.ProductId == product.ProductId);
             var design = await context.DesignMasters.FirstOrDefaultAsync(d => d.DesignId == product.DesignId);
             var purity = await context.PurityMasters.FirstOrDefaultAsync(p => p.PurityId == product.PurityId);
+            var box = await context.BoxMasters.FirstOrDefaultAsync(b => b.BoxId == product.BoxId);
 
             // Get RFID code if assigned
             var rfidAssignment = await context.ProductRfidAssignments
@@ -1381,12 +1440,12 @@ namespace RfidAppApi.Services
                 ProductName = productMaster?.ProductName ?? "Unknown",
                 DesignName = design?.DesignName ?? "Unknown",
                 PurityName = purity?.PurityName ?? "Unknown",
+                BoxDetails = box?.BoxName ?? "Unknown",
                 RfidCode = rfidAssignment?.RFIDCode,
                 GrossWeight = product.GrossWeight,
                 StoneWeight = product.StoneWeight,
                 DiamondHeight = product.DiamondHeight,
                 NetWeight = product.NetWeight,
-                BoxDetails = product.BoxDetails,
                 Size = product.Size,
                 StoneAmount = product.StoneAmount,
                 DiamondAmount = product.DiamondAmount,
@@ -1423,6 +1482,7 @@ namespace RfidAppApi.Services
             public Dictionary<string, int> Products { get; set; } = new();
             public Dictionary<string, int> Designs { get; set; } = new();
         public Dictionary<string, int> Purities { get; set; } = new();
+        public Dictionary<string, int> Boxes { get; set; } = new();
         public Dictionary<string, string> Rfids { get; set; } = new();
     }
 

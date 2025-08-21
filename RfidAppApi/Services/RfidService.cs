@@ -305,7 +305,7 @@ namespace RfidAppApi.Services
                     NetWeight = pa.Product.NetWeight,
                     StoneWeight = pa.Product.StoneWeight,
                     DiamondHeight = pa.Product.DiamondHeight,
-                    BoxDetails = pa.Product.BoxDetails,
+                    BoxDetails = pa.Product.Box?.BoxName ?? "Unknown",
                     Size = pa.Product.Size,
                     StoneAmount = pa.Product.StoneAmount,
                     DiamondAmount = pa.Product.DiamondAmount,

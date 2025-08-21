@@ -19,6 +19,7 @@ namespace RfidAppApi.Data
         public DbSet<PurityMaster> PurityMasters { get; set; }
         public DbSet<BranchMaster> BranchMasters { get; set; }
         public DbSet<CounterMaster> CounterMasters { get; set; }
+        public DbSet<BoxMaster> BoxMasters { get; set; }
         public DbSet<Rfid> Rfids { get; set; }
         public DbSet<ProductDetails> ProductDetails { get; set; }
         public DbSet<ProductRfidAssignment> ProductRfidAssignments { get; set; }
@@ -26,6 +27,9 @@ namespace RfidAppApi.Data
         public DbSet<ProductImage> ProductImages { get; set; }
         public DbSet<StockMovement> StockMovements { get; set; }
         public DbSet<DailyStockBalance> DailyStockBalances { get; set; }
+        public DbSet<StockVerification> StockVerifications { get; set; }
+        public DbSet<StockVerificationDetail> StockVerificationDetails { get; set; }
+        public DbSet<StockTransfer> StockTransfers { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -38,6 +42,7 @@ namespace RfidAppApi.Data
             modelBuilder.Entity<PurityMaster>().ToTable("tblPurityMaster");
             modelBuilder.Entity<BranchMaster>().ToTable("tblBranchMaster");
             modelBuilder.Entity<CounterMaster>().ToTable("tblCounterMaster");
+            modelBuilder.Entity<BoxMaster>().ToTable("tblBoxMaster");
             modelBuilder.Entity<Rfid>().ToTable("tblRFID");
             modelBuilder.Entity<ProductDetails>().ToTable("tblProductDetails");
             modelBuilder.Entity<ProductRfidAssignment>().ToTable("tblProductRFIDAssignment");
@@ -45,6 +50,9 @@ namespace RfidAppApi.Data
             modelBuilder.Entity<ProductImage>().ToTable("tblProductImage");
             modelBuilder.Entity<StockMovement>().ToTable("tblStockMovement");
             modelBuilder.Entity<DailyStockBalance>().ToTable("tblDailyStockBalance");
+            modelBuilder.Entity<StockVerification>().ToTable("tblStockVerification");
+            modelBuilder.Entity<StockVerificationDetail>().ToTable("tblStockVerificationDetail");
+            modelBuilder.Entity<StockTransfer>().ToTable("tblStockTransfer");
 
             // Configure relationships
             modelBuilder.Entity<CounterMaster>()
@@ -87,6 +95,12 @@ namespace RfidAppApi.Data
                 .HasOne(p => p.Counter)
                 .WithMany()
                 .HasForeignKey(p => p.CounterId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<ProductDetails>()
+                .HasOne(p => p.Box)
+                .WithMany()
+                .HasForeignKey(p => p.BoxId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<ProductRfidAssignment>()
@@ -161,6 +175,74 @@ namespace RfidAppApi.Data
                 .HasForeignKey(dsb => dsb.CategoryId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            // Stock Verification Relationships
+            modelBuilder.Entity<StockVerification>()
+                .HasOne(sv => sv.Branch)
+                .WithMany()
+                .HasForeignKey(sv => sv.BranchId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<StockVerification>()
+                .HasOne(sv => sv.Counter)
+                .WithMany()
+                .HasForeignKey(sv => sv.CounterId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<StockVerification>()
+                .HasOne(sv => sv.Category)
+                .WithMany()
+                .HasForeignKey(sv => sv.CategoryId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<StockVerificationDetail>()
+                .HasOne(svd => svd.StockVerification)
+                .WithMany(sv => sv.VerificationDetails)
+                .HasForeignKey(svd => svd.StockVerificationId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Stock Transfer Relationships
+            modelBuilder.Entity<StockTransfer>()
+                .HasOne(st => st.Product)
+                .WithMany()
+                .HasForeignKey(st => st.ProductId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<StockTransfer>()
+                .HasOne(st => st.SourceBranch)
+                .WithMany()
+                .HasForeignKey(st => st.SourceBranchId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<StockTransfer>()
+                .HasOne(st => st.SourceCounter)
+                .WithMany()
+                .HasForeignKey(st => st.SourceCounterId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<StockTransfer>()
+                .HasOne(st => st.SourceBox)
+                .WithMany()
+                .HasForeignKey(st => st.SourceBoxId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<StockTransfer>()
+                .HasOne(st => st.DestinationBranch)
+                .WithMany()
+                .HasForeignKey(st => st.DestinationBranchId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<StockTransfer>()
+                .HasOne(st => st.DestinationCounter)
+                .WithMany()
+                .HasForeignKey(st => st.DestinationCounterId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<StockTransfer>()
+                .HasOne(st => st.DestinationBox)
+                .WithMany()
+                .HasForeignKey(st => st.DestinationBoxId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             // Global Query Filter for Client Code
             modelBuilder.Entity<Rfid>().HasQueryFilter(e => e.ClientCode == _clientCode);
             modelBuilder.Entity<ProductDetails>().HasQueryFilter(e => e.ClientCode == _clientCode);
@@ -169,6 +251,9 @@ namespace RfidAppApi.Data
             modelBuilder.Entity<ProductImage>().HasQueryFilter(e => e.ClientCode == _clientCode);
             modelBuilder.Entity<StockMovement>().HasQueryFilter(e => e.ClientCode == _clientCode);
             modelBuilder.Entity<DailyStockBalance>().HasQueryFilter(e => e.ClientCode == _clientCode);
+            modelBuilder.Entity<StockVerification>().HasQueryFilter(e => e.ClientCode == _clientCode);
+            modelBuilder.Entity<StockVerificationDetail>().HasQueryFilter(e => e.ClientCode == _clientCode);
+            modelBuilder.Entity<StockTransfer>().HasQueryFilter(e => e.ClientCode == _clientCode);
 
             // HIGH PERFORMANCE INDEXES FOR LAKHS OF RECORDS
             // Master Data Indexes
@@ -190,6 +275,10 @@ namespace RfidAppApi.Data
 
             modelBuilder.Entity<BranchMaster>()
                 .HasIndex(b => b.BranchName)
+                .IsUnique();
+
+            modelBuilder.Entity<BoxMaster>()
+                .HasIndex(b => b.BoxName)
                 .IsUnique();
 
             // RFID Table - High Performance Indexes
@@ -224,6 +313,9 @@ namespace RfidAppApi.Data
                 .HasIndex(p => p.CounterId);
 
             modelBuilder.Entity<ProductDetails>()
+                .HasIndex(p => p.BoxId);
+
+            modelBuilder.Entity<ProductDetails>()
                 .HasIndex(p => p.CreatedOn);
 
             modelBuilder.Entity<ProductDetails>()
@@ -256,6 +348,51 @@ namespace RfidAppApi.Data
             // Include Indexes for Covering Queries
             modelBuilder.Entity<ProductDetails>()
                 .HasIndex(p => new { p.CategoryId, p.ItemCode, p.Status, p.CreatedOn });
+
+            // Stock Transfer - High Performance Indexes
+            modelBuilder.Entity<StockTransfer>()
+                .HasIndex(st => st.TransferNumber)
+                .IsUnique();
+
+            modelBuilder.Entity<StockTransfer>()
+                .HasIndex(st => st.ProductId);
+
+            modelBuilder.Entity<StockTransfer>()
+                .HasIndex(st => st.RfidCode);
+
+            modelBuilder.Entity<StockTransfer>()
+                .HasIndex(st => st.Status);
+
+            modelBuilder.Entity<StockTransfer>()
+                .HasIndex(st => st.TransferDate);
+
+            modelBuilder.Entity<StockTransfer>()
+                .HasIndex(st => st.SourceBranchId);
+
+            modelBuilder.Entity<StockTransfer>()
+                .HasIndex(st => st.SourceCounterId);
+
+            modelBuilder.Entity<StockTransfer>()
+                .HasIndex(st => st.DestinationBranchId);
+
+            modelBuilder.Entity<StockTransfer>()
+                .HasIndex(st => st.DestinationCounterId);
+
+            // Composite Indexes for Stock Transfer Queries
+            modelBuilder.Entity<StockTransfer>()
+                .HasIndex(st => new { st.Status, st.TransferDate });
+
+            modelBuilder.Entity<StockTransfer>()
+                .HasIndex(st => new { st.SourceBranchId, st.SourceCounterId, st.Status });
+
+            modelBuilder.Entity<StockTransfer>()
+                .HasIndex(st => new { st.DestinationBranchId, st.DestinationCounterId, st.Status });
+
+            modelBuilder.Entity<StockTransfer>()
+                .HasIndex(st => new { st.ProductId, st.Status });
+
+            modelBuilder.Entity<StockTransfer>()
+                .HasIndex(st => new { st.RfidCode, st.Status });
 
             modelBuilder.Entity<Rfid>()
                 .HasIndex(r => new { r.IsActive, r.RFIDCode, r.CreatedOn });
@@ -403,6 +540,62 @@ namespace RfidAppApi.Data
 
             modelBuilder.Entity<DailyStockBalance>()
                 .HasIndex(dsb => new { dsb.ProductId, dsb.CounterId, dsb.BalanceDate });
+
+            // Stock Verification Table - High Performance Indexes
+            modelBuilder.Entity<StockVerification>()
+                .HasIndex(sv => sv.VerificationDate);
+
+            modelBuilder.Entity<StockVerification>()
+                .HasIndex(sv => sv.CreatedOn);
+
+            modelBuilder.Entity<StockVerification>()
+                .HasIndex(sv => sv.Status);
+
+            modelBuilder.Entity<StockVerification>()
+                .HasIndex(sv => sv.BranchId);
+
+            modelBuilder.Entity<StockVerification>()
+                .HasIndex(sv => sv.CounterId);
+
+            modelBuilder.Entity<StockVerification>()
+                .HasIndex(sv => sv.CategoryId);
+
+            modelBuilder.Entity<StockVerification>()
+                .HasIndex(sv => sv.VerifiedBy);
+
+            modelBuilder.Entity<StockVerification>()
+                .HasIndex(sv => new { sv.VerificationDate, sv.Status });
+
+            modelBuilder.Entity<StockVerification>()
+                .HasIndex(sv => new { sv.BranchId, sv.VerificationDate });
+
+            modelBuilder.Entity<StockVerification>()
+                .HasIndex(sv => new { sv.CounterId, sv.VerificationDate });
+
+            modelBuilder.Entity<StockVerification>()
+                .HasIndex(sv => new { sv.CategoryId, sv.VerificationDate });
+
+            // Stock Verification Detail Table - High Performance Indexes
+            modelBuilder.Entity<StockVerificationDetail>()
+                .HasIndex(svd => svd.StockVerificationId);
+
+            modelBuilder.Entity<StockVerificationDetail>()
+                .HasIndex(svd => svd.ItemCode);
+
+            modelBuilder.Entity<StockVerificationDetail>()
+                .HasIndex(svd => svd.VerificationStatus);
+
+            modelBuilder.Entity<StockVerificationDetail>()
+                .HasIndex(svd => svd.ScannedAt);
+
+            modelBuilder.Entity<StockVerificationDetail>()
+                .HasIndex(svd => svd.ScannedBy);
+
+            modelBuilder.Entity<StockVerificationDetail>()
+                .HasIndex(svd => new { svd.StockVerificationId, svd.VerificationStatus });
+
+            modelBuilder.Entity<StockVerificationDetail>()
+                .HasIndex(svd => new { svd.ItemCode, svd.VerificationStatus });
         }
     }
 } 

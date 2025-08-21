@@ -1330,6 +1330,10 @@
                     "type": "string",
                     "nullable": true
                   },
+                  "BoxDetails": {
+                    "type": "string",
+                    "nullable": true
+                  },
                   "RfidCode": {
                     "type": "string",
                     "nullable": true
@@ -1352,10 +1356,6 @@
                   "NetWeight": {
                     "type": "number",
                     "format": "float",
-                    "nullable": true
-                  },
-                  "BoxDetails": {
-                    "type": "string",
                     "nullable": true
                   },
                   "Size": {
@@ -4737,6 +4737,1282 @@
         }
       }
     },
+    "/api/StockTransfer": {
+      "post": {
+        "tags": [
+          "StockTransfer"
+        ],
+        "summary": "Create a new stock transfer",
+        "operationId": "StockTransfer_CreateTransfer",
+        "requestBody": {
+          "x-name": "createDto",
+          "description": "Transfer creation details",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateStockTransferDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "Created transfer details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StockTransferResponseDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "StockTransfer"
+        ],
+        "summary": "Get all transfers with optional filtering",
+        "operationId": "StockTransfer_GetTransfers",
+        "parameters": [
+          {
+            "name": "ProductId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "nullable": true
+            },
+            "x-position": 1
+          },
+          {
+            "name": "RfidCode",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "nullable": true
+            },
+            "x-position": 2
+          },
+          {
+            "name": "TransferType",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "nullable": true
+            },
+            "x-position": 3
+          },
+          {
+            "name": "SourceBranchId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "nullable": true
+            },
+            "x-position": 4
+          },
+          {
+            "name": "SourceCounterId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "nullable": true
+            },
+            "x-position": 5
+          },
+          {
+            "name": "DestinationBranchId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "nullable": true
+            },
+            "x-position": 6
+          },
+          {
+            "name": "DestinationCounterId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "nullable": true
+            },
+            "x-position": 7
+          },
+          {
+            "name": "Status",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "nullable": true
+            },
+            "x-position": 8
+          },
+          {
+            "name": "FromDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "nullable": true
+            },
+            "x-position": 9
+          },
+          {
+            "name": "ToDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "nullable": true
+            },
+            "x-position": 10
+          },
+          {
+            "name": "Page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 11
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 12
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of transfers",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/StockTransferResponseDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/StockTransfer/bulk": {
+      "post": {
+        "tags": [
+          "StockTransfer"
+        ],
+        "summary": "Create multiple stock transfers in bulk",
+        "operationId": "StockTransfer_CreateBulkTransfers",
+        "requestBody": {
+          "x-name": "bulkDto",
+          "description": "Bulk transfer details",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BulkStockTransferDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "Bulk transfer results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BulkTransferResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/StockTransfer/{transferId}": {
+      "get": {
+        "tags": [
+          "StockTransfer"
+        ],
+        "summary": "Get a specific transfer by ID",
+        "operationId": "StockTransfer_GetTransfer",
+        "parameters": [
+          {
+            "name": "transferId",
+            "in": "path",
+            "required": true,
+            "description": "Transfer ID",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Transfer details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StockTransferResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/StockTransfer/{transferId}/status": {
+      "put": {
+        "tags": [
+          "StockTransfer"
+        ],
+        "summary": "Update transfer status",
+        "operationId": "StockTransfer_UpdateTransferStatus",
+        "parameters": [
+          {
+            "name": "transferId",
+            "in": "path",
+            "required": true,
+            "description": "Transfer ID",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "updateDto",
+          "description": "Status update details",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateTransferStatusDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "200": {
+            "description": "Updated transfer details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StockTransferResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/StockTransfer/{transferId}/approve": {
+      "put": {
+        "tags": [
+          "StockTransfer"
+        ],
+        "summary": "Approve a transfer",
+        "operationId": "StockTransfer_ApproveTransfer",
+        "parameters": [
+          {
+            "name": "transferId",
+            "in": "path",
+            "required": true,
+            "description": "Transfer ID",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "approveDto",
+          "description": "Approval details",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApproveTransferDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "200": {
+            "description": "Approved transfer details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StockTransferResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/StockTransfer/{transferId}/reject": {
+      "put": {
+        "tags": [
+          "StockTransfer"
+        ],
+        "summary": "Reject a transfer",
+        "operationId": "StockTransfer_RejectTransfer",
+        "parameters": [
+          {
+            "name": "transferId",
+            "in": "path",
+            "required": true,
+            "description": "Transfer ID",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "rejectDto",
+          "description": "Rejection details",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RejectTransferDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "200": {
+            "description": "Rejected transfer details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StockTransferResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/StockTransfer/{transferId}/complete": {
+      "put": {
+        "tags": [
+          "StockTransfer"
+        ],
+        "summary": "Complete a transfer (move product to destination)",
+        "operationId": "StockTransfer_CompleteTransfer",
+        "parameters": [
+          {
+            "name": "transferId",
+            "in": "path",
+            "required": true,
+            "description": "Transfer ID",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "completedBy",
+            "in": "query",
+            "description": "User who completed the transfer",
+            "schema": {
+              "type": "string"
+            },
+            "x-position": 2
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Completed transfer details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StockTransferResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/StockTransfer/{transferId}/cancel": {
+      "put": {
+        "tags": [
+          "StockTransfer"
+        ],
+        "summary": "Cancel a transfer",
+        "operationId": "StockTransfer_CancelTransfer",
+        "parameters": [
+          {
+            "name": "transferId",
+            "in": "path",
+            "required": true,
+            "description": "Transfer ID",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "cancelledBy",
+            "in": "query",
+            "description": "User who cancelled the transfer",
+            "schema": {
+              "type": "string"
+            },
+            "x-position": 2
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Cancelled transfer details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StockTransferResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/StockTransfer/summary": {
+      "get": {
+        "tags": [
+          "StockTransfer"
+        ],
+        "summary": "Get transfer summary and statistics",
+        "operationId": "StockTransfer_GetTransferSummary",
+        "parameters": [
+          {
+            "name": "fromDate",
+            "in": "query",
+            "description": "Start date for summary",
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "nullable": true
+            },
+            "x-position": 1
+          },
+          {
+            "name": "toDate",
+            "in": "query",
+            "description": "End date for summary",
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "nullable": true
+            },
+            "x-position": 2
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Transfer summary",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransferSummaryDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/StockTransfer/product/{productId}": {
+      "get": {
+        "tags": [
+          "StockTransfer"
+        ],
+        "summary": "Get transfers by product",
+        "operationId": "StockTransfer_GetTransfersByProduct",
+        "parameters": [
+          {
+            "name": "productId",
+            "in": "path",
+            "required": true,
+            "description": "Product ID",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of transfers for the product",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/StockTransferResponseDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/StockTransfer/rfid/{rfidCode}": {
+      "get": {
+        "tags": [
+          "StockTransfer"
+        ],
+        "summary": "Get transfers by RFID",
+        "operationId": "StockTransfer_GetTransfersByRfid",
+        "parameters": [
+          {
+            "name": "rfidCode",
+            "in": "path",
+            "required": true,
+            "description": "RFID code",
+            "schema": {
+              "type": "string"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of transfers for the RFID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/StockTransferResponseDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/StockTransfer/pending": {
+      "get": {
+        "tags": [
+          "StockTransfer"
+        ],
+        "summary": "Get pending transfers for a specific location",
+        "operationId": "StockTransfer_GetPendingTransfersByLocation",
+        "parameters": [
+          {
+            "name": "branchId",
+            "in": "query",
+            "description": "Branch ID",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "counterId",
+            "in": "query",
+            "description": "Counter ID",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 2
+          },
+          {
+            "name": "boxId",
+            "in": "query",
+            "description": "Box ID (optional)",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "nullable": true
+            },
+            "x-position": 3
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of pending transfers",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/StockTransferResponseDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/StockTransfer/validate": {
+      "post": {
+        "tags": [
+          "StockTransfer"
+        ],
+        "summary": "Validate if a transfer is possible",
+        "operationId": "StockTransfer_ValidateTransfer",
+        "requestBody": {
+          "x-name": "createDto",
+          "description": "Transfer creation details",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateStockTransferDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "Validation result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/StockTransfer/history/{productId}": {
+      "get": {
+        "tags": [
+          "StockTransfer"
+        ],
+        "summary": "Get transfer history for a product",
+        "operationId": "StockTransfer_GetProductTransferHistory",
+        "parameters": [
+          {
+            "name": "productId",
+            "in": "path",
+            "required": true,
+            "description": "Product ID",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Transfer history",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/StockTransferResponseDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/StockTransfer/types": {
+      "get": {
+        "tags": [
+          "StockTransfer"
+        ],
+        "summary": "Get available transfer types",
+        "operationId": "StockTransfer_GetTransferTypes",
+        "responses": {
+          "200": {
+            "description": "List of transfer types",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/StockTransfer/statuses": {
+      "get": {
+        "tags": [
+          "StockTransfer"
+        ],
+        "summary": "Get available transfer statuses",
+        "operationId": "StockTransfer_GetTransferStatuses",
+        "responses": {
+          "200": {
+            "description": "List of transfer statuses",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/StockVerification/create-session": {
+      "post": {
+        "tags": [
+          "StockVerification"
+        ],
+        "summary": "Create a new stock verification session",
+        "operationId": "StockVerification_CreateStockVerification",
+        "requestBody": {
+          "x-name": "request",
+          "description": "Stock verification session details",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateStockVerificationDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "Verification session created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StockVerificationResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request or client code not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/api/StockVerification/submit-verification": {
+      "post": {
+        "tags": [
+          "StockVerification"
+        ],
+        "summary": "Submit scanned items for verification (matched and unmatched)",
+        "operationId": "StockVerification_SubmitStockVerification",
+        "requestBody": {
+          "x-name": "request",
+          "description": "Scanned items with verification status",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitStockVerificationDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "Items submitted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StockVerificationResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request or verification session not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/api/StockVerification/{verificationId}": {
+      "get": {
+        "tags": [
+          "StockVerification"
+        ],
+        "summary": "Get stock verification session by ID",
+        "operationId": "StockVerification_GetStockVerification",
+        "parameters": [
+          {
+            "name": "verificationId",
+            "in": "path",
+            "required": true,
+            "description": "Verification session ID",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Verification session retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StockVerificationResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client code not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Verification session not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/api/StockVerification/list": {
+      "get": {
+        "tags": [
+          "StockVerification"
+        ],
+        "summary": "Get all stock verifications with filters and pagination",
+        "operationId": "StockVerification_GetStockVerifications",
+        "parameters": [
+          {
+            "name": "StartDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "nullable": true
+            },
+            "x-position": 1
+          },
+          {
+            "name": "EndDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "nullable": true
+            },
+            "x-position": 2
+          },
+          {
+            "name": "BranchName",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "nullable": true
+            },
+            "x-position": 3
+          },
+          {
+            "name": "CounterName",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "nullable": true
+            },
+            "x-position": 4
+          },
+          {
+            "name": "CategoryId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "nullable": true
+            },
+            "x-position": 5
+          },
+          {
+            "name": "Status",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "nullable": true
+            },
+            "x-position": 6
+          },
+          {
+            "name": "VerifiedBy",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "nullable": true
+            },
+            "x-position": 7
+          },
+          {
+            "name": "PageNumber",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 8
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 9
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Verifications retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StockVerificationReportResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client code not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/api/StockVerification/summary": {
+      "get": {
+        "tags": [
+          "StockVerification"
+        ],
+        "summary": "Get stock verification summary",
+        "operationId": "StockVerification_GetStockVerificationSummary",
+        "responses": {
+          "200": {
+            "description": "Summary retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StockVerificationSummaryDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client code not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/api/StockVerification/date-wise-report": {
+      "get": {
+        "tags": [
+          "StockVerification"
+        ],
+        "summary": "Get date-wise stock verification report",
+        "operationId": "StockVerification_GetDateWiseStockVerificationReport",
+        "parameters": [
+          {
+            "name": "startDate",
+            "in": "query",
+            "description": "Start date for report",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "description": "End date for report",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "x-position": 2
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Report generated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DateWiseStockVerificationReportDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client code not found or invalid date range",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/api/StockVerification/{verificationId}/complete": {
+      "post": {
+        "tags": [
+          "StockVerification"
+        ],
+        "summary": "Complete a stock verification session",
+        "operationId": "StockVerification_CompleteStockVerification",
+        "parameters": [
+          {
+            "name": "verificationId",
+            "in": "path",
+            "required": true,
+            "description": "Verification session ID",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Verification session completed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StockVerificationResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client code not found or invalid operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/api/StockVerification/{verificationId}/cancel": {
+      "post": {
+        "tags": [
+          "StockVerification"
+        ],
+        "summary": "Cancel a stock verification session",
+        "operationId": "StockVerification_CancelStockVerification",
+        "parameters": [
+          {
+            "name": "verificationId",
+            "in": "path",
+            "required": true,
+            "description": "Verification session ID",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Verification session cancelled successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StockVerificationResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client code not found or invalid operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/api/StockVerification/{verificationId}/details/{status}": {
+      "get": {
+        "tags": [
+          "StockVerification"
+        ],
+        "summary": "Get verification details by status (matched, unmatched, missing)",
+        "operationId": "StockVerification_GetVerificationDetailsByStatus",
+        "parameters": [
+          {
+            "name": "verificationId",
+            "in": "path",
+            "required": true,
+            "description": "Verification session ID",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "status",
+            "in": "path",
+            "required": true,
+            "description": "Status filter (Matched, Unmatched, Missing)",
+            "schema": {
+              "type": "string"
+            },
+            "x-position": 2
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Details retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/StockVerificationDetailDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client code not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
     "/api/User/register": {
       "post": {
         "tags": [
@@ -5687,6 +6963,10 @@
             "type": "string",
             "nullable": true
           },
+          "boxDetails": {
+            "type": "string",
+            "nullable": true
+          },
           "rfidCode": {
             "type": "string",
             "nullable": true
@@ -5709,10 +6989,6 @@
           "netWeight": {
             "type": "number",
             "format": "float",
-            "nullable": true
-          },
-          "boxDetails": {
-            "type": "string",
             "nullable": true
           },
           "size": {
@@ -6913,6 +8189,1015 @@
             "nullable": true,
             "items": {
               "type": "string"
+            }
+          }
+        }
+      },
+      "StockTransferResponseDto": {
+        "type": "object",
+        "description": "DTO for stock transfer response",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "transferNumber": {
+            "type": "string"
+          },
+          "productId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "rfidCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "transferType": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "transferDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "completedDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "reason": {
+            "type": "string",
+            "nullable": true
+          },
+          "remarks": {
+            "type": "string",
+            "nullable": true
+          },
+          "approvedBy": {
+            "type": "string",
+            "nullable": true
+          },
+          "approvedOn": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "rejectedBy": {
+            "type": "string",
+            "nullable": true
+          },
+          "rejectedOn": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "rejectionReason": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdOn": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedOn": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "sourceLocation": {
+            "$ref": "#/components/schemas/LocationInfo"
+          },
+          "destinationLocation": {
+            "$ref": "#/components/schemas/LocationInfo"
+          },
+          "product": {
+            "$ref": "#/components/schemas/ProductInfo"
+          }
+        }
+      },
+      "LocationInfo": {
+        "type": "object",
+        "description": "DTO for location information",
+        "additionalProperties": false,
+        "properties": {
+          "branchId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "branchName": {
+            "type": "string"
+          },
+          "counterId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "counterName": {
+            "type": "string"
+          },
+          "boxId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "boxName": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "ProductInfo": {
+        "type": "object",
+        "description": "DTO for product information in transfer",
+        "additionalProperties": false,
+        "properties": {
+          "itemCode": {
+            "type": "string"
+          },
+          "categoryName": {
+            "type": "string"
+          },
+          "productName": {
+            "type": "string"
+          },
+          "designName": {
+            "type": "string"
+          },
+          "purityName": {
+            "type": "string"
+          },
+          "grossWeight": {
+            "type": "number",
+            "format": "float",
+            "nullable": true
+          },
+          "netWeight": {
+            "type": "number",
+            "format": "float",
+            "nullable": true
+          },
+          "mrp": {
+            "type": "number",
+            "format": "decimal",
+            "nullable": true
+          },
+          "imageUrl": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "CreateStockTransferDto": {
+        "type": "object",
+        "description": "DTO for creating a new stock transfer",
+        "additionalProperties": false,
+        "required": [
+          "productId",
+          "transferType",
+          "sourceBranchId",
+          "sourceCounterId",
+          "destinationBranchId",
+          "destinationCounterId"
+        ],
+        "properties": {
+          "productId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "rfidCode": {
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 0,
+            "nullable": true
+          },
+          "transferType": {
+            "type": "string",
+            "maxLength": 20,
+            "minLength": 0
+          },
+          "sourceBranchId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sourceCounterId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sourceBoxId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "destinationBranchId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "destinationCounterId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "destinationBoxId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "reason": {
+            "type": "string",
+            "maxLength": 500,
+            "minLength": 0,
+            "nullable": true
+          },
+          "remarks": {
+            "type": "string",
+            "maxLength": 500,
+            "minLength": 0,
+            "nullable": true
+          }
+        }
+      },
+      "BulkTransferResponseDto": {
+        "type": "object",
+        "description": "DTO for bulk transfer response",
+        "additionalProperties": false,
+        "properties": {
+          "totalTransfers": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "successfullyCreated": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "failed": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "createdTransfers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StockTransferResponseDto"
+            }
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "BulkStockTransferDto": {
+        "type": "object",
+        "description": "DTO for bulk stock transfers",
+        "additionalProperties": false,
+        "required": [
+          "transfers"
+        ],
+        "properties": {
+          "transfers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CreateStockTransferDto"
+            }
+          },
+          "commonReason": {
+            "type": "string",
+            "maxLength": 500,
+            "minLength": 0,
+            "nullable": true
+          },
+          "commonRemarks": {
+            "type": "string",
+            "maxLength": 500,
+            "minLength": 0,
+            "nullable": true
+          }
+        }
+      },
+      "UpdateTransferStatusDto": {
+        "type": "object",
+        "description": "DTO for updating transfer status",
+        "additionalProperties": false,
+        "required": [
+          "status"
+        ],
+        "properties": {
+          "status": {
+            "type": "string",
+            "maxLength": 20,
+            "minLength": 0
+          },
+          "remarks": {
+            "type": "string",
+            "maxLength": 500,
+            "minLength": 0,
+            "nullable": true
+          },
+          "actionBy": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 0,
+            "nullable": true
+          },
+          "rejectionReason": {
+            "type": "string",
+            "maxLength": 500,
+            "minLength": 0,
+            "nullable": true
+          }
+        }
+      },
+      "ApproveTransferDto": {
+        "type": "object",
+        "description": "DTO for transfer approval",
+        "additionalProperties": false,
+        "required": [
+          "approvedBy"
+        ],
+        "properties": {
+          "approvedBy": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 0
+          },
+          "remarks": {
+            "type": "string",
+            "maxLength": 500,
+            "minLength": 0,
+            "nullable": true
+          }
+        }
+      },
+      "RejectTransferDto": {
+        "type": "object",
+        "description": "DTO for transfer rejection",
+        "additionalProperties": false,
+        "required": [
+          "rejectedBy",
+          "rejectionReason"
+        ],
+        "properties": {
+          "rejectedBy": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 0
+          },
+          "rejectionReason": {
+            "type": "string",
+            "maxLength": 500,
+            "minLength": 0
+          },
+          "remarks": {
+            "type": "string",
+            "maxLength": 500,
+            "minLength": 0,
+            "nullable": true
+          }
+        }
+      },
+      "TransferSummaryDto": {
+        "type": "object",
+        "description": "DTO for transfer summary",
+        "additionalProperties": false,
+        "properties": {
+          "totalTransfers": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pendingTransfers": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "inTransitTransfers": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "completedTransfers": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "cancelledTransfers": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "rejectedTransfers": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalValue": {
+            "type": "number",
+            "format": "decimal"
+          },
+          "transferTypeSummary": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TransferTypeSummary"
+            }
+          },
+          "branchTransferSummary": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BranchTransferSummary"
+            }
+          }
+        }
+      },
+      "TransferTypeSummary": {
+        "type": "object",
+        "description": "DTO for transfer type summary",
+        "additionalProperties": false,
+        "properties": {
+          "transferType": {
+            "type": "string"
+          },
+          "count": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalValue": {
+            "type": "number",
+            "format": "decimal"
+          }
+        }
+      },
+      "BranchTransferSummary": {
+        "type": "object",
+        "description": "DTO for branch transfer summary",
+        "additionalProperties": false,
+        "properties": {
+          "branchId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "branchName": {
+            "type": "string"
+          },
+          "incomingTransfers": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "outgoingTransfers": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "incomingValue": {
+            "type": "number",
+            "format": "decimal"
+          },
+          "outgoingValue": {
+            "type": "number",
+            "format": "decimal"
+          }
+        }
+      },
+      "StockVerificationResponseDto": {
+        "type": "object",
+        "description": "DTO for stock verification response",
+        "additionalProperties": false,
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/StockVerificationDto"
+              }
+            ]
+          }
+        }
+      },
+      "StockVerificationDto": {
+        "type": "object",
+        "description": "DTO for stock verification details",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "verificationSessionName": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "verificationDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "verificationTime": {
+            "type": "string",
+            "format": "duration"
+          },
+          "branchId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "branchName": {
+            "type": "string"
+          },
+          "counterId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "counterName": {
+            "type": "string"
+          },
+          "categoryId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "categoryName": {
+            "type": "string"
+          },
+          "totalItemsScanned": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "matchedItemsCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "unmatchedItemsCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "missingItemsCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalMatchedValue": {
+            "type": "number",
+            "format": "decimal",
+            "nullable": true
+          },
+          "totalUnmatchedValue": {
+            "type": "number",
+            "format": "decimal",
+            "nullable": true
+          },
+          "totalMissingValue": {
+            "type": "number",
+            "format": "decimal",
+            "nullable": true
+          },
+          "verifiedBy": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "string"
+          },
+          "remarks": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdOn": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "completedOn": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "verificationDetails": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StockVerificationDetailDto"
+            }
+          }
+        }
+      },
+      "StockVerificationDetailDto": {
+        "type": "object",
+        "description": "DTO for individual verification detail",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "itemCode": {
+            "type": "string"
+          },
+          "rfidCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "verificationStatus": {
+            "type": "string"
+          },
+          "scannedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "scannedTime": {
+            "type": "string",
+            "format": "duration"
+          },
+          "scannedBy": {
+            "type": "string",
+            "nullable": true
+          },
+          "remarks": {
+            "type": "string",
+            "nullable": true
+          },
+          "productDetails": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ProductDetailsDto"
+              }
+            ]
+          }
+        }
+      },
+      "ProductDetailsDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "clientCode": {
+            "type": "string"
+          },
+          "branchId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "counterId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "itemCode": {
+            "type": "string"
+          },
+          "categoryId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "productId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "designId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "purityId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "boxId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "grossWeight": {
+            "type": "number",
+            "format": "float",
+            "nullable": true
+          },
+          "stoneWeight": {
+            "type": "number",
+            "format": "float",
+            "nullable": true
+          },
+          "diamondHeight": {
+            "type": "number",
+            "format": "float",
+            "nullable": true
+          },
+          "netWeight": {
+            "type": "number",
+            "format": "float",
+            "nullable": true
+          },
+          "size": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "stoneAmount": {
+            "type": "number",
+            "format": "decimal",
+            "nullable": true
+          },
+          "diamondAmount": {
+            "type": "number",
+            "format": "decimal",
+            "nullable": true
+          },
+          "hallmarkAmount": {
+            "type": "number",
+            "format": "decimal",
+            "nullable": true
+          },
+          "makingPerGram": {
+            "type": "number",
+            "format": "decimal",
+            "nullable": true
+          },
+          "makingPercentage": {
+            "type": "number",
+            "format": "decimal",
+            "nullable": true
+          },
+          "makingFixedAmount": {
+            "type": "number",
+            "format": "decimal",
+            "nullable": true
+          },
+          "mrp": {
+            "type": "number",
+            "format": "decimal",
+            "nullable": true
+          },
+          "imageUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdOn": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "categoryName": {
+            "type": "string",
+            "nullable": true
+          },
+          "productName": {
+            "type": "string",
+            "nullable": true
+          },
+          "designName": {
+            "type": "string",
+            "nullable": true
+          },
+          "purityName": {
+            "type": "string",
+            "nullable": true
+          },
+          "branchName": {
+            "type": "string",
+            "nullable": true
+          },
+          "counterName": {
+            "type": "string",
+            "nullable": true
+          },
+          "boxDetails": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "CreateStockVerificationDto": {
+        "type": "object",
+        "description": "DTO for creating a new stock verification session",
+        "additionalProperties": false,
+        "required": [
+          "verificationSessionName",
+          "verificationDate",
+          "verificationTime",
+          "branchName",
+          "counterName",
+          "categoryId"
+        ],
+        "properties": {
+          "verificationSessionName": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "verificationDate": {
+            "type": "string",
+            "format": "date-time",
+            "minLength": 1
+          },
+          "verificationTime": {
+            "type": "string",
+            "format": "duration",
+            "minLength": 1
+          },
+          "branchName": {
+            "type": "string",
+            "minLength": 1
+          },
+          "counterName": {
+            "type": "string",
+            "minLength": 1
+          },
+          "categoryId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "verifiedBy": {
+            "type": "string",
+            "nullable": true
+          },
+          "remarks": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "SubmitStockVerificationDto": {
+        "type": "object",
+        "description": "DTO for submitting scanned items for verification",
+        "additionalProperties": false,
+        "required": [
+          "stockVerificationId",
+          "matchedItemCodes",
+          "unmatchedItemCodes"
+        ],
+        "properties": {
+          "stockVerificationId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "matchedItemCodes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "unmatchedItemCodes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "scannedBy": {
+            "type": "string",
+            "nullable": true
+          },
+          "remarks": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "StockVerificationReportResponseDto": {
+        "type": "object",
+        "description": "DTO for stock verification report response",
+        "additionalProperties": false,
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string"
+          },
+          "totalRecords": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StockVerificationDto"
+            }
+          },
+          "summary": {
+            "$ref": "#/components/schemas/StockVerificationSummaryDto"
+          }
+        }
+      },
+      "StockVerificationSummaryDto": {
+        "type": "object",
+        "description": "DTO for stock verification summary",
+        "additionalProperties": false,
+        "properties": {
+          "totalSessions": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "completedSessions": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "inProgressSessions": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalItemsVerified": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalMatchedItems": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalUnmatchedItems": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalMissingItems": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalMatchedValue": {
+            "type": "number",
+            "format": "decimal",
+            "nullable": true
+          },
+          "totalUnmatchedValue": {
+            "type": "number",
+            "format": "decimal",
+            "nullable": true
+          },
+          "totalMissingValue": {
+            "type": "number",
+            "format": "decimal",
+            "nullable": true
+          },
+          "recentSessions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StockVerificationDto"
+            }
+          }
+        }
+      },
+      "DateWiseStockVerificationReportDto": {
+        "type": "object",
+        "description": "DTO for date-wise stock verification report",
+        "additionalProperties": false,
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "totalSessions": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalItemsScanned": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalMatchedItems": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalUnmatchedItems": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalMissingItems": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalMatchedValue": {
+            "type": "number",
+            "format": "decimal",
+            "nullable": true
+          },
+          "totalUnmatchedValue": {
+            "type": "number",
+            "format": "decimal",
+            "nullable": true
+          },
+          "totalMissingValue": {
+            "type": "number",
+            "format": "decimal",
+            "nullable": true
+          },
+          "sessions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StockVerificationDto"
             }
           }
         }
