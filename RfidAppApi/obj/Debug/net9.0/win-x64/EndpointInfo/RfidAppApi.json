@@ -1035,6 +1035,10 @@
                     "type": "string",
                     "nullable": true
                   },
+                  "EpcValue": {
+                    "type": "string",
+                    "nullable": true
+                  },
                   "GrossWeight": {
                     "type": "number",
                     "format": "float",
@@ -1335,6 +1339,10 @@
                     "nullable": true
                   },
                   "RfidCode": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "EpcValue": {
                     "type": "string",
                     "nullable": true
                   },
@@ -6828,6 +6836,11 @@
             "type": "string",
             "nullable": true
           },
+          "epcValue": {
+            "type": "string",
+            "description": "EPC Value - optional, if not provided, will use RFID code as EPC value\nThis allows you to specify a different EPC value than the RFID code\nExample: RFID code \"RFID001\" with EPC value \"EPC001234567890\"\n\n⚠️ IMPORTANT: When creating new RFID tags, you MUST provide an EPC value.\nIf you don't provide an EPC value, the system will reject the request.\n\nBest practices:\n- Use descriptive RFID codes (e.g., \"RFID001\", \"RFID002\")\n- Use unique EPC values (e.g., \"EPC001234567890\", \"EPC001234567891\")\n- Never leave EPC value empty when creating new RFID tags",
+            "nullable": true
+          },
           "grossWeight": {
             "type": "number",
             "format": "float",
@@ -6969,6 +6982,11 @@
           },
           "rfidCode": {
             "type": "string",
+            "nullable": true
+          },
+          "epcValue": {
+            "type": "string",
+            "description": "EPC Value - optional for updates, if provided will update the EPC value of the RFID tag",
             "nullable": true
           },
           "grossWeight": {

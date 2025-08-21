@@ -1719,14 +1719,39 @@
             Users can simply enter text values like "Gold", "Pune", "Counter1" instead of knowing IDs
             </summary>
         </member>
+        <member name="P:RfidAppApi.DTOs.UserFriendlyCreateProductDto.EpcValue">
+            <summary>
+            EPC Value - optional, if not provided, will use RFID code as EPC value
+            This allows you to specify a different EPC value than the RFID code
+            Example: RFID code "RFID001" with EPC value "EPC001234567890"
+            
+            ⚠️ IMPORTANT: When creating new RFID tags, you MUST provide an EPC value.
+            If you don't provide an EPC value, the system will reject the request.
+            
+            Best practices:
+            - Use descriptive RFID codes (e.g., "RFID001", "RFID002")
+            - Use unique EPC values (e.g., "EPC001234567890", "EPC001234567891")
+            - Never leave EPC value empty when creating new RFID tags
+            </summary>
+        </member>
         <member name="T:RfidAppApi.DTOs.UserFriendlyUpdateProductDto">
             <summary>
             User-friendly DTO for updating products
             </summary>
         </member>
+        <member name="P:RfidAppApi.DTOs.UserFriendlyUpdateProductDto.EpcValue">
+            <summary>
+            EPC Value - optional for updates, if provided will update the EPC value of the RFID tag
+            </summary>
+        </member>
         <member name="T:RfidAppApi.DTOs.UserFriendlyProductResponseDto">
             <summary>
             Response DTO for user-friendly product operations
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.UserFriendlyProductResponseDto.EpcValue">
+            <summary>
+            EPC Value of the RFID tag assigned to this product
             </summary>
         </member>
         <member name="T:RfidAppApi.DTOs.BulkCreateProductsDto">

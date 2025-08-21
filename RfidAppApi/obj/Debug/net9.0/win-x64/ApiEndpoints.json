@@ -664,6 +664,11 @@
         "IsRequired": false
       },
       {
+        "Name": "EpcValue",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
         "Name": "GrossWeight",
         "Type": "System.Nullable\u00601[[System.Single, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "IsRequired": false
@@ -838,6 +843,11 @@
       },
       {
         "Name": "RFIDNumber",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "EpcValue",
         "Type": "System.String",
         "IsRequired": false
       },
