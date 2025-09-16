@@ -71,6 +71,21 @@ namespace RfidAppApi.DTOs
         public string? ConnectionString { get; set; }
 
         /// <summary>
+        /// Whether the user is an admin
+        /// </summary>
+        public bool IsAdmin { get; set; }
+
+        /// <summary>
+        /// User type (MainAdmin, Admin, User)
+        /// </summary>
+        public string UserType { get; set; } = string.Empty;
+
+        /// <summary>
+        /// ID of the admin user who created this user (null for main admin)
+        /// </summary>
+        public int? AdminUserId { get; set; }
+
+        /// <summary>
         /// Whether the user is active
         /// </summary>
         public bool IsActive { get; set; }
@@ -79,6 +94,11 @@ namespace RfidAppApi.DTOs
         /// When the user was created
         /// </summary>
         public DateTime CreatedOn { get; set; }
+
+        /// <summary>
+        /// Last login date
+        /// </summary>
+        public DateTime? LastLoginDate { get; set; }
     }
 
     /// <summary>

@@ -52,6 +52,7 @@ builder.Services.AddHealthChecks()
 
 // Register Services
 builder.Services.AddScoped<IRfidService, RfidService>();
+builder.Services.AddScoped<IRfidExcelService, RfidExcelService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IClientDatabaseService, ClientDatabaseService>();
 builder.Services.AddScoped<IDatabaseMigrationService, DatabaseMigrationService>();
@@ -62,6 +63,10 @@ builder.Services.AddScoped<IImageService, ImageService>();
 builder.Services.AddScoped<IReportingService, ReportingService>();
 builder.Services.AddScoped<IStockVerificationService, StockVerificationService>();
 builder.Services.AddScoped<IStockTransferService, StockTransferService>();
+
+// Register Admin and Activity Services
+builder.Services.AddScoped<IAdminService, AdminService>();
+builder.Services.AddScoped<IActivityLoggingService, ActivityLoggingService>();
 
 // Configure JWT Authentication
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
@@ -128,6 +133,9 @@ app.UseCors("AllowAll");
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+// Add permission middleware for regular users
+app.UseMiddleware<RfidAppApi.Middleware.PermissionMiddleware>();
 
 app.MapControllers();
 

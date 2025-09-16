@@ -1,0 +1,394 @@
+RFID Jewelry Inventory System - Complete Combined Documentation
+
+1. SYSTEM OVERVIEW
+
+The RFID Jewelry Inventory System is a comprehensive, multi-tenant inventory management solution designed specifically for jewelry businesses. It provides complete RFID tracking, stock management, sales processing, and reporting capabilities.
+
+Key Features:
+- Multi-tenant architecture with complete data isolation
+- RFID tag management and product tracking
+- Comprehensive inventory management
+- Sales and invoice processing
+- Stock verification and transfer management
+- Advanced reporting and analytics
+- Excel import/export functionality
+- RESTful API for third-party integration
+
+2. DATABASE ARCHITECTURE
+
+2.1 Multi-Tenant Design
+- Master Database (AppDbContext): User management and authentication
+- Client Databases (ClientDbContext): Isolated business data per client
+- Automatic database creation for new clients
+- Complete data isolation through ClientCode
+
+2.2 Core Tables (19 Total)
+- User Management: 4 tables (User, Role, UserRole, Permission)
+- Master Data: 6 tables (Category, Product, Design, Purity, Branch, Counter)
+- Core Business: 4 tables (ProductDetails, RFID, ProductImage, ProductRFIDAssignment)
+- Stock Management: 2 tables (StockVerification, StockVerificationDetail)
+- Sales & Movement: 3 tables (Invoice, StockMovement, DailyStockBalance)
+
+2.3 Key Relationships
+- Branch → Counter → Product hierarchy
+- Product ↔ RFID through assignment table
+- Comprehensive foreign key relationships
+- Multi-dimensional indexing for performance
+
+3. API ENDPOINTS SUMMARY
+
+3.1 Authentication & User Management (8 endpoints)
+- Registration, login, CRUD operations
+- JWT token-based authentication
+- Multi-tenant user isolation
+
+3.2 RFID Management (13 endpoints)
+- CRUD operations for RFID tags
+- Excel upload/download functionality
+- RFID analysis and scanning
+- Bulk operations support
+
+3.3 Product Management (11 endpoints)
+- User-friendly product creation
+- Bulk operations
+- Image management
+- Search and filtering
+
+3.4 Product Image Management (10 endpoints)
+- Single and bulk image uploads
+- Metadata management
+- Multiple image types support
+
+3.5 Invoice Management (14 endpoints)
+- Sales processing
+- Customer management
+- Payment tracking
+- Export functionality
+
+3.6 Reporting & Analytics (40+ endpoints)
+- Stock movement tracking
+- Daily balance calculations
+- Sales analytics
+- RFID usage analysis
+- Performance metrics
+
+3.7 Stock Verification (9 endpoints)
+- Verification session management
+- RFID scanning support
+- Status tracking
+
+3.8 Stock Transfer (10 endpoints)
+- Transfer request management
+- Approval workflow
+- Execution tracking
+
+3.9 Database Migration (11 endpoints)
+- Health monitoring
+- Migration management
+- Emergency repair tools
+
+4. INTEGRATION CAPABILITIES
+
+4.1 Supported Software
+- Accounting: QuickBooks, Tally, Sage, Xero
+- ERP: SAP, Microsoft Dynamics, Oracle, Odoo
+- E-commerce: Shopify, WooCommerce, Magento
+- POS: Square, Lightspeed, Vend
+- WMS: SAP EWM, Manhattan, Oracle WMS
+
+4.2 Integration Methods
+- RESTful API with JSON
+- Webhook notifications
+- Excel/CSV file exchange
+- Real-time SignalR updates
+- Batch processing
+
+4.3 Programming Languages
+- JavaScript/Node.js
+- Python
+- C#
+- Java
+- PHP
+
+5. RFID EXCEL UPLOAD FORMAT
+
+5.1 Required Excel Structure
+- Column 1: RFID Code (required, max 50 characters)
+- Column 2: EPC Value (required, max 100 characters)
+- Header row optional but recommended
+
+5.2 Excel Format Example
+| RFID Code | EPC Value |
+|-----------|-----------|
+| RFID001   | EPC123456789 |
+| RFID002   | EPC987654321 |
+| RFID003   | EPC456789123 |
+
+5.3 Upload Options
+- Update existing RFID codes
+- Create new RFID codes
+- Bulk processing support
+- Validation and error reporting
+
+6. SECURITY FEATURES
+
+6.1 Authentication
+- JWT token-based security
+- 256-bit encryption
+- Token expiration management
+- Secure password hashing
+
+6.2 Data Protection
+- Multi-tenant isolation
+- Role-based access control
+- Granular permissions
+- Audit trail logging
+
+6.3 API Security
+- HTTPS enforcement
+- Rate limiting
+- Input validation
+- SQL injection prevention
+
+7. PERFORMANCE FEATURES
+
+7.1 Database Optimization
+- Comprehensive indexing strategy
+- Query optimization
+- Connection pooling
+- Performance monitoring
+
+7.2 Scalability
+- Multi-tenant architecture
+- Horizontal scaling support
+- Load balancing ready
+- Caching capabilities
+
+8. DEPLOYMENT & CONFIGURATION
+
+8.1 System Requirements
+- .NET 9.0 runtime
+- SQL Server 2019+
+- Windows/Linux support
+- Docker containerization
+
+8.2 Configuration
+- Environment-based settings
+- Database connection management
+- File upload limits (50MB)
+- Health check monitoring
+
+9. MONITORING & MAINTENANCE
+
+9.1 Health Monitoring
+- Database connectivity checks
+- API endpoint monitoring
+- Performance metrics
+- Error tracking
+
+9.2 Maintenance Tools
+- Database migration utilities
+- Emergency repair tools
+- Backup and recovery
+- Performance optimization
+
+10. SUPPORT & DOCUMENTATION
+
+10.1 Available Resources
+- Complete API documentation
+- Postman collection
+- Code examples
+- Integration guides
+- Troubleshooting guides
+
+10.2 Development Support
+- OpenAPI/Swagger documentation
+- SDK libraries
+- Webhook testing tools
+- Rate limiting guidelines
+
+11. BUSINESS WORKFLOWS
+
+11.1 Product Lifecycle
+1. Product creation with specifications
+2. RFID tag assignment
+3. Inventory placement (branch/counter)
+4. Stock movement tracking
+5. Sales processing
+6. Stock balance updates
+
+11.2 RFID Management
+1. Tag creation and activation
+2. Product assignment
+3. Inventory tracking
+4. Stock verification
+5. Transfer management
+6. Deactivation/recycling
+
+11.3 Stock Verification
+1. Session creation
+2. RFID scanning
+3. Data comparison
+4. Discrepancy reporting
+5. Status updates
+6. Report generation
+
+11.4 Stock Transfer
+1. Transfer request creation
+2. Source/destination validation
+3. Approval workflow
+4. Execution
+5. Stock updates
+6. Movement tracking
+
+12. REPORTING & ANALYTICS
+
+12.1 Available Reports
+- Stock movement analysis
+- Sales performance metrics
+- RFID usage statistics
+- Inventory valuation
+- Customer analytics
+- Performance dashboards
+
+12.2 Export Formats
+- Excel (.xlsx)
+- CSV
+- PDF
+- JSON
+- XML
+
+12.3 Real-time Data
+- Live inventory levels
+- Current stock status
+- Recent transactions
+- System performance metrics
+
+13. COMPLIANCE & STANDARDS
+
+13.1 Data Standards
+- ISO 27001 security compliance
+- GDPR data protection
+- Industry-standard RFID protocols
+- Financial reporting standards
+
+13.2 Audit Requirements
+- Complete audit trail
+- User action logging
+- Data change tracking
+- Compliance reporting
+
+14. UPGRADE & MIGRATION
+
+14.1 Version Management
+- Backward compatibility
+- Database migration tools
+- API versioning
+- Upgrade procedures
+
+14.2 Data Migration
+- Import/export utilities
+- Data validation tools
+- Migration testing
+- Rollback procedures
+
+15. TROUBLESHOOTING
+
+15.1 Common Issues
+- Authentication problems
+- Database connectivity
+- File upload errors
+- Performance issues
+
+15.2 Resolution Steps
+- Error code reference
+- Diagnostic tools
+- Support procedures
+- Emergency contacts
+
+16. FUTURE ROADMAP
+
+16.1 Planned Features
+- Advanced AI analytics
+- Mobile application
+- IoT device integration
+- Blockchain integration
+- Advanced reporting
+
+16.2 Technology Updates
+- Framework upgrades
+- Database enhancements
+- Security improvements
+- Performance optimizations
+
+17. QUICK START GUIDE
+
+17.1 Initial Setup
+1. Register new client organization
+2. Login to get JWT token
+3. Configure master data (categories, branches, counters)
+4. Upload initial RFID tags
+5. Create products
+6. Begin inventory management
+
+17.2 Daily Operations
+1. RFID scanning for verification
+2. Stock movement tracking
+3. Sales processing
+4. Report generation
+5. Data backup
+
+17.3 Integration Setup
+1. Obtain API credentials
+2. Configure webhook endpoints
+3. Set up data synchronization
+4. Test integration points
+5. Monitor performance
+
+18. BEST PRACTICES
+
+18.1 Data Management
+- Regular data validation
+- Consistent naming conventions
+- Proper categorization
+- Regular backups
+
+18.2 Performance Optimization
+- Efficient RFID scanning
+- Optimized queries
+- Proper indexing
+- Regular maintenance
+
+18.3 Security
+- Regular password updates
+- Access control review
+- Audit log monitoring
+- Security updates
+
+19. SUPPORT CONTACTS
+
+19.1 Technical Support
+- API documentation: /swagger
+- Health monitoring: /health
+- Error reporting: Built-in logging
+- Performance metrics: Built-in monitoring
+
+19.2 Development Support
+- Code examples: Available in documentation
+- SDK downloads: Available for major languages
+- Integration testing: Webhook testing tools
+- Rate limiting: Clear guidelines provided
+
+20. CONCLUSION
+
+The RFID Jewelry Inventory System provides a comprehensive, scalable, and secure solution for jewelry inventory management. With its multi-tenant architecture, extensive API capabilities, and robust integration support, it serves as a complete platform for modern jewelry businesses.
+
+Key Benefits:
+- Complete RFID lifecycle management
+- Multi-tenant data isolation
+- Comprehensive reporting and analytics
+- Extensive third-party integration support
+- Scalable and secure architecture
+- User-friendly interface and workflows
+
+The system is designed to grow with your business, providing the tools and capabilities needed for efficient inventory management, accurate tracking, and informed decision-making in the jewelry industry.

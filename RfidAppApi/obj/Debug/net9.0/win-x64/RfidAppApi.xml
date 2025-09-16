@@ -4,6 +4,261 @@
         <name>RfidAppApi</name>
     </assembly>
     <members>
+        <member name="T:RfidAppApi.Controllers.AdminController">
+            <summary>
+            Admin controller for user management and activity tracking
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.AdminController.RegisterAdmin(RfidAppApi.DTOs.CreateUserByAdminDto)">
+            <summary>
+            Register a new admin user (Main Admin only)
+            </summary>
+            <param name="createUserDto">Admin user creation details</param>
+            <returns>Created admin user information</returns>
+        </member>
+        <member name="M:RfidAppApi.Controllers.AdminController.RegisterSubUser(RfidAppApi.DTOs.CreateUserByAdminDto)">
+            <summary>
+            Register a new sub-user under admin
+            </summary>
+            <param name="createUserDto">Sub-user creation details</param>
+            <returns>Created sub-user information</returns>
+        </member>
+        <member name="M:RfidAppApi.Controllers.AdminController.GetUser(System.Int32)">
+            <summary>
+            Get user by ID
+            </summary>
+            <param name="userId">User ID</param>
+            <returns>User information</returns>
+        </member>
+        <member name="M:RfidAppApi.Controllers.AdminController.GetUsersUnderAdmin(System.Int32,System.Int32,System.String,System.String,System.String)">
+            <summary>
+            Get all users managed by the current admin
+            </summary>
+            <returns>List of users</returns>
+        </member>
+        <member name="M:RfidAppApi.Controllers.AdminController.UpdateUser(System.Int32,RfidAppApi.DTOs.UpdateUserByAdminDto)">
+            <summary>
+            Update user information (Admin only)
+            </summary>
+            <param name="userId">User ID</param>
+            <param name="updateUserDto">Update information</param>
+            <returns>Updated user information</returns>
+        </member>
+        <member name="M:RfidAppApi.Controllers.AdminController.DeleteUser(System.Int32)">
+            <summary>
+            Delete user (Admin only)
+            </summary>
+            <param name="userId">User ID</param>
+            <returns>Success status</returns>
+        </member>
+        <member name="M:RfidAppApi.Controllers.AdminController.ActivateUser(RfidAppApi.Controllers.ActivateUserDto)">
+            <summary>
+            Activate user (Admin only)
+            </summary>
+            <param name="activateUserDto">Activation details</param>
+            <returns>Success status</returns>
+        </member>
+        <member name="M:RfidAppApi.Controllers.AdminController.DeactivateUser(RfidAppApi.Controllers.DeactivateUserDto)">
+            <summary>
+            Deactivate user (Admin only)
+            </summary>
+            <param name="deactivateUserDto">Deactivation details</param>
+            <returns>Success status</returns>
+        </member>
+        <member name="M:RfidAppApi.Controllers.AdminController.ResetUserPassword(System.Int32,RfidAppApi.Controllers.ResetPasswordDto)">
+            <summary>
+            Reset user password (Admin only)
+            </summary>
+            <param name="userId">User ID</param>
+            <param name="resetPasswordDto">New password</param>
+            <returns>Success status</returns>
+        </member>
+        <member name="M:RfidAppApi.Controllers.AdminController.AssignPermissions(RfidAppApi.Controllers.AssignPermissionsDto)">
+            <summary>
+            Assign permissions to user
+            </summary>
+            <param name="assignPermissionsDto">Permission assignment details</param>
+            <returns>Success status</returns>
+        </member>
+        <member name="M:RfidAppApi.Controllers.AdminController.UpdatePermissions(RfidAppApi.Controllers.UpdatePermissionsDto)">
+            <summary>
+            Update user permissions (Admin only)
+            </summary>
+            <param name="updatePermissionsDto">Permission update details</param>
+            <returns>Success status</returns>
+        </member>
+        <member name="M:RfidAppApi.Controllers.AdminController.GetUserPermissions(System.Int32)">
+            <summary>
+            Get user permissions
+            </summary>
+            <param name="userId">User ID</param>
+            <returns>User permissions</returns>
+        </member>
+        <member name="M:RfidAppApi.Controllers.AdminController.GetAllUserPermissions">
+            <summary>
+            Get all user permissions
+            </summary>
+            <returns>All user permissions</returns>
+        </member>
+        <member name="M:RfidAppApi.Controllers.AdminController.UpdateUserPermissions(System.Int32,System.Collections.Generic.List{RfidAppApi.DTOs.UserPermissionCreateDto})">
+            <summary>
+            Update user permissions (Admin only)
+            </summary>
+            <param name="userId">User ID</param>
+            <param name="permissions">New permissions</param>
+            <returns>Success status</returns>
+        </member>
+        <member name="M:RfidAppApi.Controllers.AdminController.BulkUpdatePermissions(RfidAppApi.DTOs.BulkPermissionUpdateDto)">
+            <summary>
+            Bulk update permissions for multiple users (Admin only)
+            </summary>
+            <param name="bulkUpdate">Bulk permission update details</param>
+            <returns>Success status</returns>
+        </member>
+        <member name="M:RfidAppApi.Controllers.AdminController.GetUserActivities(System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.Nullable{System.Int32},System.String,System.String,System.Int32,System.Int32)">
+            <summary>
+            Get user activities with filters
+            </summary>
+            <param name="filter">Activity filter parameters</param>
+            <returns>List of user activities</returns>
+        </member>
+        <member name="M:RfidAppApi.Controllers.AdminController.GetUserActivitiesByUser(System.Int32)">
+            <summary>
+            Get activities for a specific user
+            </summary>
+            <param name="userId">User ID</param>
+            <returns>List of user activities</returns>
+        </member>
+        <member name="M:RfidAppApi.Controllers.AdminController.GetUserActivitiesByDateRange(System.DateTime,System.DateTime)">
+            <summary>
+            Get user activities by date range
+            </summary>
+            <param name="startDate">Start date</param>
+            <param name="endDate">End date</param>
+            <returns>List of user activities</returns>
+        </member>
+        <member name="M:RfidAppApi.Controllers.AdminController.GetUserActivitiesByModule(System.String)">
+            <summary>
+            Get user activities by module
+            </summary>
+            <param name="module">Module name</param>
+            <returns>List of user activities</returns>
+        </member>
+        <member name="M:RfidAppApi.Controllers.AdminController.GetUserActivitiesByAction(System.String)">
+            <summary>
+            Get user activities by action
+            </summary>
+            <param name="action">Action name</param>
+            <returns>List of user activities</returns>
+        </member>
+        <member name="M:RfidAppApi.Controllers.AdminController.GetUserActivities(System.Int32,RfidAppApi.DTOs.ActivityFilterDto)">
+            <summary>
+            Get activities for a specific user
+            </summary>
+            <param name="userId">User ID</param>
+            <param name="filter">Activity filter parameters</param>
+            <returns>List of user activities</returns>
+        </member>
+        <member name="M:RfidAppApi.Controllers.AdminController.GetActivitySummary">
+            <summary>
+            Get activity summary
+            </summary>
+            <returns>Activity summary</returns>
+        </member>
+        <member name="M:RfidAppApi.Controllers.AdminController.GetActivitySummaryByDateRange(System.DateTime,System.DateTime)">
+            <summary>
+            Get activity summary by date range
+            </summary>
+            <param name="startDate">Start date</param>
+            <param name="endDate">End date</param>
+            <returns>Activity summary</returns>
+        </member>
+        <member name="M:RfidAppApi.Controllers.AdminController.GetActivitySummaryByUser(System.Int32)">
+            <summary>
+            Get activity summary by user
+            </summary>
+            <param name="userId">User ID</param>
+            <returns>Activity summary</returns>
+        </member>
+        <member name="M:RfidAppApi.Controllers.AdminController.GetActivitySummaryByModule(System.String)">
+            <summary>
+            Get activity summary by module
+            </summary>
+            <param name="module">Module name</param>
+            <returns>Activity summary</returns>
+        </member>
+        <member name="M:RfidAppApi.Controllers.AdminController.GetUserHierarchy">
+            <summary>
+            Get user hierarchy
+            </summary>
+            <returns>User hierarchy</returns>
+        </member>
+        <member name="M:RfidAppApi.Controllers.AdminController.GetUserHierarchyByAdmin(System.Int32)">
+            <summary>
+            Get user hierarchy by admin
+            </summary>
+            <param name="adminUserId">Admin user ID</param>
+            <returns>User hierarchy</returns>
+        </member>
+        <member name="M:RfidAppApi.Controllers.AdminController.ExportActivitiesToCsv(System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.Nullable{System.Int32},System.String)">
+            <summary>
+            Export user activities to CSV
+            </summary>
+            <param name="startDate">Start date</param>
+            <param name="endDate">End date</param>
+            <param name="userId">User ID (optional)</param>
+            <param name="module">Module (optional)</param>
+            <returns>CSV file</returns>
+        </member>
+        <member name="M:RfidAppApi.Controllers.AdminController.ExportPermissionsToCsv">
+            <summary>
+            Export user permissions to CSV
+            </summary>
+            <returns>CSV file</returns>
+        </member>
+        <member name="M:RfidAppApi.Controllers.AdminController.GetDashboard">
+            <summary>
+            Get admin dashboard with statistics and recent activities
+            </summary>
+            <returns>Admin dashboard data</returns>
+        </member>
+        <member name="M:RfidAppApi.Controllers.AdminController.GetOrganizationDashboard">
+            <summary>
+            Get organization dashboard (Main Admin only)
+            </summary>
+            <returns>Organization dashboard data</returns>
+        </member>
+        <member name="M:RfidAppApi.Controllers.AdminController.GetOrganizationUsers">
+            <summary>
+            Get all users in organization (Main Admin only)
+            </summary>
+            <returns>List of all users in organization</returns>
+        </member>
+        <member name="T:RfidAppApi.Controllers.ResetPasswordDto">
+            <summary>
+            DTO for password reset
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.Controllers.ActivateUserDto">
+            <summary>
+            DTO for activating user
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.Controllers.DeactivateUserDto">
+            <summary>
+            DTO for deactivating user
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.Controllers.AssignPermissionsDto">
+            <summary>
+            DTO for assigning permissions
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.Controllers.UpdatePermissionsDto">
+            <summary>
+            DTO for updating permissions
+            </summary>
+        </member>
         <member name="T:RfidAppApi.Controllers.DatabaseMigrationController">
             <summary>
             Controller for database migration and health monitoring
@@ -659,6 +914,24 @@
             <response code="400">Invalid request or client code not found in token</response>
             <response code="500">Internal server error</response>
         </member>
+        <member name="M:RfidAppApi.Controllers.RfidController.UploadRfidFromExcel(RfidAppApi.DTOs.RfidExcelUploadDto)">
+            <summary>
+            Upload RFID data from Excel file
+            </summary>
+            <param name="uploadDto">Excel upload request with file and options</param>
+            <returns>Upload processing results</returns>
+            <response code="200">Excel upload processed successfully</response>
+            <response code="400">Invalid request or validation errors</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:RfidAppApi.Controllers.RfidController.DownloadExcelTemplate">
+            <summary>
+            Download Excel template for RFID upload
+            </summary>
+            <returns>Excel template file</returns>
+            <response code="200">Template downloaded successfully</response>
+            <response code="500">Internal server error</response>
+        </member>
         <member name="T:RfidAppApi.Controllers.StockTransferController">
             <summary>
             Controller for managing stock transfers between branches, counters, and boxes
@@ -918,6 +1191,15 @@
             <response code="401">Invalid credentials</response>
             <response code="500">Internal server error</response>
         </member>
+        <member name="M:RfidAppApi.Controllers.UserController.Logout">
+            <summary>
+            Logout user and log the activity
+            </summary>
+            <returns>Success message</returns>
+            <response code="200">Logout successful</response>
+            <response code="401">Unauthorized</response>
+            <response code="500">Internal server error</response>
+        </member>
         <member name="M:RfidAppApi.Controllers.UserController.GetUserById(System.Int32)">
             <summary>
             Get user by ID
@@ -977,6 +1259,81 @@
             <response code="204">User deleted successfully</response>
             <response code="404">User not found</response>
             <response code="500">Internal server error</response>
+        </member>
+        <member name="T:RfidAppApi.DTOs.AdminUserDto">
+            <summary>
+            DTO for admin user management
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.CreateUserByAdminDto">
+            <summary>
+            DTO for creating a new user by admin
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.UpdateUserByAdminDto">
+            <summary>
+            DTO for updating user by admin
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.UserPermissionDto">
+            <summary>
+            DTO for user permissions
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.UserPermissionCreateDto">
+            <summary>
+            DTO for creating user permissions
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.UserActivityDto">
+            <summary>
+            DTO for user activity tracking
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.AdminDashboardDto">
+            <summary>
+            DTO for admin dashboard statistics
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.ActivityFilterDto">
+            <summary>
+            DTO for activity filter
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.BulkPermissionUpdateDto">
+            <summary>
+            DTO for bulk user permission update
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.ActivitySummaryDto">
+            <summary>
+            DTO for activity summary
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.ModuleActivitySummary">
+            <summary>
+            DTO for module activity summary
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.UserActivitySummary">
+            <summary>
+            DTO for user activity summary
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.RecentActivity">
+            <summary>
+            DTO for recent activity
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.UserHierarchyDto">
+            <summary>
+            DTO for user hierarchy
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.UserHierarchyItem">
+            <summary>
+            DTO for user hierarchy item
+            </summary>
         </member>
         <member name="T:RfidAppApi.DTOs.ProductImageUploadDto">
             <summary>
@@ -1378,6 +1735,86 @@
             Product image URL
             </summary>
         </member>
+        <member name="T:RfidAppApi.DTOs.RfidExcelUploadDto">
+            <summary>
+            DTO for RFID Excel upload request
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.RfidExcelUploadDto.ExcelFile">
+            <summary>
+            Excel file containing RFID data
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.RfidExcelUploadDto.ClientCode">
+            <summary>
+            Client code for the upload (optional, will be extracted from token if not provided)
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.RfidExcelUploadDto.UpdateExisting">
+            <summary>
+            Whether to update existing RFID codes with new EPC values
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.RfidExcelUploadDto.CreateNew">
+            <summary>
+            Whether to create new RFID codes if they don't exist
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.RfidExcelRowDto">
+            <summary>
+            DTO for individual RFID data from Excel
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.RfidExcelRowDto.RFIDCode">
+            <summary>
+            RFID Code from Excel column 1
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.RfidExcelRowDto.EPCValue">
+            <summary>
+            EPC Value from Excel column 2
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.RfidExcelUploadResponseDto">
+            <summary>
+            DTO for RFID Excel upload response
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.RfidExcelUploadResponseDto.TotalRowsProcessed">
+            <summary>
+            Total rows processed
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.RfidExcelUploadResponseDto.NewRfidsCreated">
+            <summary>
+            Number of new RFID codes created
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.RfidExcelUploadResponseDto.ExistingRfidsUpdated">
+            <summary>
+            Number of existing RFID codes updated
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.RfidExcelUploadResponseDto.ErrorRows">
+            <summary>
+            Number of rows with errors
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.RfidExcelUploadResponseDto.Errors">
+            <summary>
+            List of errors encountered during processing
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.RfidExcelUploadResponseDto.ProcessedRows">
+            <summary>
+            List of successfully processed rows
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.RfidExcelUploadResponseDto.Summary">
+            <summary>
+            Summary message
+            </summary>
+        </member>
         <member name="T:RfidAppApi.DTOs.CreateStockTransferDto">
             <summary>
             DTO for creating a new stock transfer
@@ -1568,6 +2005,21 @@
             Connection string for the client database
             </summary>
         </member>
+        <member name="P:RfidAppApi.DTOs.UserDto.IsAdmin">
+            <summary>
+            Whether the user is an admin
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.UserDto.UserType">
+            <summary>
+            User type (MainAdmin, Admin, User)
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.UserDto.AdminUserId">
+            <summary>
+            ID of the admin user who created this user (null for main admin)
+            </summary>
+        </member>
         <member name="P:RfidAppApi.DTOs.UserDto.IsActive">
             <summary>
             Whether the user is active
@@ -1576,6 +2028,11 @@
         <member name="P:RfidAppApi.DTOs.UserDto.CreatedOn">
             <summary>
             When the user was created
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.UserDto.LastLoginDate">
+            <summary>
+            Last login date
             </summary>
         </member>
         <member name="T:RfidAppApi.DTOs.CreateUserDto">
@@ -1719,39 +2176,14 @@
             Users can simply enter text values like "Gold", "Pune", "Counter1" instead of knowing IDs
             </summary>
         </member>
-        <member name="P:RfidAppApi.DTOs.UserFriendlyCreateProductDto.EpcValue">
-            <summary>
-            EPC Value - optional, if not provided, will use RFID code as EPC value
-            This allows you to specify a different EPC value than the RFID code
-            Example: RFID code "RFID001" with EPC value "EPC001234567890"
-            
-            ⚠️ IMPORTANT: When creating new RFID tags, you MUST provide an EPC value.
-            If you don't provide an EPC value, the system will reject the request.
-            
-            Best practices:
-            - Use descriptive RFID codes (e.g., "RFID001", "RFID002")
-            - Use unique EPC values (e.g., "EPC001234567890", "EPC001234567891")
-            - Never leave EPC value empty when creating new RFID tags
-            </summary>
-        </member>
         <member name="T:RfidAppApi.DTOs.UserFriendlyUpdateProductDto">
             <summary>
             User-friendly DTO for updating products
             </summary>
         </member>
-        <member name="P:RfidAppApi.DTOs.UserFriendlyUpdateProductDto.EpcValue">
-            <summary>
-            EPC Value - optional for updates, if provided will update the EPC value of the RFID tag
-            </summary>
-        </member>
         <member name="T:RfidAppApi.DTOs.UserFriendlyProductResponseDto">
             <summary>
             Response DTO for user-friendly product operations
-            </summary>
-        </member>
-        <member name="P:RfidAppApi.DTOs.UserFriendlyProductResponseDto.EpcValue">
-            <summary>
-            EPC Value of the RFID tag assigned to this product
             </summary>
         </member>
         <member name="T:RfidAppApi.DTOs.BulkCreateProductsDto">
@@ -1951,6 +2383,42 @@
             Interface for comprehensive reporting service
             </summary>
         </member>
+        <member name="T:RfidAppApi.Services.IRfidExcelService">
+            <summary>
+            Service interface for RFID Excel operations
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Services.IRfidExcelService.UploadRfidFromExcelAsync(RfidAppApi.DTOs.RfidExcelUploadDto,System.String)">
+            <summary>
+            Upload RFID data from Excel file
+            </summary>
+            <param name="uploadDto">Upload request containing Excel file and options</param>
+            <param name="clientCode">Client code for the operation</param>
+            <returns>Upload response with processing results</returns>
+        </member>
+        <member name="M:RfidAppApi.Services.IRfidExcelService.ProcessRfidRowsAsync(System.Collections.Generic.List{RfidAppApi.DTOs.RfidExcelRowDto},System.String,System.Boolean,System.Boolean)">
+            <summary>
+            Process RFID data from Excel rows
+            </summary>
+            <param name="rfidRows">List of RFID data from Excel</param>
+            <param name="clientCode">Client code for the operation</param>
+            <param name="updateExisting">Whether to update existing RFID codes</param>
+            <param name="createNew">Whether to create new RFID codes</param>
+            <returns>Processing results</returns>
+        </member>
+        <member name="M:RfidAppApi.Services.IRfidExcelService.ValidateRfidDataAsync(System.Collections.Generic.List{RfidAppApi.DTOs.RfidExcelRowDto})">
+            <summary>
+            Validate RFID data from Excel
+            </summary>
+            <param name="rfidRows">List of RFID data to validate</param>
+            <returns>Validation results with any errors</returns>
+        </member>
+        <member name="M:RfidAppApi.Services.IRfidExcelService.GenerateExcelTemplateAsync">
+            <summary>
+            Generate sample Excel template for RFID upload
+            </summary>
+            <returns>Excel file as byte array</returns>
+        </member>
         <member name="M:RfidAppApi.Services.IRfidService.GetUsedRfidAnalysisAsync(System.String)">
             <summary>
             Get detailed analysis of used RFID tags (assigned to products) for a client
@@ -2106,6 +2574,41 @@
         <member name="T:RfidAppApi.Services.ReportingService">
             <summary>
             Comprehensive reporting service for stock tracking, sales reporting, and daily balances
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.Services.RfidExcelService">
+            <summary>
+            Service for RFID Excel operations including upload, processing, and template generation
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Services.RfidExcelService.UploadRfidFromExcelAsync(RfidAppApi.DTOs.RfidExcelUploadDto,System.String)">
+            <summary>
+            Upload RFID data from Excel file
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Services.RfidExcelService.ProcessRfidRowsAsync(System.Collections.Generic.List{RfidAppApi.DTOs.RfidExcelRowDto},System.String,System.Boolean,System.Boolean)">
+            <summary>
+            Process RFID data from Excel rows
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Services.RfidExcelService.ValidateRfidDataAsync(System.Collections.Generic.List{RfidAppApi.DTOs.RfidExcelRowDto})">
+            <summary>
+            Validate RFID data from Excel
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Services.RfidExcelService.GenerateExcelTemplateAsync">
+            <summary>
+            Generate sample Excel template for RFID upload
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Services.RfidExcelService.ReadExcelFileAsync(Microsoft.AspNetCore.Http.IFormFile)">
+            <summary>
+            Read Excel file and extract RFID data
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Services.RfidExcelService.GenerateSummary(RfidAppApi.DTOs.RfidExcelUploadResponseDto)">
+            <summary>
+            Generate summary message for the response
             </summary>
         </member>
         <member name="T:RfidAppApi.Services.StockTransferService">

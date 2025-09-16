@@ -1,0 +1,947 @@
+RFID Jewelry Inventory System - Complete API Endpoints Documentation
+
+1. AUTHENTICATION & USER MANAGEMENT
+
+1.1 User Registration
+- Endpoint: POST /api/User/register
+- Description: Register new client organization with automatic database creation
+- Request Body:
+  {
+    "userName": "string",
+    "email": "string",
+    "password": "string",
+    "fullName": "string",
+    "mobileNumber": "string",
+    "city": "string",
+    "address": "string",
+    "organisationName": "string",
+    "showroomType": "string"
+  }
+- Response: 201 Created with user details and client code
+
+1.2 User Login
+- Endpoint: POST /api/User/login
+- Description: Authenticate user and generate JWT token
+- Request Body:
+  {
+    "email": "string",
+    "password": "string"
+  }
+- Response: 200 OK with JWT token and user details
+
+1.3 Get User by ID
+- Endpoint: GET /api/User/{id}
+- Description: Retrieve user information by ID
+- Headers: Authorization: Bearer {token}
+- Response: 200 OK with user details
+
+1.4 Get User by Email
+- Endpoint: GET /api/User/by-email/{email}
+- Description: Retrieve user information by email
+- Headers: Authorization: Bearer {token}
+- Response: 200 OK with user details
+
+1.5 Get Users by Client Code
+- Endpoint: GET /api/User/by-client-code/{clientCode}
+- Description: Retrieve all users for a specific client
+- Headers: Authorization: Bearer {token}
+- Response: 200 OK with list of users
+
+1.6 Get All Users
+- Endpoint: GET /api/User
+- Description: Retrieve all users (admin only)
+- Headers: Authorization: Bearer {token}
+- Response: 200 OK with list of users
+
+1.7 Update User
+- Endpoint: PUT /api/User/{id}
+- Description: Update user information
+- Headers: Authorization: Bearer {token}
+- Request Body: User update DTO
+- Response: 200 OK with updated user details
+
+1.8 Delete User
+- Endpoint: DELETE /api/User/{id}
+- Description: Delete user account
+- Headers: Authorization: Bearer {token}
+- Response: 204 No Content
+
+2. RFID MANAGEMENT
+
+2.1 Create RFID
+- Endpoint: POST /api/Rfid
+- Description: Create new RFID tag
+- Headers: Authorization: Bearer {token}
+- Request Body:
+  {
+    "rfidCode": "string",
+    "epcValue": "string",
+    "clientCode": "string"
+  }
+- Response: 201 Created with RFID details
+
+2.2 Get All RFIDs
+- Endpoint: GET /api/Rfid
+- Description: Retrieve all RFID tags for authenticated client
+- Headers: Authorization: Bearer {token}
+- Response: 200 OK with list of RFID tags
+
+2.3 Get RFID by Code
+- Endpoint: GET /api/Rfid/{rfidCode}
+- Description: Retrieve specific RFID tag by code
+- Headers: Authorization: Bearer {token}
+- Response: 200 OK with RFID details
+
+2.4 Update RFID
+- Endpoint: PUT /api/Rfid/{rfidCode}
+- Description: Update RFID tag information
+- Headers: Authorization: Bearer {token}
+- Request Body:
+  {
+    "epcValue": "string",
+    "isActive": "boolean"
+  }
+- Response: 200 OK with updated RFID details
+
+2.5 Delete RFID
+- Endpoint: DELETE /api/Rfid/{rfidCode}
+- Description: Delete RFID tag
+- Headers: Authorization: Bearer {token}
+- Response: 204 No Content
+
+2.6 Get Available RFIDs
+- Endpoint: GET /api/Rfid/available
+- Description: Get RFID tags not assigned to products
+- Headers: Authorization: Bearer {token}
+- Response: 200 OK with available RFID tags
+
+2.7 Get Active RFIDs
+- Endpoint: GET /api/Rfid/active
+- Description: Get all active RFID tags
+- Headers: Authorization: Bearer {token}
+- Response: 200 OK with active RFID tags
+
+2.8 Get RFID Count
+- Endpoint: GET /api/Rfid/count
+- Description: Get total count of RFID tags
+- Headers: Authorization: Bearer {token}
+- Response: 200 OK with count
+
+2.9 Get Used RFID Analysis
+- Endpoint: GET /api/Rfid/used-analysis
+- Description: Get analysis of used RFID tags
+- Headers: Authorization: Bearer {token}
+- Response: 200 OK with analysis data
+
+2.10 Get Unused RFID Analysis
+- Endpoint: GET /api/Rfid/unused-analysis
+- Description: Get analysis of unused RFID tags
+- Headers: Authorization: Bearer {token}
+- Response: 200 OK with analysis data
+
+2.11 Scan Products by EPC Value
+- Endpoint: POST /api/Rfid/scan
+- Description: Scan for products by EPC value(s)
+- Headers: Authorization: Bearer {token}
+- Request Body:
+  {
+    "epcValue": "string",
+    "epcValues": ["string"]
+  }
+- Response: 200 OK with scan results
+
+2.12 Upload RFID from Excel
+- Endpoint: POST /api/Rfid/upload-excel
+- Description: Bulk upload RFID data from Excel file
+- Headers: Authorization: Bearer {token}
+- Request Body: FormData with Excel file
+- Response: 200 OK with upload results
+
+2.13 Download Excel Template
+- Endpoint: GET /api/Rfid/download-template
+- Description: Download Excel template for RFID upload
+- Headers: Authorization: Bearer {token}
+- Response: 200 OK with Excel file
+
+3. PRODUCT MANAGEMENT
+
+3.1 Create Product
+- Endpoint: POST /api/Product/create
+- Description: Create new product with user-friendly inputs
+- Headers: Authorization: Bearer {token}
+- Request Body:
+  {
+    "itemCode": "string",
+    "categoryName": "string",
+    "branchName": "string",
+    "counterName": "string",
+    "productName": "string",
+    "designName": "string",
+    "purityName": "string",
+    "rfidCode": "string",
+    "grossWeight": "float",
+    "netWeight": "float",
+    "mrp": "decimal"
+  }
+- Response: 201 Created with product details
+
+3.2 Create Bulk Products
+- Endpoint: POST /api/Product/bulk-create
+- Description: Create multiple products in bulk
+- Headers: Authorization: Bearer {token}
+- Request Body: Array of product creation DTOs
+- Response: 200 OK with bulk creation results
+
+3.3 Create Product with Images
+- Endpoint: POST /api/Product/create-with-images
+- Description: Create product with image uploads
+- Headers: Authorization: Bearer {token}
+- Request Body: FormData with product data and images
+- Response: 201 Created with product and image details
+
+3.4 Get Product by ID
+- Endpoint: GET /api/Product/{id}
+- Description: Retrieve product details by ID
+- Headers: Authorization: Bearer {token}
+- Response: 200 OK with product details
+
+3.5 Get All Products
+- Endpoint: GET /api/Product/all
+- Description: Retrieve all products with filtering
+- Headers: Authorization: Bearer {token}
+- Query Parameters: page, pageSize, searchTerm, sortBy, sortOrder
+- Response: 200 OK with paginated product list
+
+3.6 Update Product
+- Endpoint: PUT /api/Product/{id}
+- Description: Update product information
+- Headers: Authorization: Bearer {token}
+- Request Body: Product update DTO
+- Response: 200 OK with updated product details
+
+3.7 Update Product with Images
+- Endpoint: PUT /api/Product/{id}/with-images
+- Description: Update product with image modifications
+- Headers: Authorization: Bearer {token}
+- Request Body: FormData with product data and images
+- Response: 200 OK with updated product details
+
+3.8 Delete Product
+- Endpoint: DELETE /api/Product/{id}
+- Description: Delete product
+- Headers: Authorization: Bearer {token}
+- Response: 204 No Content
+
+3.9 Search Products
+- Endpoint: GET /api/Product/search
+- Description: Search products with advanced filters
+- Headers: Authorization: Bearer {token}
+- Query Parameters: searchTerm, categoryId, branchId, counterId, status
+- Response: 200 OK with search results
+
+3.10 Get Product Statistics
+- Endpoint: GET /api/Product/statistics
+- Description: Get product analytics and statistics
+- Headers: Authorization: Bearer {token}
+- Response: 200 OK with statistics data
+
+3.11 Get Product Image
+- Endpoint: GET /api/Product/{id}/image
+- Description: Retrieve product image
+- Headers: Authorization: Bearer {token}
+- Response: 200 OK with image data
+
+4. PRODUCT IMAGE MANAGEMENT
+
+4.1 Upload Single Image
+- Endpoint: POST /api/ProductImage/upload
+- Description: Upload single image for product
+- Headers: Authorization: Bearer {token}
+- Request Body: FormData with image file and metadata
+- Response: 200 OK with image details
+
+4.2 Upload Multiple Images
+- Endpoint: POST /api/ProductImage/upload-multiple
+- Description: Upload multiple images for products
+- Headers: Authorization: Bearer {token}
+- Request Body: FormData with multiple files and metadata
+- Response: 200 OK with image details
+
+4.3 Upload Image with Metadata
+- Endpoint: POST /api/ProductImage/upload-with-metadata
+- Description: Upload image with detailed metadata
+- Headers: Authorization: Bearer {token}
+- Request Body: FormData with image and metadata
+- Response: 200 OK with image details
+
+4.4 Get Image by ID
+- Endpoint: GET /api/ProductImage/{id}
+- Description: Retrieve image by ID
+- Headers: Authorization: Bearer {token}
+- Response: 200 OK with image details
+
+4.5 Get Product Images
+- Endpoint: GET /api/ProductImage/product/{productId}
+- Description: Retrieve all images for a product
+- Headers: Authorization: Bearer {token}
+- Response: 200 OK with image list
+
+4.6 Update Image
+- Endpoint: PUT /api/ProductImage/{id}
+- Description: Update image metadata
+- Headers: Authorization: Bearer {token}
+- Request Body: Image update DTO
+- Response: 200 OK with updated image details
+
+4.7 Bulk Update Images
+- Endpoint: PUT /api/ProductImage/bulk-update
+- Description: Update multiple images in bulk
+- Headers: Authorization: Bearer {token}
+- Request Body: Bulk image operation DTO
+- Response: 200 OK with bulk update results
+
+4.8 Delete Image
+- Endpoint: DELETE /api/ProductImage/{id}
+- Description: Delete single image
+- Headers: Authorization: Bearer {token}
+- Response: 204 No Content
+
+4.9 Delete Product Images
+- Endpoint: DELETE /api/ProductImage/product/{productId}
+- Description: Delete all images for a product
+- Headers: Authorization: Bearer {token}
+- Response: 204 No Content
+
+4.10 Bulk Delete Images
+- Endpoint: DELETE /api/ProductImage/bulk-delete
+- Description: Delete multiple images in bulk
+- Headers: Authorization: Bearer {token}
+- Request Body: Array of image IDs
+- Response: 204 No Content
+
+5. INVOICE MANAGEMENT
+
+5.1 Create Invoice
+- Endpoint: POST /api/Invoice
+- Description: Create new sales invoice
+- Headers: Authorization: Bearer {token}
+- Request Body:
+  {
+    "productId": "int",
+    "rfidCode": "string",
+    "customerName": "string",
+    "customerPhone": "string",
+    "sellingPrice": "decimal",
+    "discountAmount": "decimal",
+    "finalAmount": "decimal",
+    "invoiceType": "string",
+    "paymentMethod": "string"
+  }
+- Response: 201 Created with invoice details
+
+5.2 Get Invoice by ID
+- Endpoint: GET /api/Invoice/{id}
+- Description: Retrieve invoice by ID
+- Headers: Authorization: Bearer {token}
+- Response: 200 OK with invoice details
+
+5.3 Get All Invoices
+- Endpoint: GET /api/Invoice
+- Description: Retrieve all invoices with filtering
+- Headers: Authorization: Bearer {token}
+- Query Parameters: page, pageSize, searchTerm, sortBy, sortOrder
+- Response: 200 OK with paginated invoice list
+
+5.4 Update Invoice
+- Endpoint: PUT /api/Invoice/{id}
+- Description: Update invoice information
+- Headers: Authorization: Bearer {token}
+- Request Body: Invoice update DTO
+- Response: 200 OK with updated invoice details
+
+5.5 Delete Invoice
+- Endpoint: DELETE /api/Invoice/{id}
+- Description: Delete invoice
+- Headers: Authorization: Bearer {token}
+- Response: 204 No Content
+
+5.6 Get Invoices by Date Range
+- Endpoint: GET /api/Invoice/by-date-range
+- Description: Filter invoices by date range
+- Headers: Authorization: Bearer {token}
+- Query Parameters: startDate, endDate
+- Response: 200 OK with filtered invoices
+
+5.7 Get Invoices by Product
+- Endpoint: GET /api/Invoice/by-product
+- Description: Filter invoices by product
+- Headers: Authorization: Bearer {token}
+- Query Parameters: productId
+- Response: 200 OK with filtered invoices
+
+5.8 Get Invoices by Customer
+- Endpoint: GET /api/Invoice/by-customer
+- Description: Filter invoices by customer
+- Headers: Authorization: Bearer {token}
+- Query Parameters: customerName, customerPhone
+- Response: 200 OK with filtered invoices
+
+5.9 Get Invoices by Payment Method
+- Endpoint: GET /api/Invoice/by-payment-method
+- Description: Filter invoices by payment method
+- Headers: Authorization: Bearer {token}
+- Query Parameters: paymentMethod
+- Response: 200 OK with filtered invoices
+
+5.10 Get Invoice Statistics
+- Endpoint: GET /api/Invoice/statistics
+- Description: Get invoice analytics and statistics
+- Headers: Authorization: Bearer {token}
+- Response: 200 OK with statistics data
+
+5.11 Get Revenue Analytics
+- Endpoint: GET /api/Invoice/revenue-analytics
+- Description: Get revenue analysis and trends
+- Headers: Authorization: Bearer {token}
+- Response: 200 OK with revenue analytics
+
+5.12 Get Top Products
+- Endpoint: GET /api/Invoice/top-products
+- Description: Get top-selling products
+- Headers: Authorization: Bearer {token}
+- Response: 200 OK with top products data
+
+5.13 Bulk Create Invoices
+- Endpoint: POST /api/Invoice/bulk-create
+- Description: Create multiple invoices in bulk
+- Headers: Authorization: Bearer {token}
+- Request Body: Array of invoice creation DTOs
+- Response: 200 OK with bulk creation results
+
+5.14 Export Invoices to CSV
+- Endpoint: GET /api/Invoice/export-csv
+- Description: Export invoices to CSV format
+- Headers: Authorization: Bearer {token}
+- Query Parameters: startDate, endDate, format
+- Response: 200 OK with CSV file
+
+6. REPORTING & ANALYTICS
+
+6.1 Stock Movement Management
+- Endpoint: POST /api/Reporting/stock-movements
+- Description: Create new stock movement
+- Headers: Authorization: Bearer {token}
+- Request Body: Stock movement creation DTO
+- Response: 201 Created with movement details
+
+- Endpoint: POST /api/Reporting/stock-movements/bulk
+- Description: Create multiple stock movements in bulk
+- Headers: Authorization: Bearer {token}
+- Request Body: Array of movement creation DTOs
+- Response: 200 OK with bulk creation results
+
+- Endpoint: GET /api/Reporting/stock-movements
+- Description: Retrieve stock movements with filtering
+- Headers: Authorization: Bearer {token}
+- Query Parameters: page, pageSize, startDate, endDate, movementType
+- Response: 200 OK with paginated movement list
+
+- Endpoint: GET /api/Reporting/stock-movements/{id}
+- Description: Retrieve specific stock movement
+- Headers: Authorization: Bearer {token}
+- Response: 200 OK with movement details
+
+- Endpoint: GET /api/Reporting/stock-movements/by-date-range
+- Description: Filter movements by date range
+- Headers: Authorization: Bearer {token}
+- Query Parameters: startDate, endDate
+- Response: 200 OK with filtered movements
+
+- Endpoint: GET /api/Reporting/stock-movements/by-product
+- Description: Filter movements by product
+- Headers: Authorization: Bearer {token}
+- Query Parameters: productId
+- Response: 200 OK with filtered movements
+
+- Endpoint: GET /api/Reporting/stock-movements/by-branch
+- Description: Filter movements by branch
+- Headers: Authorization: Bearer {token}
+- Query Parameters: branchId
+- Response: 200 OK with filtered movements
+
+- Endpoint: GET /api/Reporting/stock-movements/by-counter
+- Description: Filter movements by counter
+- Headers: Authorization: Bearer {token}
+- Query Parameters: counterId
+- Response: 200 OK with filtered movements
+
+- Endpoint: GET /api/Reporting/stock-movements/by-category
+- Description: Filter movements by category
+- Headers: Authorization: Bearer {token}
+- Query Parameters: categoryId
+- Response: 200 OK with filtered movements
+
+6.2 Daily Stock Balance Management
+- Endpoint: GET /api/Reporting/daily-stock-balances
+- Description: Retrieve daily stock balances
+- Headers: Authorization: Bearer {token}
+- Query Parameters: page, pageSize, balanceDate
+- Response: 200 OK with balance list
+
+- Endpoint: GET /api/Reporting/daily-stock-balances/{id}
+- Description: Retrieve specific daily stock balance
+- Headers: Authorization: Bearer {token}
+- Response: 200 OK with balance details
+
+- Endpoint: GET /api/Reporting/daily-stock-balances/by-product-and-date
+- Description: Get balance for specific product and date
+- Headers: Authorization: Bearer {token}
+- Query Parameters: productId, balanceDate
+- Response: 200 OK with balance details
+
+- Endpoint: GET /api/Reporting/daily-stock-balances/by-date-range
+- Description: Filter balances by date range
+- Headers: Authorization: Bearer {token}
+- Query Parameters: startDate, endDate
+- Response: 200 OK with filtered balances
+
+- Endpoint: POST /api/Reporting/daily-stock-balances/calculate
+- Description: Calculate daily stock balances
+- Headers: Authorization: Bearer {token}
+- Request Body: Balance calculation DTO
+- Response: 200 OK with calculation results
+
+- Endpoint: POST /api/Reporting/daily-stock-balances/calculate-for-date
+- Description: Calculate balances for specific date
+- Headers: Authorization: Bearer {token}
+- Request Body: Date-specific calculation DTO
+- Response: 200 OK with calculation results
+
+6.3 Sales Reporting
+- Endpoint: GET /api/Reporting/sales-report
+- Description: Get sales analytics and reports
+- Headers: Authorization: Bearer {token}
+- Query Parameters: startDate, endDate, groupBy
+- Response: 200 OK with sales report data
+
+- Endpoint: GET /api/Reporting/sales-report/by-date-range
+- Description: Get sales report for date range
+- Headers: Authorization: Bearer {token}
+- Query Parameters: startDate, endDate
+- Response: 200 OK with sales report data
+
+- Endpoint: GET /api/Reporting/sales-report/by-branch
+- Description: Get sales report by branch
+- Headers: Authorization: Bearer {token}
+- Query Parameters: branchId, startDate, endDate
+- Response: 200 OK with branch sales report
+
+- Endpoint: GET /api/Reporting/sales-report/by-counter
+- Description: Get sales report by counter
+- Headers: Authorization: Bearer {token}
+- Query Parameters: counterId, startDate, endDate
+- Response: 200 OK with counter sales report
+
+- Endpoint: GET /api/Reporting/sales-report/by-category
+- Description: Get sales report by category
+- Headers: Authorization: Bearer {token}
+- Query Parameters: categoryId, startDate, endDate
+- Response: 200 OK with category sales report
+
+6.4 Stock Verification Reporting
+- Endpoint: GET /api/Reporting/stock-verification-report
+- Description: Get stock verification reports
+- Headers: Authorization: Bearer {token}
+- Query Parameters: startDate, endDate, status
+- Response: 200 OK with verification report data
+
+- Endpoint: GET /api/Reporting/stock-verification-report/by-session
+- Description: Get verification report for specific session
+- Headers: Authorization: Bearer {token}
+- Query Parameters: sessionId
+- Response: 200 OK with session verification report
+
+- Endpoint: GET /api/Reporting/stock-verification-report/by-branch
+- Description: Get verification report by branch
+- Headers: Authorization: Bearer {token}
+- Query Parameters: branchId, startDate, endDate
+- Response: 200 OK with branch verification report
+
+- Endpoint: GET /api/Reporting/stock-verification-report/by-counter
+- Description: Get verification report by counter
+- Headers: Authorization: Bearer {token}
+- Query Parameters: counterId, startDate, endDate
+- Response: 200 OK with counter verification report
+
+6.5 RFID Usage Analytics
+- Endpoint: GET /api/Reporting/rfid-usage
+- Description: Get RFID usage overview
+- Headers: Authorization: Bearer {token}
+- Response: 200 OK with RFID usage data
+
+- Endpoint: GET /api/Reporting/rfid-usage/by-date
+- Description: Get RFID usage by date
+- Headers: Authorization: Bearer {token}
+- Query Parameters: startDate, endDate
+- Response: 200 OK with date-based usage data
+
+- Endpoint: GET /api/Reporting/rfid-usage/used
+- Description: Get used RFID tags analysis
+- Headers: Authorization: Bearer {token}
+- Response: 200 OK with used RFID analysis
+
+- Endpoint: GET /api/Reporting/rfid-usage/unused
+- Description: Get unused RFID tags analysis
+- Headers: Authorization: Bearer {token}
+- Response: 200 OK with unused RFID analysis
+
+- Endpoint: GET /api/Reporting/rfid-usage/by-status
+- Description: Get RFID usage by status
+- Headers: Authorization: Bearer {token}
+- Query Parameters: status
+- Response: 200 OK with status-based usage data
+
+- Endpoint: GET /api/Reporting/rfid-usage/by-category
+- Description: Get RFID usage by category
+- Headers: Authorization: Bearer {token}
+- Query Parameters: categoryId
+- Response: 200 OK with category-based usage data
+
+- Endpoint: GET /api/Reporting/rfid-usage/by-branch
+- Description: Get RFID usage by branch
+- Headers: Authorization: Bearer {token}
+- Query Parameters: branchId
+- Response: 200 OK with branch-based usage data
+
+- Endpoint: GET /api/Reporting/rfid-usage/by-counter
+- Description: Get RFID usage by counter
+- Headers: Authorization: Bearer {token}
+- Query Parameters: counterId
+- Response: 200 OK with counter-based usage data
+
+- Endpoint: GET /api/Reporting/rfid-usage/for-specific-category
+- Description: Get RFID usage for specific category
+- Headers: Authorization: Bearer {token}
+- Query Parameters: categoryId
+- Response: 200 OK with specific category usage data
+
+- Endpoint: GET /api/Reporting/rfid-usage/for-specific-branch
+- Description: Get RFID usage for specific branch
+- Headers: Authorization: Bearer {token}
+- Query Parameters: branchId
+- Response: 200 OK with specific branch usage data
+
+- Endpoint: GET /api/Reporting/rfid-usage/for-specific-counter
+- Description: Get RFID usage for specific counter
+- Headers: Authorization: Bearer {token}
+- Query Parameters: counterId
+- Response: 200 OK with specific counter usage data
+
+- Endpoint: GET /api/Reporting/rfid-usage/total-count
+- Description: Get total RFID count
+- Headers: Authorization: Bearer {token}
+- Response: 200 OK with total count
+
+- Endpoint: GET /api/Reporting/rfid-usage/used-count
+- Description: Get used RFID count
+- Headers: Authorization: Bearer {token}
+- Response: 200 OK with used count
+
+- Endpoint: GET /api/Reporting/rfid-usage/unused-count
+- Description: Get unused RFID count
+- Headers: Authorization: Bearer {token}
+- Response: 200 OK with unused count
+
+- Endpoint: GET /api/Reporting/rfid-usage/usage-percentage
+- Description: Get RFID usage percentage
+- Headers: Authorization: Bearer {token}
+- Response: 200 OK with usage percentage
+
+6.6 Performance Analytics
+- Endpoint: GET /api/Reporting/performance-analytics
+- Description: Get system performance analytics
+- Headers: Authorization: Bearer {token}
+- Response: 200 OK with performance data
+
+- Endpoint: GET /api/Reporting/performance-analytics/by-date-range
+- Description: Get performance analytics for date range
+- Headers: Authorization: Bearer {token}
+- Query Parameters: startDate, endDate
+- Response: 200 OK with date-based performance data
+
+- Endpoint: GET /api/Reporting/performance-analytics/by-branch
+- Description: Get performance analytics by branch
+- Headers: Authorization: Bearer {token}
+- Query Parameters: branchId
+- Response: 200 OK with branch performance data
+
+- Endpoint: GET /api/Reporting/performance-analytics/by-counter
+- Description: Get performance analytics by counter
+- Headers: Authorization: Bearer {token}
+- Query Parameters: counterId
+- Response: 200 OK with counter performance data
+
+6.7 Export Functionality
+- Endpoint: GET /api/Reporting/export-stock-movements
+- Description: Export stock movements to various formats
+- Headers: Authorization: Bearer {token}
+- Query Parameters: format, startDate, endDate
+- Response: 200 OK with exported file
+
+- Endpoint: GET /api/Reporting/export-daily-balances
+- Description: Export daily stock balances
+- Headers: Authorization: Bearer {token}
+- Query Parameters: format, startDate, endDate
+- Response: 200 OK with exported file
+
+- Endpoint: GET /api/Reporting/export-sales-report
+- Description: Export sales report
+- Headers: Authorization: Bearer {token}
+- Query Parameters: format, startDate, endDate
+- Response: 200 OK with exported file
+
+- Endpoint: GET /api/Reporting/export-rfid-usage
+- Description: Export RFID usage report
+- Headers: Authorization: Bearer {token}
+- Query Parameters: format, startDate, endDate
+- Response: 200 OK with exported file
+
+6.8 Recalculation Endpoints
+- Endpoint: POST /api/Reporting/recalculate-stock-balances
+- Description: Recalculate stock balances
+- Headers: Authorization: Bearer {token}
+- Request Body: Recalculation DTO
+- Response: 200 OK with recalculation results
+
+- Endpoint: POST /api/Reporting/recalculate-all-balances
+- Description: Recalculate all stock balances
+- Headers: Authorization: Bearer {token}
+- Response: 200 OK with recalculation results
+
+7. STOCK VERIFICATION MANAGEMENT
+
+7.1 Create Stock Verification Session
+- Endpoint: POST /api/StockVerification/create-session
+- Description: Create new stock verification session
+- Headers: Authorization: Bearer {token}
+- Request Body: Stock verification creation DTO
+- Response: 200 OK with verification session details
+
+7.2 Get Stock Verification by ID
+- Endpoint: GET /api/StockVerification/{id}
+- Description: Retrieve stock verification session by ID
+- Headers: Authorization: Bearer {token}
+- Response: 200 OK with verification details
+
+7.3 Get All Stock Verifications
+- Endpoint: GET /api/StockVerification
+- Description: Retrieve all stock verification sessions
+- Headers: Authorization: Bearer {token}
+- Query Parameters: page, pageSize, status, startDate, endDate
+- Response: 200 OK with verification list
+
+7.4 Update Stock Verification
+- Endpoint: PUT /api/StockVerification/{id}
+- Description: Update stock verification session
+- Headers: Authorization: Bearer {token}
+- Request Body: Stock verification update DTO
+- Response: 200 OK with updated verification details
+
+7.5 Delete Stock Verification
+- Endpoint: DELETE /api/StockVerification/{id}
+- Description: Delete stock verification session
+- Headers: Authorization: Bearer {token}
+- Response: 204 No Content
+
+7.6 Get Stock Verification Details
+- Endpoint: GET /api/StockVerification/{id}/details
+- Description: Get verification details for session
+- Headers: Authorization: Bearer {token}
+- Response: 200 OK with verification details
+
+7.7 Update Verification Status
+- Endpoint: PUT /api/StockVerification/{id}/status
+- Description: Update verification session status
+- Headers: Authorization: Bearer {token}
+- Request Body: Status update DTO
+- Response: 200 OK with updated status
+
+7.8 Complete Verification Session
+- Endpoint: POST /api/StockVerification/{id}/complete
+- Description: Mark verification session as complete
+- Headers: Authorization: Bearer {token}
+- Response: 200 OK with completion results
+
+7.9 Get Verification Statistics
+- Endpoint: GET /api/StockVerification/statistics
+- Description: Get verification statistics and analytics
+- Headers: Authorization: Bearer {token}
+- Response: 200 OK with statistics data
+
+8. STOCK TRANSFER MANAGEMENT
+
+8.1 Create Stock Transfer
+- Endpoint: POST /api/StockTransfer
+- Description: Create new stock transfer request
+- Headers: Authorization: Bearer {token}
+- Request Body: Stock transfer creation DTO
+- Response: 201 Created with transfer details
+
+8.2 Get Stock Transfer by ID
+- Endpoint: GET /api/StockTransfer/{id}
+- Description: Retrieve stock transfer by ID
+- Headers: Authorization: Bearer {token}
+- Response: 200 OK with transfer details
+
+8.3 Get All Stock Transfers
+- Endpoint: GET /api/StockTransfer
+- Description: Retrieve all stock transfers
+- Headers: Authorization: Bearer {token}
+- Query Parameters: page, pageSize, status, startDate, endDate
+- Response: 200 OK with transfer list
+
+8.4 Update Stock Transfer
+- Endpoint: PUT /api/StockTransfer/{id}
+- Description: Update stock transfer information
+- Headers: Authorization: Bearer {token}
+- Request Body: Stock transfer update DTO
+- Response: 200 OK with updated transfer details
+
+8.5 Delete Stock Transfer
+- Endpoint: DELETE /api/StockTransfer/{id}
+- Description: Delete stock transfer
+- Headers: Authorization: Bearer {token}
+- Response: 204 No Content
+
+8.6 Approve Stock Transfer
+- Endpoint: POST /api/StockTransfer/{id}/approve
+- Description: Approve stock transfer request
+- Headers: Authorization: Bearer {token}
+- Request Body: Approval DTO
+- Response: 200 OK with approval results
+
+8.7 Reject Stock Transfer
+- Endpoint: POST /api/StockTransfer/{id}/reject
+- Description: Reject stock transfer request
+- Headers: Authorization: Bearer {token}
+- Request Body: Rejection DTO
+- Response: 200 OK with rejection results
+
+8.8 Execute Stock Transfer
+- Endpoint: POST /api/StockTransfer/{id}/execute
+- Description: Execute approved stock transfer
+- Headers: Authorization: Bearer {token}
+- Response: 200 OK with execution results
+
+8.9 Cancel Stock Transfer
+- Endpoint: POST /api/StockTransfer/{id}/cancel
+- Description: Cancel stock transfer request
+- Headers: Authorization: Bearer {token}
+- Response: 200 OK with cancellation results
+
+8.10 Get Transfer Statistics
+- Endpoint: GET /api/StockTransfer/statistics
+- Description: Get transfer statistics and analytics
+- Headers: Authorization: Bearer {token}
+- Response: 200 OK with statistics data
+
+9. DATABASE MIGRATION & HEALTH
+
+9.1 Get Database Health
+- Endpoint: GET /api/DatabaseMigration/health
+- Description: Get overall database health status
+- Response: 200 OK with health status
+
+9.2 Get Client Database Health
+- Endpoint: GET /api/DatabaseMigration/health/{clientCode}
+- Description: Get health status for specific client
+- Response: 200 OK with client health status
+
+9.3 Migrate Client Database
+- Endpoint: POST /api/DatabaseMigration/migrate/{clientCode}
+- Description: Migrate specific client database
+- Response: 200 OK with migration results
+
+9.4 Migrate All Client Databases
+- Endpoint: POST /api/DatabaseMigration/migrate-all
+- Description: Migrate all client databases
+- Response: 200 OK with migration results
+
+9.5 Repair Client Database
+- Endpoint: POST /api/DatabaseMigration/repair/{clientCode}
+- Description: Repair specific client database
+- Response: 200 OK with repair results
+
+9.6 Get Migration Statistics
+- Endpoint: GET /api/DatabaseMigration/statistics
+- Description: Get migration statistics
+- Response: 200 OK with statistics data
+
+9.7 Emergency Repair All
+- Endpoint: POST /api/DatabaseMigration/emergency-repair-all
+- Description: Emergency repair all databases
+- Response: 200 OK with repair results
+
+9.8 Test Client Tables
+- Endpoint: GET /api/DatabaseMigration/test-tables/{clientCode}
+- Description: Test tables for specific client
+- Response: 200 OK with test results
+
+9.9 Force Create Missing Tables
+- Endpoint: POST /api/DatabaseMigration/force-create-missing-tables/{clientCode}
+- Description: Force create missing tables for client
+- Response: 200 OK with creation results
+
+9.10 Add Product Image Table
+- Endpoint: POST /api/DatabaseMigration/add-product-image-table/{clientCode}
+- Description: Add product image table for client
+- Response: 200 OK with addition results
+
+9.11 Add Product Image Table to All
+- Endpoint: POST /api/DatabaseMigration/add-product-image-table-to-all
+- Description: Add product image table to all clients
+- Response: 200 OK with addition results
+
+10. SYSTEM HEALTH & MONITORING
+
+10.1 Health Check
+- Endpoint: GET /health
+- Description: System health check endpoint
+- Response: 200 OK with health status
+
+10.2 OpenAPI Documentation
+- Endpoint: GET /
+- Description: Swagger UI for API documentation
+- Response: 200 OK with Swagger UI
+
+10.3 OpenAPI JSON
+- Endpoint: GET /swagger/v1/swagger.json
+- Description: OpenAPI specification in JSON format
+- Response: 200 OK with OpenAPI spec
+
+AUTHENTICATION & SECURITY:
+
+- All endpoints (except registration, login, and health check) require JWT authentication
+- JWT token must be included in Authorization header: "Bearer {token}"
+- Client code is automatically extracted from JWT token
+- Multi-tenant isolation ensures data security between clients
+
+RESPONSE FORMATS:
+
+- Success responses include data and success indicators
+- Error responses include error messages and details
+- Pagination is supported for list endpoints
+- File uploads support multiple formats (Excel, images)
+- Export functionality supports CSV, Excel, and PDF formats
+
+QUERY PARAMETERS:
+
+- page: Page number for pagination (default: 1)
+- pageSize: Number of items per page (default: 20, max: 100)
+- searchTerm: Search text for filtering
+- sortBy: Field to sort by
+- sortOrder: Sort order (asc/desc)
+- startDate: Start date for date range filtering
+- endDate: End date for date range filtering
+- status: Filter by status
+- format: Export format (csv, excel, pdf)

@@ -1,0 +1,797 @@
+RFID Jewelry Inventory System - Third-Party Software Integration Guide
+
+1. OVERVIEW OF INTEGRATION CAPABILITIES
+
+The RFID Jewelry Inventory System is designed with open APIs and standard protocols to integrate seamlessly with various third-party software solutions. This document outlines the integration approaches, supported formats, and implementation examples.
+
+2. INTEGRATION ARCHITECTURE
+
+2.1 RESTful API Integration
+- Standard HTTP methods (GET, POST, PUT, DELETE)
+- JSON request/response format
+- JWT token-based authentication
+- Comprehensive error handling
+- Rate limiting and throttling support
+
+2.2 Webhook Support
+- Real-time event notifications
+- Configurable webhook endpoints
+- Event filtering and routing
+- Retry mechanisms for failed deliveries
+
+2.3 File-Based Integration
+- Excel file import/export
+- CSV data exchange
+- XML format support
+- Batch processing capabilities
+
+3. SUPPORTED INTEGRATION SCENARIOS
+
+3.1 Accounting Software Integration
+- QuickBooks Online/Desktop
+- Tally ERP
+- Sage 50/100
+- Xero
+- FreshBooks
+
+3.2 ERP System Integration
+- SAP Business One
+- Microsoft Dynamics
+- Oracle NetSuite
+- Odoo
+- ERPNext
+
+3.3 E-commerce Platform Integration
+- Shopify
+- WooCommerce
+- Magento
+- BigCommerce
+- Amazon Seller Central
+
+3.4 POS System Integration
+- Square POS
+- Lightspeed Retail
+- Vend POS
+- Shopify POS
+- Custom POS solutions
+
+3.5 Warehouse Management Systems
+- SAP Extended Warehouse Management
+- Manhattan Associates
+- Oracle WMS
+- JDA Warehouse Management
+- Custom WMS solutions
+
+4. INTEGRATION METHODS
+
+4.1 Direct API Integration
+```javascript
+// Example: JavaScript/Node.js integration
+const axios = require('axios');
+
+class RFIDInventoryAPI {
+    constructor(baseUrl, apiKey) {
+        this.baseUrl = baseUrl;
+        this.apiKey = apiKey;
+        this.client = axios.create({
+            baseURL: baseUrl,
+            headers: {
+                'Authorization': `Bearer ${apiKey}`,
+                'Content-Type': 'application/json'
+            }
+        });
+    }
+
+    async createProduct(productData) {
+        try {
+            const response = await this.client.post('/api/Product/create', productData);
+            return response.data;
+        } catch (error) {
+            throw new Error(`Failed to create product: ${error.message}`);
+        }
+    }
+
+    async getProducts(page = 1, pageSize = 20) {
+        try {
+            const response = await this.client.get('/api/Product/all', {
+                params: { page, pageSize }
+            });
+            return response.data;
+        } catch (error) {
+            throw new Error(`Failed to get products: ${error.message}`);
+        }
+    }
+
+    async uploadRFIDFromExcel(filePath) {
+        try {
+            const formData = new FormData();
+            formData.append('ExcelFile', filePath);
+            formData.append('UpdateExisting', 'true');
+            formData.append('CreateNew', 'true');
+
+            const response = await this.client.post('/api/Rfid/upload-excel', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+            return response.data;
+        } catch (error) {
+            throw new Error(`Failed to upload RFID data: ${error.message}`);
+        }
+    }
+}
+
+// Usage example
+const api = new RFIDInventoryAPI('https://api.rfidinventory.com', 'your-jwt-token');
+```
+
+4.2 Python Integration
+```python
+# Example: Python integration
+import requests
+import json
+from typing import Dict, List, Optional
+
+class RFIDInventoryClient:
+    def __init__(self, base_url: str, api_key: str):
+        self.base_url = base_url
+        self.api_key = api_key
+        self.session = requests.Session()
+        self.session.headers.update({
+            'Authorization': f'Bearer {api_key}',
+            'Content-Type': 'application/json'
+        })
+
+    def create_product(self, product_data: Dict) -> Dict:
+        """Create a new product"""
+        try:
+            response = self.session.post(
+                f'{self.base_url}/api/Product/create',
+                json=product_data
+            )
+            response.raise_for_status()
+            return response.json()
+        except requests.exceptions.RequestException as e:
+            raise Exception(f"Failed to create product: {str(e)}")
+
+    def get_products(self, page: int = 1, page_size: int = 20) -> Dict:
+        """Get products with pagination"""
+        try:
+            response = self.session.get(
+                f'{self.base_url}/api/Product/all',
+                params={'page': page, 'pageSize': page_size}
+            )
+            response.raise_for_status()
+            return response.json()
+        except requests.exceptions.RequestException as e:
+            raise Exception(f"Failed to get products: {str(e)}")
+
+    def upload_rfid_excel(self, file_path: str) -> Dict:
+        """Upload RFID data from Excel file"""
+        try:
+            with open(file_path, 'rb') as file:
+                files = {'ExcelFile': file}
+                data = {
+                    'UpdateExisting': 'true',
+                    'CreateNew': 'true'
+                }
+                response = self.session.post(
+                    f'{self.base_url}/api/Rfid/upload-excel',
+                    files=files,
+                    data=data
+                )
+                response.raise_for_status()
+                return response.json()
+        except Exception as e:
+            raise Exception(f"Failed to upload RFID data: {str(e)}")
+
+    def get_sales_report(self, start_date: str, end_date: str) -> Dict:
+        """Get sales report for date range"""
+        try:
+            response = self.session.get(
+                f'{self.base_url}/api/Reporting/sales-report',
+                params={'startDate': start_date, 'endDate': end_date}
+            )
+            response.raise_for_status()
+            return response.json()
+        except requests.exceptions.RequestException as e:
+            raise Exception(f"Failed to get sales report: {str(e)}")
+
+# Usage example
+client = RFIDInventoryClient('https://api.rfidinventory.com', 'your-jwt-token')
+
+# Create a product
+product_data = {
+    "itemCode": "GOLD001",
+    "categoryName": "Gold",
+    "branchName": "Main Store",
+    "counterName": "Counter 1",
+    "productName": "Ring",
+    "designName": "Classic",
+    "purityName": "24K",
+    "grossWeight": 5.5,
+    "netWeight": 5.2,
+    "mrp": 25000.00
+}
+
+result = client.create_product(product_data)
+print(f"Product created: {result}")
+```
+
+4.3 C# Integration
+```csharp
+// Example: C# integration
+using System;
+using System.Net.Http;
+using System.Text;
+using System.Text.Json;
+using System.Threading.Tasks;
+
+public class RFIDInventoryClient
+{
+    private readonly HttpClient _httpClient;
+    private readonly string _baseUrl;
+    private readonly string _apiKey;
+
+    public RFIDInventoryClient(string baseUrl, string apiKey)
+    {
+        _baseUrl = baseUrl;
+        _apiKey = apiKey;
+        _httpClient = new HttpClient();
+        _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {apiKey}");
+    }
+
+    public async Task<ProductResponse> CreateProductAsync(CreateProductRequest request)
+    {
+        try
+        {
+            var json = JsonSerializer.Serialize(request);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+            
+            var response = await _httpClient.PostAsync($"{_baseUrl}/api/Product/create", content);
+            response.EnsureSuccessStatusCode();
+            
+            var responseContent = await response.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<ProductResponse>(responseContent);
+        }
+        catch (Exception ex)
+        {
+            throw new Exception($"Failed to create product: {ex.Message}");
+        }
+    }
+
+    public async Task<ProductsResponse> GetProductsAsync(int page = 1, int pageSize = 20)
+    {
+        try
+        {
+            var response = await _httpClient.GetAsync(
+                $"{_baseUrl}/api/Product/all?page={page}&pageSize={pageSize}");
+            response.EnsureSuccessStatusCode();
+            
+            var responseContent = await response.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<ProductsResponse>(responseContent);
+        }
+        catch (Exception ex)
+        {
+            throw new Exception($"Failed to get products: {ex.Message}");
+        }
+    }
+
+    public async Task<RFIDUploadResponse> UploadRFIDFromExcelAsync(string filePath)
+    {
+        try
+        {
+            using var formData = new MultipartFormDataContent();
+            using var fileStream = File.OpenRead(filePath);
+            formData.Add(new StreamContent(fileStream), "ExcelFile", Path.GetFileName(filePath));
+            formData.Add(new StringContent("true"), "UpdateExisting");
+            formData.Add(new StringContent("true"), "CreateNew");
+            
+            var response = await _httpClient.PostAsync($"{_baseUrl}/api/Rfid/upload-excel", formData);
+            response.EnsureSuccessStatusCode();
+            
+            var responseContent = await response.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<RFIDUploadResponse>(responseContent);
+        }
+        catch (Exception ex)
+        {
+            throw new Exception($"Failed to upload RFID data: {ex.Message}");
+        }
+    }
+
+    public async Task<SalesReportResponse> GetSalesReportAsync(DateTime startDate, DateTime endDate)
+    {
+        try
+        {
+            var response = await _httpClient.GetAsync(
+                $"{_baseUrl}/api/Reporting/sales-report?startDate={startDate:yyyy-MM-dd}&endDate={endDate:yyyy-MM-dd}");
+            response.EnsureSuccessStatusCode();
+            
+            var responseContent = await response.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<SalesReportResponse>(responseContent);
+        }
+        catch (Exception ex)
+        {
+            throw new Exception($"Failed to get sales report: {ex.Message}");
+        }
+    }
+}
+
+// Data models
+public class CreateProductRequest
+{
+    public string ItemCode { get; set; }
+    public string CategoryName { get; set; }
+    public string BranchName { get; set; }
+    public string CounterName { get; set; }
+    public string ProductName { get; set; }
+    public string DesignName { get; set; }
+    public string PurityName { get; set; }
+    public decimal GrossWeight { get; set; }
+    public decimal NetWeight { get; set; }
+    public decimal Mrp { get; set; }
+}
+
+public class ProductResponse
+{
+    public bool Success { get; set; }
+    public string Message { get; set; }
+    public ProductData Data { get; set; }
+}
+
+public class ProductData
+{
+    public int Id { get; set; }
+    public string ItemCode { get; set; }
+    public string Status { get; set; }
+}
+
+// Usage example
+var client = new RFIDInventoryClient("https://api.rfidinventory.com", "your-jwt-token");
+
+var productRequest = new CreateProductRequest
+{
+    ItemCode = "GOLD001",
+    CategoryName = "Gold",
+    BranchName = "Main Store",
+    CounterName = "Counter 1",
+    ProductName = "Ring",
+    DesignName = "Classic",
+    PurityName = "24K",
+    GrossWeight = 5.5m,
+    NetWeight = 5.2m,
+    Mrp = 25000.00m
+};
+
+var result = await client.CreateProductAsync(productRequest);
+Console.WriteLine($"Product created: {result.Data.Id}");
+```
+
+5. WEBHOOK INTEGRATION
+
+5.1 Webhook Configuration
+```json
+{
+  "webhookUrl": "https://your-system.com/webhook/rfid-inventory",
+  "events": [
+    "product.created",
+    "product.updated",
+    "product.deleted",
+    "rfid.assigned",
+    "rfid.unassigned",
+    "invoice.created",
+    "stock.movement",
+    "verification.completed"
+  ],
+  "secret": "your-webhook-secret",
+  "retryCount": 3,
+  "retryDelay": 5000
+}
+```
+
+5.2 Webhook Payload Example
+```json
+{
+  "event": "product.created",
+  "timestamp": "2024-01-15T10:30:00Z",
+  "data": {
+    "productId": 123,
+    "itemCode": "GOLD001",
+    "categoryName": "Gold",
+    "branchName": "Main Store",
+    "counterName": "Counter 1",
+    "productName": "Ring",
+    "designName": "Classic",
+    "purityName": "24K",
+    "grossWeight": 5.5,
+    "netWeight": 5.2,
+    "mrp": 25000.00,
+    "status": "Active"
+  },
+  "clientCode": "CLIENT001",
+  "signature": "sha256-hash-of-payload"
+}
+```
+
+6. FILE-BASED INTEGRATION
+
+6.1 Excel Import/Export
+```python
+# Excel export example
+import pandas as pd
+from rfid_inventory_client import RFIDInventoryClient
+
+def export_products_to_excel(client, output_file):
+    """Export products to Excel file"""
+    products = client.get_products(page_size=1000)  # Get all products
+    
+    # Convert to DataFrame
+    df = pd.DataFrame(products['data'])
+    
+    # Export to Excel
+    with pd.ExcelWriter(output_file, engine='openpyxl') as writer:
+        df.to_excel(writer, sheet_name='Products', index=False)
+        
+        # Add metadata sheet
+        metadata = {
+            'Export Date': [pd.Timestamp.now()],
+            'Total Products': [len(products['data'])],
+            'Client Code': [products.get('clientCode', '')]
+        }
+        pd.DataFrame(metadata).to_excel(writer, sheet_name='Metadata', index=False)
+
+# Usage
+client = RFIDInventoryClient('https://api.rfidinventory.com', 'your-jwt-token')
+export_products_to_excel(client, 'products_export.xlsx')
+```
+
+6.2 CSV Data Exchange
+```python
+# CSV import example
+import csv
+from rfid_inventory_client import RFIDInventoryClient
+
+def import_products_from_csv(client, csv_file):
+    """Import products from CSV file"""
+    products_created = 0
+    products_updated = 0
+    errors = []
+    
+    with open(csv_file, 'r', encoding='utf-8') as file:
+        reader = csv.DictReader(file)
+        
+        for row in reader:
+            try:
+                # Map CSV columns to API fields
+                product_data = {
+                    "itemCode": row['ItemCode'],
+                    "categoryName": row['Category'],
+                    "branchName": row['Branch'],
+                    "counterName": row['Counter'],
+                    "productName": row['Product'],
+                    "designName": row['Design'],
+                    "purityName": row['Purity'],
+                    "grossWeight": float(row['GrossWeight']),
+                    "netWeight": float(row['NetWeight']),
+                    "mrp": float(row['MRP'])
+                }
+                
+                # Create product
+                result = client.create_product(product_data)
+                products_created += 1
+                print(f"Created product: {row['ItemCode']}")
+                
+            except Exception as e:
+                errors.append({
+                    'row': row,
+                    'error': str(e)
+                })
+                print(f"Error creating product {row['ItemCode']}: {e}")
+    
+    print(f"\nImport Summary:")
+    print(f"Products Created: {products_created}")
+    print(f"Products Updated: {products_updated}")
+    print(f"Errors: {len(errors)}")
+    
+    return {
+        'created': products_created,
+        'updated': products_updated,
+        'errors': errors
+    }
+
+# Usage
+client = RFIDInventoryClient('https://api.rfidinventory.com', 'your-jwt-token')
+result = import_products_from_csv(client, 'products_import.csv')
+```
+
+7. REAL-TIME INTEGRATION
+
+7.1 SignalR Integration (Real-time Updates)
+```javascript
+// Real-time integration using SignalR
+const connection = new signalR.HubConnectionBuilder()
+    .withUrl("https://api.rfidinventory.com/hubs/inventory")
+    .withAutomaticReconnect()
+    .build();
+
+// Subscribe to real-time events
+connection.on("ProductCreated", (product) => {
+    console.log("New product created:", product);
+    // Update your system in real-time
+});
+
+connection.on("RFIDAssigned", (assignment) => {
+    console.log("RFID assigned:", assignment);
+    // Update RFID status in real-time
+});
+
+connection.on("StockMovement", (movement) => {
+    console.log("Stock movement:", movement);
+    // Update inventory levels in real-time
+});
+
+connection.on("VerificationCompleted", (verification) => {
+    console.log("Verification completed:", verification);
+    // Update verification status in real-time
+});
+
+// Start connection
+connection.start()
+    .then(() => console.log("Connected to real-time hub"))
+    .catch(err => console.error("Connection failed:", err));
+```
+
+8. BATCH PROCESSING INTEGRATION
+
+8.1 Bulk Operations
+```python
+# Bulk product creation
+def bulk_create_products(client, products_data):
+    """Create multiple products in bulk"""
+    try:
+        result = client.create_bulk_products(products_data)
+        return result
+    except Exception as e:
+        raise Exception(f"Bulk creation failed: {str(e)}")
+
+# Bulk RFID upload
+def bulk_upload_rfid(client, rfid_data):
+    """Upload multiple RFID tags in bulk"""
+    try:
+        # Convert to Excel format
+        df = pd.DataFrame(rfid_data)
+        excel_file = 'rfid_bulk_upload.xlsx'
+        df.to_excel(excel_file, index=False)
+        
+        # Upload Excel file
+        result = client.upload_rfid_excel(excel_file)
+        return result
+    except Exception as e:
+        raise Exception(f"Bulk RFID upload failed: {str(e)}")
+    finally:
+        # Clean up temporary file
+        if os.path.exists(excel_file):
+            os.remove(excel_file)
+```
+
+9. ERROR HANDLING & RETRY LOGIC
+
+9.1 Retry Mechanism
+```python
+import time
+from functools import wraps
+
+def retry_on_failure(max_retries=3, delay=1):
+    """Decorator for retrying failed API calls"""
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            last_exception = None
+            
+            for attempt in range(max_retries):
+                try:
+                    return func(*args, **kwargs)
+                except Exception as e:
+                    last_exception = e
+                    if attempt < max_retries - 1:
+                        time.sleep(delay * (2 ** attempt))  # Exponential backoff
+                        continue
+                    else:
+                        break
+            
+            raise last_exception
+        return wrapper
+    return decorator
+
+# Usage with retry
+@retry_on_failure(max_retries=3, delay=2)
+def create_product_with_retry(client, product_data):
+    return client.create_product(product_data)
+```
+
+10. SECURITY & AUTHENTICATION
+
+10.1 API Key Management
+```python
+import os
+from cryptography.fernet import Fernet
+
+class SecureAPIClient:
+    def __init__(self, base_url, encrypted_api_key):
+        self.base_url = base_url
+        self.api_key = self.decrypt_api_key(encrypted_api_key)
+        self.client = RFIDInventoryClient(base_url, self.api_key)
+    
+    def decrypt_api_key(self, encrypted_key):
+        """Decrypt API key using environment variable"""
+        key = os.getenv('ENCRYPTION_KEY')
+        if not key:
+            raise ValueError("ENCRYPTION_KEY environment variable not set")
+        
+        fernet = Fernet(key.encode())
+        return fernet.decrypt(encrypted_key.encode()).decode()
+    
+    def rotate_api_key(self):
+        """Rotate API key for security"""
+        # Implementation for key rotation
+        pass
+
+# Usage with secure client
+secure_client = SecureAPIClient(
+    'https://api.rfidinventory.com',
+    'encrypted-api-key-here'
+)
+```
+
+11. MONITORING & LOGGING
+
+11.1 Integration Monitoring
+```python
+import logging
+from datetime import datetime
+
+class IntegrationMonitor:
+    def __init__(self):
+        self.logger = logging.getLogger('rfid_integration')
+        self.setup_logging()
+    
+    def setup_logging(self):
+        """Setup logging configuration"""
+        logging.basicConfig(
+            level=logging.INFO,
+            format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+            handlers=[
+                logging.FileHandler('rfid_integration.log'),
+                logging.StreamHandler()
+            ]
+        )
+    
+    def log_api_call(self, endpoint, method, status, duration):
+        """Log API call details"""
+        self.logger.info(
+            f"API Call: {method} {endpoint} - Status: {status} - Duration: {duration}ms"
+        )
+    
+    def log_error(self, error, context):
+        """Log error details"""
+        self.logger.error(
+            f"Error in {context}: {str(error)}",
+            exc_info=True
+        )
+    
+    def log_sync_status(self, entity_type, count, status):
+        """Log synchronization status"""
+        self.logger.info(
+            f"Sync {entity_type}: {count} records - Status: {status}"
+        )
+
+# Usage
+monitor = IntegrationMonitor()
+monitor.log_api_call('/api/Product/create', 'POST', '200', 150)
+```
+
+12. INTEGRATION TESTING
+
+12.1 Test Suite Example
+```python
+import unittest
+from unittest.mock import Mock, patch
+from rfid_inventory_client import RFIDInventoryClient
+
+class TestRFIDInventoryIntegration(unittest.TestCase):
+    def setUp(self):
+        self.client = RFIDInventoryClient('https://test-api.com', 'test-key')
+    
+    @patch('requests.Session.post')
+    def test_create_product_success(self, mock_post):
+        """Test successful product creation"""
+        mock_response = Mock()
+        mock_response.json.return_value = {
+            'success': True,
+            'data': {'id': 123, 'itemCode': 'TEST001'}
+        }
+        mock_response.status_code = 201
+        mock_post.return_value = mock_response
+        
+        result = self.client.create_product({
+            'itemCode': 'TEST001',
+            'categoryName': 'Test'
+        })
+        
+        self.assertTrue(result['success'])
+        self.assertEqual(result['data']['itemCode'], 'TEST001')
+    
+    @patch('requests.Session.post')
+    def test_create_product_failure(self, mock_post):
+        """Test product creation failure"""
+        mock_post.side_effect = Exception("Network error")
+        
+        with self.assertRaises(Exception):
+            self.client.create_product({'itemCode': 'TEST001'})
+
+if __name__ == '__main__':
+    unittest.main()
+```
+
+13. DEPLOYMENT & CONFIGURATION
+
+13.1 Environment Configuration
+```bash
+# Environment variables for integration
+export RFID_API_BASE_URL="https://api.rfidinventory.com"
+export RFID_API_KEY="your-jwt-token"
+export RFID_WEBHOOK_SECRET="your-webhook-secret"
+export RFID_RETRY_COUNT="3"
+export RFID_RETRY_DELAY="5000"
+export RFID_LOG_LEVEL="INFO"
+export RFID_ENCRYPTION_KEY="your-encryption-key"
+```
+
+13.2 Docker Integration
+```dockerfile
+# Dockerfile for integration service
+FROM python:3.9-slim
+
+WORKDIR /app
+
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+
+COPY . .
+
+CMD ["python", "integration_service.py"]
+```
+
+```yaml
+# docker-compose.yml
+version: '3.8'
+services:
+  rfid-integration:
+    build: .
+    environment:
+      - RFID_API_BASE_URL=${RFID_API_BASE_URL}
+      - RFID_API_KEY=${RFID_API_KEY}
+      - RFID_WEBHOOK_SECRET=${RFID_WEBHOOK_SECRET}
+    volumes:
+      - ./logs:/app/logs
+      - ./data:/app/data
+    restart: unless-stopped
+```
+
+14. SUPPORT & MAINTENANCE
+
+14.1 Integration Support
+- API Documentation: Comprehensive OpenAPI/Swagger documentation
+- SDK Libraries: Official SDKs for popular programming languages
+- Code Examples: Ready-to-use integration examples
+- Webhook Testing: Tools for testing webhook integrations
+- Rate Limiting: Clear rate limiting policies and guidelines
+
+14.2 Maintenance Best Practices
+- Regular API version monitoring
+- Automated testing of integration points
+- Error monitoring and alerting
+- Performance monitoring and optimization
+- Security updates and patches
+
+This integration guide provides comprehensive information for integrating the RFID Jewelry Inventory System with various third-party software solutions. The system is designed to be flexible and accommodate different integration patterns and requirements.

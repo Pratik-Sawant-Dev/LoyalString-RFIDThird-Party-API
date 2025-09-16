@@ -1,0 +1,411 @@
+### RFID Jewelry Inventory System - Admin API Tests
+### Multi-Tenant Admin-User Hierarchy System
+
+@baseUrl = https://localhost:7107
+@authToken = {{token}}
+
+### 🎯 ADMIN USER HIERARCHY FLOW
+### Step 1: First user registers as Main Admin automatically
+POST {{baseUrl}}/api/user/register
+Content-Type: application/json
+
+{
+    "userName": "main_admin",
+    "email": "admin@jewelrystore.com",
+    "password": "Admin123!",
+    "fullName": "Main Administrator",
+    "mobileNumber": "+1234567890",
+    "organisationName": "Premium Jewelry Store",
+    "showroomType": "Premium",
+    "city": "New York",
+    "address": "123 Main Street"
+}
+
+### Step 2: Main Admin Login
+POST {{baseUrl}}/api/user/login
+Content-Type: application/json
+
+{
+    "email": "admin@jewelrystore.com",
+    "password": "Admin123!"
+}
+
+### Step 3: Main Admin creates Sub-Admin User
+POST {{baseUrl}}/api/admin/users
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+    "userName": "shop_admin",
+    "email": "shopadmin@jewelrystore.com",
+    "password": "ShopAdmin123!",
+    "fullName": "Shop Administrator",
+    "mobileNumber": "+1234567891",
+    "city": "New York",
+    "address": "123 Main Street",
+    "showroomType": "Premium",
+    "isAdmin": true,
+    "permissions": [
+        {
+            "module": "Product",
+            "canView": true,
+            "canCreate": true,
+            "canUpdate": true,
+            "canDelete": true,
+            "canExport": true,
+            "canImport": true
+        },
+        {
+            "module": "RFID",
+            "canView": true,
+            "canCreate": true,
+            "canUpdate": true,
+            "canDelete": false,
+            "canExport": true,
+            "canImport": true
+        },
+        {
+            "module": "Invoice",
+            "canView": true,
+            "canCreate": true,
+            "canUpdate": true,
+            "canDelete": false,
+            "canExport": true,
+            "canImport": false
+        }
+    ]
+}
+
+### Step 4: Main Admin creates Regular User
+POST {{baseUrl}}/api/admin/users
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+    "userName": "sales_user",
+    "email": "sales@jewelrystore.com",
+    "password": "Sales123!",
+    "fullName": "Sales Representative",
+    "mobileNumber": "+1234567892",
+    "city": "New York",
+    "address": "123 Main Street",
+    "showroomType": "Premium",
+    "isAdmin": false,
+    "permissions": [
+        {
+            "module": "Product",
+            "canView": true,
+            "canCreate": false,
+            "canUpdate": false,
+            "canDelete": false,
+            "canExport": false,
+            "canImport": false
+        },
+        {
+            "module": "RFID",
+            "canView": true,
+            "canCreate": false,
+            "canUpdate": false,
+            "canDelete": false,
+            "canExport": false,
+            "canImport": false
+        },
+        {
+            "module": "Invoice",
+            "canView": true,
+            "canCreate": true,
+            "canUpdate": false,
+            "canDelete": false,
+            "canExport": true,
+            "canImport": false
+        }
+    ]
+}
+
+### 📊 ADMIN DASHBOARD AND ANALYTICS
+
+### Get Main Admin Dashboard
+GET {{baseUrl}}/api/admin/dashboard
+Authorization: Bearer {{authToken}}
+
+### Get Organization Dashboard (Main Admin Only)
+GET {{baseUrl}}/api/admin/organization/dashboard
+Authorization: Bearer {{authToken}}
+
+### Get Organization Users (Main Admin Only)
+GET {{baseUrl}}/api/admin/organization/users
+Authorization: Bearer {{authToken}}
+
+### 👥 USER MANAGEMENT
+
+### Get All Users Managed by Admin
+GET {{baseUrl}}/api/admin/users
+Authorization: Bearer {{authToken}}
+
+### Get Specific User
+GET {{baseUrl}}/api/admin/users/2
+Authorization: Bearer {{authToken}}
+
+### Update User Information
+PUT {{baseUrl}}/api/admin/users/2
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+    "fullName": "Updated Shop Administrator",
+    "mobileNumber": "+1234567899",
+    "isActive": true,
+    "permissions": [
+        {
+            "module": "Product",
+            "canView": true,
+            "canCreate": true,
+            "canUpdate": true,
+            "canDelete": true,
+            "canExport": true,
+            "canImport": true
+        },
+        {
+            "module": "Reports",
+            "canView": true,
+            "canCreate": false,
+            "canUpdate": false,
+            "canDelete": false,
+            "canExport": true,
+            "canImport": false
+        }
+    ]
+}
+
+### Activate User
+POST {{baseUrl}}/api/admin/users/3/activate
+Authorization: Bearer {{authToken}}
+
+### Deactivate User
+POST {{baseUrl}}/api/admin/users/3/deactivate
+Authorization: Bearer {{authToken}}
+
+### Reset User Password
+POST {{baseUrl}}/api/admin/users/3/reset-password
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+    "newPassword": "NewPassword123!"
+}
+
+### Delete User (Soft Delete)
+DELETE {{baseUrl}}/api/admin/users/3
+Authorization: Bearer {{authToken}}
+
+### 🔐 PERMISSION MANAGEMENT
+
+### Get User Permissions
+GET {{baseUrl}}/api/admin/users/2/permissions
+Authorization: Bearer {{authToken}}
+
+### Update User Permissions
+PUT {{baseUrl}}/api/admin/users/2/permissions
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+[
+    {
+        "module": "Product",
+        "canView": true,
+        "canCreate": true,
+        "canUpdate": true,
+        "canDelete": false,
+        "canExport": true,
+        "canImport": true
+    },
+    {
+        "module": "RFID",
+        "canView": true,
+        "canCreate": true,
+        "canUpdate": true,
+        "canDelete": false,
+        "canExport": true,
+        "canImport": true
+    },
+    {
+        "module": "Invoice",
+        "canView": true,
+        "canCreate": true,
+        "canUpdate": false,
+        "canDelete": false,
+        "canExport": true,
+        "canImport": false
+    },
+    {
+        "module": "Reports",
+        "canView": true,
+        "canCreate": false,
+        "canUpdate": false,
+        "canDelete": false,
+        "canExport": true,
+        "canImport": false
+    }
+]
+
+### Bulk Update Permissions for Multiple Users
+POST {{baseUrl}}/api/admin/permissions/bulk-update
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+    "userIds": [2, 3],
+    "permissions": [
+        {
+            "module": "Product",
+            "canView": true,
+            "canCreate": true,
+            "canUpdate": true,
+            "canDelete": false,
+            "canExport": true,
+            "canImport": false
+        },
+        {
+            "module": "RFID",
+            "canView": true,
+            "canCreate": false,
+            "canUpdate": false,
+            "canDelete": false,
+            "canExport": true,
+            "canImport": false
+        }
+    ]
+}
+
+### 📋 ACTIVITY TRACKING AND MONITORING
+
+### Get All Activities (Admin View)
+GET {{baseUrl}}/api/admin/activities?pageNumber=1&pageSize=20
+Authorization: Bearer {{authToken}}
+
+### Get Activities with Filters
+GET {{baseUrl}}/api/admin/activities?activityType=Product&action=Create&fromDate=2024-01-01&toDate=2024-12-31&pageNumber=1&pageSize=10
+Authorization: Bearer {{authToken}}
+
+### Get Specific User Activities
+GET {{baseUrl}}/api/admin/users/2/activities?pageNumber=1&pageSize=20
+Authorization: Bearer {{authToken}}
+
+### Get User Activities with Filters
+GET {{baseUrl}}/api/admin/users/2/activities?activityType=Invoice&fromDate=2024-01-01&pageNumber=1&pageSize=10
+Authorization: Bearer {{authToken}}
+
+### 🔄 USER AUTHENTICATION FLOW
+
+### Sub-Admin Login
+POST {{baseUrl}}/api/user/login
+Content-Type: application/json
+
+{
+    "email": "shopadmin@jewelrystore.com",
+    "password": "ShopAdmin123!"
+}
+
+### Regular User Login
+POST {{baseUrl}}/api/user/login
+Content-Type: application/json
+
+{
+    "email": "sales@jewelrystore.com",
+    "password": "Sales123!"
+}
+
+### User Logout (Tracks logout activity)
+POST {{baseUrl}}/api/user/logout
+Authorization: Bearer {{authToken}}
+
+### 🧪 PERMISSION TESTING
+
+### Test Product Access (Should work for users with Product permissions)
+GET {{baseUrl}}/api/product
+Authorization: Bearer {{authToken}}
+
+### Test RFID Access (Should work for users with RFID permissions)
+GET {{baseUrl}}/api/rfid
+Authorization: Bearer {{authToken}}
+
+### Test Invoice Access (Should work for users with Invoice permissions)
+GET {{baseUrl}}/api/invoice
+Authorization: Bearer {{authToken}}
+
+### Test Unauthorized Access (Should fail for users without permissions)
+DELETE {{baseUrl}}/api/product/1
+Authorization: Bearer {{authToken}}
+
+### 📈 REPORTING AND ANALYTICS
+
+### Create Sample Activity (for testing)
+POST {{baseUrl}}/api/product
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+    "categoryId": 1,
+    "productId": 1,
+    "designId": 1,
+    "purityId": 1,
+    "branchId": 1,
+    "counterId": 1,
+    "itemCode": "TEST001",
+    "grossWeight": 10.5,
+    "netWeight": 9.8,
+    "mrp": 25000
+}
+
+### Create Sample RFID (for testing)
+POST {{baseUrl}}/api/rfid
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+    "rfidCode": "TEST_RFID_001",
+    "epcValue": "EPC_TEST_001"
+}
+
+### Check Recent Activities
+GET {{baseUrl}}/api/admin/activities?pageNumber=1&pageSize=5
+Authorization: Bearer {{authToken}}
+
+### 🎛️ SYSTEM ADMINISTRATION
+
+### Health Check
+GET {{baseUrl}}/health
+
+### Get Current User Info
+GET {{baseUrl}}/api/user/1
+Authorization: Bearer {{authToken}}
+
+### Update Current User Profile
+PUT {{baseUrl}}/api/user/1
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+    "fullName": "Updated Main Administrator",
+    "mobileNumber": "+1234567890",
+    "city": "New York",
+    "address": "123 Updated Main Street"
+}
+
+### 🔍 ADVANCED QUERIES
+
+### Get Activities by Date Range
+GET {{baseUrl}}/api/admin/activities?fromDate=2024-01-01T00:00:00Z&toDate=2024-12-31T23:59:59Z&pageNumber=1&pageSize=50
+Authorization: Bearer {{authToken}}
+
+### Get Product Activities Only
+GET {{baseUrl}}/api/admin/activities?activityType=Product&pageNumber=1&pageSize=20
+Authorization: Bearer {{authToken}}
+
+### Get Authentication Activities
+GET {{baseUrl}}/api/admin/activities?activityType=Authentication&pageNumber=1&pageSize=20
+Authorization: Bearer {{authToken}}
+
+### Get RFID Activities Only
+GET {{baseUrl}}/api/admin/activities?activityType=RFID&pageNumber=1&pageSize=20
+Authorization: Bearer {{authToken}}

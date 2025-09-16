@@ -1,6 +1,6 @@
 {
-	"id": "rfid-jewelry-environment-v2",
-	"name": "RFID Jewelry Inventory - Development Environment v2",
+	"id": "rfid-jewelry-environment-v3",
+	"name": "RFID Jewelry Inventory - Development Environment v3",
 	"values": [
 		{
 			"key": "baseUrl",
@@ -737,6 +737,144 @@
 		{
 			"key": "testJwtExpiryHours",
 			"value": "24",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "adminUserId",
+			"value": "",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "subUserId",
+			"value": "",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testAdminUserName",
+			"value": "admin2@jewelrystore.com",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testAdminPassword",
+			"value": "Admin@123",
+			"type": "secret",
+			"enabled": true
+		},
+		{
+			"key": "testAdminFullName",
+			"value": "Jane Admin",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testAdminMobileNumber",
+			"value": "+91-9876543211",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testAdminCity",
+			"value": "Mumbai",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testAdminAddress",
+			"value": "456 Admin Street, Mumbai, Maharashtra, India",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testSubUserName",
+			"value": "user1@jewelrystore.com",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testSubUserPassword",
+			"value": "User@123",
+			"type": "secret",
+			"enabled": true
+		},
+		{
+			"key": "testSubUserFullName",
+			"value": "John User",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testSubUserMobileNumber",
+			"value": "+91-9876543212",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testSubUserCity",
+			"value": "Mumbai",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testSubUserAddress",
+			"value": "789 User Street, Mumbai, Maharashtra, India",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testModuleProduct",
+			"value": "Product",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testModuleRFID",
+			"value": "RFID",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testModuleInvoice",
+			"value": "Invoice",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testActionCreate",
+			"value": "Create",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testActionEdit",
+			"value": "Edit",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testActionDelete",
+			"value": "Delete",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testActionView",
+			"value": "View",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testActionExport",
+			"value": "Export",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testActionImport",
+			"value": "Import",
 			"type": "default",
 			"enabled": true
 		}

@@ -1,6 +1,8 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RfidAppApi.DTOs;
 using RfidAppApi.Services;
+using System.Security.Claims;
 
 namespace RfidAppApi.Controllers
 {
@@ -12,10 +14,12 @@ namespace RfidAppApi.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
+        private readonly IActivityLoggingService _activityLoggingService;
 
-        public UserController(IUserService userService)
+        public UserController(IUserService userService, IActivityLoggingService activityLoggingService)
         {
             _userService = userService;
+            _activityLoggingService = activityLoggingService;
         }
 
         /// <summary>
@@ -100,6 +104,39 @@ namespace RfidAppApi.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, new { message = "An error occurred during login.", error = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Logout user and log the activity
+        /// </summary>
+        /// <returns>Success message</returns>
+        /// <response code="200">Logout successful</response>
+        /// <response code="401">Unauthorized</response>
+        /// <response code="500">Internal server error</response>
+        [HttpPost("logout")]
+        [Authorize]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(500)]
+        public async Task<ActionResult> Logout()
+        {
+            try
+            {
+                var userId = GetCurrentUserId();
+                var clientCode = GetClientCodeFromToken();
+
+                if (userId > 0 && !string.IsNullOrEmpty(clientCode))
+                {
+                    await _activityLoggingService.LogActivityAsync(userId, clientCode, "Authentication", "Logout", 
+                        "User logged out", null, null, null, null, GetIpAddress(), GetUserAgent());
+                }
+
+                return Ok(new { message = "Logged out successfully." });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred during logout.", error = ex.Message });
             }
         }
 
@@ -281,5 +318,30 @@ namespace RfidAppApi.Controllers
                 return StatusCode(500, new { message = "An error occurred while deleting the user.", error = ex.Message });
             }
         }
+
+        #region Helper Methods
+
+        private int GetCurrentUserId()
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            return userIdClaim != null ? int.Parse(userIdClaim.Value) : 0;
+        }
+
+        private string GetClientCodeFromToken()
+        {
+            return User.FindFirst("ClientCode")?.Value ?? string.Empty;
+        }
+
+        private string? GetIpAddress()
+        {
+            return HttpContext.Connection.RemoteIpAddress?.ToString();
+        }
+
+        private string? GetUserAgent()
+        {
+            return HttpContext.Request.Headers["User-Agent"].FirstOrDefault();
+        }
+
+        #endregion
     }
 } 

@@ -1,10 +1,10 @@
 {
 	"info": {
-		"_postman_id": "rfid-jewelry-inventory-complete-v3",
-		"name": "RFID Jewelry Inventory System - Complete API Collection v3",
-		"description": "Complete API collection for RFID Jewelry Inventory Management System with Multi-Tenant Architecture, Product Management, Image Upload, RFID Tracking, Comprehensive Reporting System, RFID Usage Analytics, and Database Management. All endpoints with real data examples and proper localhost URLs.",
+		"_postman_id": "rfid-jewelry-inventory-complete-v4",
+		"name": "RFID Jewelry Inventory System - Complete API Collection v4",
+		"description": "Complete API collection for RFID Jewelry Inventory Management System with Multi-Tenant Architecture, Admin-User Hierarchy System, Granular Permissions, Activity Tracking, Product Management, Image Upload, RFID Tracking, Comprehensive Reporting System, RFID Usage Analytics, and Database Management. All endpoints with real data examples and proper localhost URLs.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "rfid-jewelry-system-v3"
+		"_exporter_id": "rfid-jewelry-system-v4"
 	},
 	"item": [
 		{
@@ -203,6 +203,24 @@
 							"raw": "{{baseUrl}}/api/User/{{userId}}",
 							"host": ["{{baseUrl}}"],
 							"path": ["api", "User", "{{userId}}"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logout User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/User/logout",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "User", "logout"]
 						}
 					},
 					"response": []
@@ -1515,6 +1533,66 @@
 						"description": "Scan for products by EPC value(s). Supports both single EPC value (epcValue) and multiple EPC values (epcValues). You can use either field or both. Examples:\n\nSingle EPC: {\"epcValue\": \"RFID001\"}\nMultiple EPCs: {\"epcValues\": [\"RFID001\", \"RFID002\"]}\nBoth: {\"epcValue\": \"RFID001\", \"epcValues\": [\"RFID002\", \"RFID003\"]}\n\nNote: If both fields are provided, all unique EPC values will be scanned. Duplicates are automatically removed."
 					},
 					"response": []
+				},
+				{
+					"name": "📤 Upload RFID from Excel",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "ExcelFile",
+									"type": "file",
+									"src": []
+								},
+								{
+									"key": "UpdateExisting",
+									"value": "true",
+									"type": "text",
+									"description": "Whether to update existing RFID codes with new EPC values"
+								},
+								{
+									"key": "CreateNew",
+									"value": "true",
+									"type": "text",
+									"description": "Whether to create new RFID codes if they don't exist"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/Rfid/upload-excel",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "Rfid", "upload-excel"]
+						},
+						"description": "Upload RFID data from Excel file. The Excel should have 2 columns:\n- Column 1: RFID Code (max 50 characters)\n- Column 2: EPC Value (max 100 characters)\n\nFeatures:\n✅ Bulk upload support\n✅ Update existing RFID codes\n✅ Create new RFID codes\n✅ Validation and error reporting\n✅ Duplicate detection\n✅ File size limit: 10MB\n✅ Supported formats: .xlsx, .xls\n\nExcel Format:\n| RFID Code | EPC Value |\n|------------|-----------|\n| RFID001   | EPC123456 |\n| RFID002   | EPC789012 |\n| RFID003   | EPC345678 |\n\nNote: If RFID Code exists, EPC Value will be updated. If RFID Code doesn't exist, new record will be created."
+					},
+					"response": []
+				},
+				{
+					"name": "📥 Download Excel Template",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/Rfid/download-template",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "Rfid", "download-template"]
+						},
+						"description": "Download Excel template for RFID upload. The template includes:\n✅ Pre-filled headers (RFID Code, EPC Value)\n✅ Sample data rows\n✅ Instructions for proper formatting\n✅ Styled headers and sample data\n✅ Auto-fitted columns\n\nUse this template to ensure correct Excel format for RFID uploads."
+					},
+					"response": []
 				}
 			]
 		},
@@ -2256,6 +2334,615 @@
 							"raw": "{{baseUrl}}/swagger/v1/swagger.json",
 							"host": ["{{baseUrl}}"],
 							"path": ["swagger", "v1", "swagger.json"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "👑 Admin Management System",
+			"item": [
+				{
+					"name": "Register Admin User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"userName\": \"admin2@jewelrystore.com\",\n  \"email\": \"admin2@jewelrystore.com\",\n  \"password\": \"Admin@123\",\n  \"fullName\": \"Jane Admin\",\n  \"mobileNumber\": \"+91-9876543211\",\n  \"city\": \"Mumbai\",\n  \"address\": \"456 Admin Street, Mumbai, Maharashtra, India\",\n  \"organisationName\": \"Premium Jewelry Store\",\n  \"showroomType\": \"Premium\",\n  \"isAdmin\": true,\n  \"userType\": \"Admin\",\n  \"adminUserId\": null\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/Admin/register-admin",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "Admin", "register-admin"]
+						}
+					},
+					"response": [],
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    if (response.userId) {",
+									"        pm.environment.set('adminUserId', response.userId);",
+									"        console.log('Admin user registered successfully with ID:', response.userId);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
+				},
+				{
+					"name": "Register Sub-User (Under Admin)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"userName\": \"user1@jewelrystore.com\",\n  \"email\": \"user1@jewelrystore.com\",\n  \"password\": \"User@123\",\n  \"fullName\": \"John User\",\n  \"mobileNumber\": \"+91-9876543212\",\n  \"city\": \"Mumbai\",\n  \"address\": \"789 User Street, Mumbai, Maharashtra, India\",\n  \"organisationName\": \"Premium Jewelry Store\",\n  \"showroomType\": \"Premium\",\n  \"isAdmin\": false,\n  \"userType\": \"User\",\n  \"adminUserId\": {{adminUserId}}\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/Admin/register-sub-user",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "Admin", "register-sub-user"]
+						}
+					},
+					"response": [],
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    if (response.userId) {",
+									"        pm.environment.set('subUserId', response.userId);",
+									"        console.log('Sub-user registered successfully with ID:', response.userId);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
+				},
+				{
+					"name": "Get Users Under Admin",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/Admin/users-under-admin",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "Admin", "users-under-admin"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Users Under Admin with Pagination",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/Admin/users-under-admin?page=1&pageSize=10&searchTerm=john&sortBy=createdOn&sortOrder=desc",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "Admin", "users-under-admin"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "pageSize",
+									"value": "10"
+								},
+								{
+									"key": "searchTerm",
+									"value": "john"
+								},
+								{
+									"key": "sortBy",
+									"value": "createdOn"
+								},
+								{
+									"key": "sortOrder",
+									"value": "desc"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Assign Permissions to User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"userId\": {{subUserId}},\n  \"permissions\": [\n    {\n      \"module\": \"Product\",\n      \"canView\": true,\n      \"canCreate\": true,\n      \"canEdit\": true,\n      \"canDelete\": false,\n      \"canExport\": true,\n      \"canImport\": false\n    },\n    {\n      \"module\": \"RFID\",\n      \"canView\": true,\n      \"canCreate\": true,\n      \"canEdit\": false,\n      \"canDelete\": false,\n      \"canExport\": false,\n      \"canImport\": false\n    },\n    {\n      \"module\": \"Invoice\",\n      \"canView\": true,\n      \"canCreate\": true,\n      \"canEdit\": false,\n      \"canDelete\": false,\n      \"canExport\": true,\n      \"canImport\": false\n    }\n  ]\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/Admin/assign-permissions",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "Admin", "assign-permissions"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update User Permissions",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"userId\": {{subUserId}},\n  \"permissions\": [\n    {\n      \"module\": \"Product\",\n      \"canView\": true,\n      \"canCreate\": true,\n      \"canEdit\": true,\n      \"canDelete\": true,\n      \"canExport\": true,\n      \"canImport\": true\n    },\n    {\n      \"module\": \"RFID\",\n      \"canView\": true,\n      \"canCreate\": true,\n      \"canEdit\": true,\n      \"canDelete\": false,\n      \"canExport\": true,\n      \"canImport\": true\n    },\n    {\n      \"module\": \"Invoice\",\n      \"canView\": true,\n      \"canCreate\": true,\n      \"canEdit\": true,\n      \"canDelete\": false,\n      \"canExport\": true,\n      \"canImport\": false\n    }\n  ]\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/Admin/update-permissions",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "Admin", "update-permissions"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User Permissions",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/Admin/user-permissions/{{subUserId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "Admin", "user-permissions", "{{subUserId}}"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All User Permissions",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/Admin/all-user-permissions",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "Admin", "all-user-permissions"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User Activities",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/Admin/user-activities",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "Admin", "user-activities"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User Activities with Filters",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/Admin/user-activities?startDate=2024-01-01&endDate=2024-01-31&userId={{subUserId}}&activityType=Product&action=Create&page=1&pageSize=20",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "Admin", "user-activities"],
+							"query": [
+								{
+									"key": "startDate",
+									"value": "2024-01-01"
+								},
+								{
+									"key": "startDate",
+									"value": "2024-01-31"
+								},
+								{
+									"key": "userId",
+									"value": "{{subUserId}}"
+								},
+								{
+									"key": "activityType",
+									"value": "Product"
+								},
+								{
+									"key": "action",
+									"value": "Create"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "pageSize",
+									"value": "20"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User Activities by User",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/Admin/user-activities/user/{{subUserId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "Admin", "user-activities", "user", "{{subUserId}}"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User Activities by Date Range",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/Admin/user-activities/date-range?startDate=2024-01-01&endDate=2024-01-31",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "Admin", "user-activities", "date-range"],
+							"query": [
+								{
+									"key": "startDate",
+									"value": "2024-01-01"
+								},
+								{
+									"key": "endDate",
+									"value": "2024-01-31"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User Activities by Module",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/Admin/user-activities/module/Product",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "Admin", "user-activities", "module", "Product"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User Activities by Action",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/Admin/user-activities/action/Create",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "Admin", "user-activities", "action", "Create"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Activity Summary",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/Admin/activity-summary",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "Admin", "activity-summary"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Activity Summary by Date Range",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/Admin/activity-summary/date-range?startDate=2024-01-01&endDate=2024-01-31",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "Admin", "activity-summary", "date-range"],
+							"query": [
+								{
+									"key": "startDate",
+									"value": "2024-01-01"
+								},
+								{
+									"key": "endDate",
+									"value": "2024-01-31"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Activity Summary by User",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/Admin/activity-summary/user/{{subUserId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "Admin", "activity-summary", "user", "{{subUserId}}"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Activity Summary by Module",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/Admin/activity-summary/module/Product",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "Admin", "activity-summary", "module", "Product"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Deactivate User",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"userId\": {{subUserId}},\n  \"isActive\": false,\n  \"remarks\": \"User deactivated due to policy violation\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/Admin/deactivate-user",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "Admin", "deactivate-user"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Activate User",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"userId\": {{subUserId}},\n  \"isActive\": true,\n  \"remarks\": \"User reactivated after review\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/Admin/activate-user",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "Admin", "activate-user"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User Hierarchy",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/Admin/user-hierarchy",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "Admin", "user-hierarchy"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User Hierarchy by Admin",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/Admin/user-hierarchy/admin/{{adminUserId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "Admin", "user-hierarchy", "admin", "{{adminUserId}}"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Export User Activities to CSV",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/Admin/export-activities/csv?startDate=2024-01-01&endDate=2024-01-31&userId={{subUserId}}&module=Product",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "Admin", "export-activities", "csv"],
+							"query": [
+								{
+									"key": "startDate",
+									"value": "2024-01-01"
+								},
+								{
+									"key": "endDate",
+									"value": "2024-01-31"
+								},
+								{
+									"key": "userId",
+									"value": "{{subUserId}}"
+								},
+								{
+									"key": "module",
+									"value": "Product"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Export User Permissions to CSV",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/Admin/export-permissions/csv",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "Admin", "export-permissions", "csv"]
 						}
 					},
 					"response": []

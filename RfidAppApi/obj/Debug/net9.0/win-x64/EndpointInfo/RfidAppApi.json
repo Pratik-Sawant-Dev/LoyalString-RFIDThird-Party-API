@@ -7,6 +7,1703 @@
     "version": "v1"
   },
   "paths": {
+    "/api/Admin/register-admin": {
+      "post": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Register a new admin user (Main Admin only)",
+        "operationId": "Admin_RegisterAdmin",
+        "requestBody": {
+          "x-name": "createUserDto",
+          "description": "Admin user creation details",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUserByAdminDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "201": {
+            "description": "Created admin user information",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminUserDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/Admin/register-sub-user": {
+      "post": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Register a new sub-user under admin",
+        "operationId": "Admin_RegisterSubUser",
+        "requestBody": {
+          "x-name": "createUserDto",
+          "description": "Sub-user creation details",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUserByAdminDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "201": {
+            "description": "Created sub-user information",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminUserDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/Admin/users/{userId}": {
+      "get": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Get user by ID",
+        "operationId": "Admin_GetUser",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "description": "User ID",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User information",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminUserDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Update user information (Admin only)",
+        "operationId": "Admin_UpdateUser",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "description": "User ID",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "updateUserDto",
+          "description": "Update information",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUserByAdminDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "200": {
+            "description": "Updated user information",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminUserDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Delete user (Admin only)",
+        "operationId": "Admin_DeleteUser",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "description": "User ID",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success status"
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Admin/users-under-admin": {
+      "get": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Get all users managed by the current admin",
+        "operationId": "Admin_GetUsersUnderAdmin",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 1
+            },
+            "x-position": 1
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10
+            },
+            "x-position": 2
+          },
+          {
+            "name": "searchTerm",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "nullable": true
+            },
+            "x-position": 3
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "nullable": true
+            },
+            "x-position": 4
+          },
+          {
+            "name": "sortOrder",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "nullable": true
+            },
+            "x-position": 5
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of users",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AdminUserDto"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Admin/activate-user": {
+      "put": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Activate user (Admin only)",
+        "operationId": "Admin_ActivateUser",
+        "requestBody": {
+          "x-name": "activateUserDto",
+          "description": "Activation details",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ActivateUserDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "Success status"
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Admin/deactivate-user": {
+      "put": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Deactivate user (Admin only)",
+        "operationId": "Admin_DeactivateUser",
+        "requestBody": {
+          "x-name": "deactivateUserDto",
+          "description": "Deactivation details",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeactivateUserDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "Success status"
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Admin/users/{userId}/reset-password": {
+      "post": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Reset user password (Admin only)",
+        "operationId": "Admin_ResetUserPassword",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "description": "User ID",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "resetPasswordDto",
+          "description": "New password",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResetPasswordDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "200": {
+            "description": "Success status"
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Admin/assign-permissions": {
+      "post": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Assign permissions to user",
+        "operationId": "Admin_AssignPermissions",
+        "requestBody": {
+          "x-name": "assignPermissionsDto",
+          "description": "Permission assignment details",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssignPermissionsDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "Success status"
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Admin/update-permissions": {
+      "put": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Update user permissions (Admin only)",
+        "operationId": "Admin_UpdatePermissions",
+        "requestBody": {
+          "x-name": "updatePermissionsDto",
+          "description": "Permission update details",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePermissionsDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "Success status"
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Admin/user-permissions/{userId}": {
+      "get": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Get user permissions",
+        "operationId": "Admin_GetUserPermissions",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "description": "User ID",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User permissions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UserPermissionDto"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Admin/all-user-permissions": {
+      "get": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Get all user permissions",
+        "operationId": "Admin_GetAllUserPermissions",
+        "responses": {
+          "200": {
+            "description": "All user permissions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UserPermissionDto"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Admin/users/{userId}/permissions": {
+      "put": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Update user permissions (Admin only)",
+        "operationId": "Admin_UpdateUserPermissions",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "description": "User ID",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "permissions",
+          "description": "New permissions",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/UserPermissionCreateDto"
+                }
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "200": {
+            "description": "Success status"
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Admin/permissions/bulk-update": {
+      "post": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Bulk update permissions for multiple users (Admin only)",
+        "operationId": "Admin_BulkUpdatePermissions",
+        "requestBody": {
+          "x-name": "bulkUpdate",
+          "description": "Bulk permission update details",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BulkPermissionUpdateDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "Success status"
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Admin/user-activities": {
+      "get": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Get user activities with filters",
+        "operationId": "Admin_GetUserActivities",
+        "parameters": [
+          {
+            "name": "startDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "nullable": true
+            },
+            "x-position": 1
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "nullable": true
+            },
+            "x-position": 2
+          },
+          {
+            "name": "userId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "nullable": true
+            },
+            "x-position": 3
+          },
+          {
+            "name": "activityType",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "nullable": true
+            },
+            "x-position": 4
+          },
+          {
+            "name": "action",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "nullable": true
+            },
+            "x-position": 5
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 1
+            },
+            "x-position": 6
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 20
+            },
+            "x-position": 7
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of user activities",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UserActivityDto"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Admin/user-activities/user/{userId}": {
+      "get": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Get activities for a specific user",
+        "operationId": "Admin_GetUserActivitiesByUser",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "description": "User ID",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of user activities",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UserActivityDto"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Admin/user-activities/date-range": {
+      "get": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Get user activities by date range",
+        "operationId": "Admin_GetUserActivitiesByDateRange",
+        "parameters": [
+          {
+            "name": "startDate",
+            "in": "query",
+            "description": "Start date",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "description": "End date",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "x-position": 2
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of user activities",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UserActivityDto"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Admin/user-activities/module/{module}": {
+      "get": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Get user activities by module",
+        "operationId": "Admin_GetUserActivitiesByModule",
+        "parameters": [
+          {
+            "name": "module",
+            "in": "path",
+            "required": true,
+            "description": "Module name",
+            "schema": {
+              "type": "string"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of user activities",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UserActivityDto"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Admin/user-activities/action/{action}": {
+      "get": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Get user activities by action",
+        "operationId": "Admin_GetUserActivitiesByAction",
+        "parameters": [
+          {
+            "name": "action",
+            "in": "path",
+            "required": true,
+            "description": "Action name",
+            "schema": {
+              "type": "string"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of user activities",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UserActivityDto"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Admin/users/{userId}/activities": {
+      "get": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Get activities for a specific user",
+        "operationId": "Admin_GetUserActivities2",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "description": "User ID",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "UserId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "nullable": true
+            },
+            "x-position": 2
+          },
+          {
+            "name": "ActivityType",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "nullable": true
+            },
+            "x-position": 3
+          },
+          {
+            "name": "Action",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "nullable": true
+            },
+            "x-position": 4
+          },
+          {
+            "name": "StartDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "nullable": true
+            },
+            "x-position": 5
+          },
+          {
+            "name": "EndDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "nullable": true
+            },
+            "x-position": 6
+          },
+          {
+            "name": "Page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 7
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 8
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of user activities",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UserActivityDto"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Admin/activity-summary": {
+      "get": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Get activity summary",
+        "operationId": "Admin_GetActivitySummary",
+        "responses": {
+          "200": {
+            "description": "Activity summary",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActivitySummaryDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Admin/activity-summary/date-range": {
+      "get": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Get activity summary by date range",
+        "operationId": "Admin_GetActivitySummaryByDateRange",
+        "parameters": [
+          {
+            "name": "startDate",
+            "in": "query",
+            "description": "Start date",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "description": "End date",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "x-position": 2
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Activity summary",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActivitySummaryDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Admin/activity-summary/user/{userId}": {
+      "get": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Get activity summary by user",
+        "operationId": "Admin_GetActivitySummaryByUser",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "description": "User ID",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Activity summary",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActivitySummaryDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Admin/activity-summary/module/{module}": {
+      "get": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Get activity summary by module",
+        "operationId": "Admin_GetActivitySummaryByModule",
+        "parameters": [
+          {
+            "name": "module",
+            "in": "path",
+            "required": true,
+            "description": "Module name",
+            "schema": {
+              "type": "string"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Activity summary",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActivitySummaryDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Admin/user-hierarchy": {
+      "get": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Get user hierarchy",
+        "operationId": "Admin_GetUserHierarchy",
+        "responses": {
+          "200": {
+            "description": "User hierarchy",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserHierarchyDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Admin/user-hierarchy/admin/{adminUserId}": {
+      "get": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Get user hierarchy by admin",
+        "operationId": "Admin_GetUserHierarchyByAdmin",
+        "parameters": [
+          {
+            "name": "adminUserId",
+            "in": "path",
+            "required": true,
+            "description": "Admin user ID",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User hierarchy",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserHierarchyDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Admin/export-activities/csv": {
+      "get": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Export user activities to CSV",
+        "operationId": "Admin_ExportActivitiesToCsv",
+        "parameters": [
+          {
+            "name": "startDate",
+            "in": "query",
+            "description": "Start date",
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "nullable": true
+            },
+            "x-position": 1
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "description": "End date",
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "nullable": true
+            },
+            "x-position": 2
+          },
+          {
+            "name": "userId",
+            "in": "query",
+            "description": "User ID (optional)",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "nullable": true
+            },
+            "x-position": 3
+          },
+          {
+            "name": "module",
+            "in": "query",
+            "description": "Module (optional)",
+            "schema": {
+              "type": "string",
+              "nullable": true
+            },
+            "x-position": 4
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "CSV file"
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Admin/export-permissions/csv": {
+      "get": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Export user permissions to CSV",
+        "operationId": "Admin_ExportPermissionsToCsv",
+        "responses": {
+          "200": {
+            "description": "CSV file"
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Admin/dashboard": {
+      "get": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Get admin dashboard with statistics and recent activities",
+        "operationId": "Admin_GetDashboard",
+        "responses": {
+          "200": {
+            "description": "Admin dashboard data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminDashboardDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Admin/organization/dashboard": {
+      "get": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Get organization dashboard (Main Admin only)",
+        "operationId": "Admin_GetOrganizationDashboard",
+        "responses": {
+          "200": {
+            "description": "Organization dashboard data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminDashboardDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Admin/organization/users": {
+      "get": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Get all users in organization (Main Admin only)",
+        "operationId": "Admin_GetOrganizationUsers",
+        "responses": {
+          "200": {
+            "description": "List of all users in organization",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AdminUserDto"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/DatabaseMigration/health": {
       "get": {
         "tags": [
@@ -1035,10 +2732,6 @@
                     "type": "string",
                     "nullable": true
                   },
-                  "EpcValue": {
-                    "type": "string",
-                    "nullable": true
-                  },
                   "GrossWeight": {
                     "type": "number",
                     "format": "float",
@@ -1339,10 +3032,6 @@
                     "nullable": true
                   },
                   "RfidCode": {
-                    "type": "string",
-                    "nullable": true
-                  },
-                  "EpcValue": {
                     "type": "string",
                     "nullable": true
                   },
@@ -4745,6 +6434,83 @@
         }
       }
     },
+    "/api/Rfid/upload-excel": {
+      "post": {
+        "tags": [
+          "Rfid"
+        ],
+        "summary": "Upload RFID data from Excel file",
+        "operationId": "Rfid_UploadRfidFromExcel",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "ExcelFile": {
+                    "type": "string",
+                    "format": "binary",
+                    "nullable": true
+                  },
+                  "ClientCode": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "UpdateExisting": {
+                    "type": "boolean"
+                  },
+                  "CreateNew": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Excel upload processed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RfidExcelUploadResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request or validation errors",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/api/Rfid/download-template": {
+      "get": {
+        "tags": [
+          "Rfid"
+        ],
+        "summary": "Download Excel template for RFID upload",
+        "operationId": "Rfid_DownloadExcelTemplate",
+        "responses": {
+          "200": {
+            "description": "Template downloaded successfully"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
     "/api/StockTransfer": {
       "post": {
         "tags": [
@@ -6125,6 +7891,33 @@
         }
       }
     },
+    "/api/User/logout": {
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Logout user and log the activity",
+        "operationId": "User_Logout",
+        "responses": {
+          "200": {
+            "description": "Logout successful"
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
     "/api/User/{id}": {
       "get": {
         "tags": [
@@ -6400,6 +8193,650 @@
   },
   "components": {
     "schemas": {
+      "AdminUserDto": {
+        "type": "object",
+        "description": "DTO for admin user management",
+        "additionalProperties": false,
+        "properties": {
+          "userId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "userName": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "fullName": {
+            "type": "string",
+            "nullable": true
+          },
+          "mobileNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "city": {
+            "type": "string",
+            "nullable": true
+          },
+          "address": {
+            "type": "string",
+            "nullable": true
+          },
+          "organisationName": {
+            "type": "string"
+          },
+          "showroomType": {
+            "type": "string",
+            "nullable": true
+          },
+          "clientCode": {
+            "type": "string"
+          },
+          "databaseName": {
+            "type": "string",
+            "nullable": true
+          },
+          "isAdmin": {
+            "type": "boolean"
+          },
+          "adminUserId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "userType": {
+            "type": "string"
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "createdOn": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "lastLoginDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "permissions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserPermissionDto"
+            }
+          }
+        }
+      },
+      "UserPermissionDto": {
+        "type": "object",
+        "description": "DTO for user permissions",
+        "additionalProperties": false,
+        "properties": {
+          "userPermissionId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "userId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "clientCode": {
+            "type": "string"
+          },
+          "module": {
+            "type": "string"
+          },
+          "canView": {
+            "type": "boolean"
+          },
+          "canCreate": {
+            "type": "boolean"
+          },
+          "canEdit": {
+            "type": "boolean"
+          },
+          "canDelete": {
+            "type": "boolean"
+          },
+          "canExport": {
+            "type": "boolean"
+          },
+          "canImport": {
+            "type": "boolean"
+          },
+          "createdOn": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "createdBy": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "userName": {
+            "type": "string"
+          },
+          "userEmail": {
+            "type": "string"
+          }
+        }
+      },
+      "ProblemDetails": {
+        "type": "object",
+        "additionalProperties": {
+          "nullable": true
+        },
+        "properties": {
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "detail": {
+            "type": "string",
+            "nullable": true
+          },
+          "instance": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "CreateUserByAdminDto": {
+        "type": "object",
+        "description": "DTO for creating a new user by admin",
+        "additionalProperties": false,
+        "required": [
+          "userName",
+          "email",
+          "password"
+        ],
+        "properties": {
+          "userName": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 0
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "maxLength": 100,
+            "minLength": 0
+          },
+          "password": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 6
+          },
+          "fullName": {
+            "type": "string",
+            "maxLength": 150,
+            "minLength": 0,
+            "nullable": true
+          },
+          "mobileNumber": {
+            "type": "string",
+            "maxLength": 20,
+            "minLength": 0,
+            "nullable": true
+          },
+          "city": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 0,
+            "nullable": true
+          },
+          "address": {
+            "type": "string",
+            "maxLength": 255,
+            "minLength": 0,
+            "nullable": true
+          },
+          "showroomType": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 0,
+            "nullable": true
+          },
+          "isAdmin": {
+            "type": "boolean"
+          },
+          "permissions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserPermissionCreateDto"
+            }
+          }
+        }
+      },
+      "UserPermissionCreateDto": {
+        "type": "object",
+        "description": "DTO for creating user permissions",
+        "additionalProperties": false,
+        "required": [
+          "module"
+        ],
+        "properties": {
+          "module": {
+            "type": "string",
+            "minLength": 1
+          },
+          "canView": {
+            "type": "boolean"
+          },
+          "canCreate": {
+            "type": "boolean"
+          },
+          "canEdit": {
+            "type": "boolean"
+          },
+          "canDelete": {
+            "type": "boolean"
+          },
+          "canExport": {
+            "type": "boolean"
+          },
+          "canImport": {
+            "type": "boolean"
+          }
+        }
+      },
+      "UpdateUserByAdminDto": {
+        "type": "object",
+        "description": "DTO for updating user by admin",
+        "additionalProperties": false,
+        "properties": {
+          "fullName": {
+            "type": "string",
+            "nullable": true
+          },
+          "mobileNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "city": {
+            "type": "string",
+            "nullable": true
+          },
+          "address": {
+            "type": "string",
+            "nullable": true
+          },
+          "showroomType": {
+            "type": "string",
+            "nullable": true
+          },
+          "isActive": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "isAdmin": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "permissions": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/UserPermissionCreateDto"
+            }
+          }
+        }
+      },
+      "ActivateUserDto": {
+        "type": "object",
+        "description": "DTO for activating user",
+        "additionalProperties": false,
+        "properties": {
+          "userId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "remarks": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "DeactivateUserDto": {
+        "type": "object",
+        "description": "DTO for deactivating user",
+        "additionalProperties": false,
+        "properties": {
+          "userId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "remarks": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "ResetPasswordDto": {
+        "type": "object",
+        "description": "DTO for password reset",
+        "additionalProperties": false,
+        "properties": {
+          "newPassword": {
+            "type": "string"
+          }
+        }
+      },
+      "AssignPermissionsDto": {
+        "type": "object",
+        "description": "DTO for assigning permissions",
+        "additionalProperties": false,
+        "properties": {
+          "userId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "permissions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserPermissionCreateDto"
+            }
+          }
+        }
+      },
+      "UpdatePermissionsDto": {
+        "type": "object",
+        "description": "DTO for updating permissions",
+        "additionalProperties": false,
+        "properties": {
+          "userId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "permissions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserPermissionCreateDto"
+            }
+          }
+        }
+      },
+      "BulkPermissionUpdateDto": {
+        "type": "object",
+        "description": "DTO for bulk user permission update",
+        "additionalProperties": false,
+        "properties": {
+          "userIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          "permissions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserPermissionCreateDto"
+            }
+          }
+        }
+      },
+      "UserActivityDto": {
+        "type": "object",
+        "description": "DTO for user activity tracking",
+        "additionalProperties": false,
+        "properties": {
+          "activityId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "userId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "clientCode": {
+            "type": "string"
+          },
+          "activityType": {
+            "type": "string"
+          },
+          "action": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "tableName": {
+            "type": "string",
+            "nullable": true
+          },
+          "recordId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "oldValues": {
+            "type": "string",
+            "nullable": true
+          },
+          "newValues": {
+            "type": "string",
+            "nullable": true
+          },
+          "ipAddress": {
+            "type": "string",
+            "nullable": true
+          },
+          "userAgent": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdOn": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "userName": {
+            "type": "string"
+          },
+          "userEmail": {
+            "type": "string"
+          }
+        }
+      },
+      "ActivitySummaryDto": {
+        "type": "object",
+        "description": "DTO for activity summary",
+        "additionalProperties": false,
+        "properties": {
+          "totalActivities": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "activitiesByModule": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ModuleActivitySummary"
+            }
+          },
+          "activitiesByUser": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserActivitySummary"
+            }
+          },
+          "recentActivities": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RecentActivity"
+            }
+          }
+        }
+      },
+      "ModuleActivitySummary": {
+        "type": "object",
+        "description": "DTO for module activity summary",
+        "additionalProperties": false,
+        "properties": {
+          "module": {
+            "type": "string"
+          },
+          "count": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "lastActivity": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "UserActivitySummary": {
+        "type": "object",
+        "description": "DTO for user activity summary",
+        "additionalProperties": false,
+        "properties": {
+          "userId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "count": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "lastActivity": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "RecentActivity": {
+        "type": "object",
+        "description": "DTO for recent activity",
+        "additionalProperties": false,
+        "properties": {
+          "userId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "activityType": {
+            "type": "string"
+          },
+          "action": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdOn": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "UserHierarchyDto": {
+        "type": "object",
+        "description": "DTO for user hierarchy",
+        "additionalProperties": false,
+        "properties": {
+          "adminUserId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "adminUserName": {
+            "type": "string"
+          },
+          "users": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserHierarchyItem"
+            }
+          }
+        }
+      },
+      "UserHierarchyItem": {
+        "type": "object",
+        "description": "DTO for user hierarchy item",
+        "additionalProperties": false,
+        "properties": {
+          "userId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "userName": {
+            "type": "string"
+          },
+          "userType": {
+            "type": "string"
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "createdOn": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "AdminDashboardDto": {
+        "type": "object",
+        "description": "DTO for admin dashboard statistics",
+        "additionalProperties": false,
+        "properties": {
+          "totalUsers": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "activeUsers": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalAdmins": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalProducts": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalRFIDs": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalInvoices": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "todayActivities": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "recentActivities": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserActivityDto"
+            }
+          },
+          "recentUsers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdminUserDto"
+            }
+          }
+        }
+      },
       "InvoiceResponseDto": {
         "type": "object",
         "description": "DTO for invoice response",
@@ -6836,11 +9273,6 @@
             "type": "string",
             "nullable": true
           },
-          "epcValue": {
-            "type": "string",
-            "description": "EPC Value - optional, if not provided, will use RFID code as EPC value\nThis allows you to specify a different EPC value than the RFID code\nExample: RFID code \"RFID001\" with EPC value \"EPC001234567890\"\n\n⚠️ IMPORTANT: When creating new RFID tags, you MUST provide an EPC value.\nIf you don't provide an EPC value, the system will reject the request.\n\nBest practices:\n- Use descriptive RFID codes (e.g., \"RFID001\", \"RFID002\")\n- Use unique EPC values (e.g., \"EPC001234567890\", \"EPC001234567891\")\n- Never leave EPC value empty when creating new RFID tags",
-            "nullable": true
-          },
           "grossWeight": {
             "type": "number",
             "format": "float",
@@ -6982,11 +9414,6 @@
           },
           "rfidCode": {
             "type": "string",
-            "nullable": true
-          },
-          "epcValue": {
-            "type": "string",
-            "description": "EPC Value - optional for updates, if provided will update the EPC value of the RFID tag",
             "nullable": true
           },
           "grossWeight": {
@@ -7833,35 +10260,6 @@
           }
         }
       },
-      "ProblemDetails": {
-        "type": "object",
-        "additionalProperties": {
-          "nullable": true
-        },
-        "properties": {
-          "type": {
-            "type": "string",
-            "nullable": true
-          },
-          "title": {
-            "type": "string",
-            "nullable": true
-          },
-          "status": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "detail": {
-            "type": "string",
-            "nullable": true
-          },
-          "instance": {
-            "type": "string",
-            "nullable": true
-          }
-        }
-      },
       "CreateRfidDto": {
         "type": "object",
         "additionalProperties": false,
@@ -8208,6 +10606,74 @@
             "items": {
               "type": "string"
             }
+          }
+        }
+      },
+      "RfidExcelUploadResponseDto": {
+        "type": "object",
+        "description": "DTO for RFID Excel upload response",
+        "additionalProperties": false,
+        "properties": {
+          "totalRowsProcessed": {
+            "type": "integer",
+            "description": "Total rows processed",
+            "format": "int32"
+          },
+          "newRfidsCreated": {
+            "type": "integer",
+            "description": "Number of new RFID codes created",
+            "format": "int32"
+          },
+          "existingRfidsUpdated": {
+            "type": "integer",
+            "description": "Number of existing RFID codes updated",
+            "format": "int32"
+          },
+          "errorRows": {
+            "type": "integer",
+            "description": "Number of rows with errors",
+            "format": "int32"
+          },
+          "errors": {
+            "type": "array",
+            "description": "List of errors encountered during processing",
+            "items": {
+              "type": "string"
+            }
+          },
+          "processedRows": {
+            "type": "array",
+            "description": "List of successfully processed rows",
+            "items": {
+              "$ref": "#/components/schemas/RfidExcelRowDto"
+            }
+          },
+          "summary": {
+            "type": "string",
+            "description": "Summary message"
+          }
+        }
+      },
+      "RfidExcelRowDto": {
+        "type": "object",
+        "description": "DTO for individual RFID data from Excel",
+        "additionalProperties": false,
+        "required": [
+          "rfidCode",
+          "epcValue"
+        ],
+        "properties": {
+          "rfidCode": {
+            "type": "string",
+            "description": "RFID Code from Excel column 1",
+            "maxLength": 50,
+            "minLength": 0
+          },
+          "epcValue": {
+            "type": "string",
+            "description": "EPC Value from Excel column 2",
+            "maxLength": 100,
+            "minLength": 0
           }
         }
       },
@@ -9286,6 +11752,20 @@
             "description": "Connection string for the client database",
             "nullable": true
           },
+          "isAdmin": {
+            "type": "boolean",
+            "description": "Whether the user is an admin"
+          },
+          "userType": {
+            "type": "string",
+            "description": "User type (MainAdmin, Admin, User)"
+          },
+          "adminUserId": {
+            "type": "integer",
+            "description": "ID of the admin user who created this user (null for main admin)",
+            "format": "int32",
+            "nullable": true
+          },
           "isActive": {
             "type": "boolean",
             "description": "Whether the user is active"
@@ -9294,6 +11774,12 @@
             "type": "string",
             "description": "When the user was created",
             "format": "date-time"
+          },
+          "lastLoginDate": {
+            "type": "string",
+            "description": "Last login date",
+            "format": "date-time",
+            "nullable": true
           }
         }
       },

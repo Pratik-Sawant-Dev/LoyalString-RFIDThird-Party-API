@@ -1,0 +1,673 @@
+RFID Jewelry Inventory System - Complete ER Diagram with Mermaid Code
+
+1. COMPLETE ENTITY RELATIONSHIP DIAGRAM
+
+```mermaid
+erDiagram
+    %% ========================================
+    %% USER MANAGEMENT & AUTHENTICATION
+    %% ========================================
+    User {
+        int UserId PK
+        string UserName UK
+        string Email UK
+        string PasswordHash
+        string FullName
+        string MobileNumber
+        string FaxNumber
+        string City
+        string Address
+        string OrganisationName
+        string ShowroomType
+        string ClientCode FK
+        string DatabaseName
+        string ConnectionString
+        bool IsActive
+        datetime CreatedOn
+    }
+
+    Role {
+        int RoleId PK
+        string RoleName UK
+        string Description
+    }
+
+    UserRole {
+        int UserRoleId PK
+        int UserId FK
+        int RoleId FK
+    }
+
+    Permission {
+        int PermissionId PK
+        int RoleId FK
+        string PageName
+        bool CanView
+        bool CanEdit
+        bool CanDelete
+    }
+
+    %% ========================================
+    %% MASTER DATA TABLES
+    %% ========================================
+    CategoryMaster {
+        int CategoryId PK
+        string CategoryName UK
+    }
+
+    ProductMaster {
+        int ProductId PK
+        string ProductName UK
+    }
+
+    DesignMaster {
+        int DesignId PK
+        string DesignName UK
+    }
+
+    PurityMaster {
+        int PurityId PK
+        string PurityName UK
+    }
+
+    BranchMaster {
+        int BranchId PK
+        string BranchName UK
+        string ClientCode FK
+    }
+
+    CounterMaster {
+        int CounterId PK
+        string CounterName UK
+        int BranchId FK
+        string ClientCode FK
+    }
+
+    BoxMaster {
+        int BoxId PK
+        string BoxName UK
+        string ClientCode FK
+    }
+
+    %% ========================================
+    %% CORE PRODUCT & RFID TABLES
+    %% ========================================
+    ProductDetails {
+        int Id PK
+        string ClientCode FK
+        int BranchId FK
+        int CounterId FK
+        string ItemCode UK
+        int CategoryId FK
+        int ProductId FK
+        int DesignId FK
+        int PurityId FK
+        float GrossWeight
+        float StoneWeight
+        float DiamondHeight
+        float NetWeight
+        string BoxDetails
+        int Size
+        decimal StoneAmount
+        decimal DiamondAmount
+        decimal HallmarkAmount
+        decimal MakingPerGram
+        decimal MakingPercentage
+        decimal MakingFixedAmount
+        decimal Mrp
+        string ImageUrl
+        string Status
+        datetime CreatedOn
+    }
+
+    Rfid {
+        string RFIDCode PK
+        string EPCValue UK
+        string ClientCode FK
+        bool IsActive
+        datetime CreatedOn
+    }
+
+    ProductRfidAssignment {
+        int Id PK
+        int ProductId FK
+        string RFIDCode FK
+        datetime AssignedOn
+        datetime UnassignedOn
+        bool IsActive
+    }
+
+    ProductImage {
+        int Id PK
+        string ClientCode FK
+        int ProductId FK
+        string FileName
+        string FilePath
+        string ContentType
+        long FileSize
+        string OriginalFileName
+        string ImageType
+        int DisplayOrder
+        bool IsActive
+        datetime CreatedOn
+        datetime UpdatedOn
+    }
+
+    %% ========================================
+    %% STOCK VERIFICATION SYSTEM
+    %% ========================================
+    StockVerification {
+        int Id PK
+        string ClientCode FK
+        string VerificationSessionName
+        int BranchId FK
+        int CounterId FK
+        int CategoryId FK
+        string Status
+        int TotalItemsScanned
+        int MatchedItemsCount
+        int UnmatchedItemsCount
+        datetime CreatedOn
+        datetime UpdatedOn
+        bool IsActive
+    }
+
+    StockVerificationDetail {
+        int Id PK
+        int StockVerificationId FK
+        string ClientCode FK
+        string ItemCode
+        string RfidCode
+        string VerificationStatus
+        datetime CreatedOn
+        bool IsActive
+    }
+
+    %% ========================================
+    %% INVOICE & SALES MANAGEMENT
+    %% ========================================
+    Invoice {
+        int Id PK
+        string ClientCode FK
+        string InvoiceNumber UK
+        int ProductId FK
+        string RfidCode
+        decimal SellingPrice
+        decimal DiscountAmount
+        decimal FinalAmount
+        string InvoiceType
+        string CustomerName
+        string CustomerPhone
+        string CustomerAddress
+        string PaymentMethod
+        string PaymentReference
+        datetime SoldOn
+        datetime CreatedOn
+        datetime UpdatedOn
+        string Remarks
+        bool IsActive
+    }
+
+    %% ========================================
+    %% STOCK TRACKING & MOVEMENT
+    %% ========================================
+    StockMovement {
+        int Id PK
+        string ClientCode FK
+        int ProductId FK
+        string RfidCode
+        string MovementType
+        int Quantity
+        decimal UnitPrice
+        decimal TotalAmount
+        int BranchId FK
+        int CounterId FK
+        int CategoryId FK
+        string ReferenceNumber
+        string ReferenceType
+        string Remarks
+        datetime MovementDate
+        datetime CreatedOn
+        datetime UpdatedOn
+        bool IsActive
+    }
+
+    DailyStockBalance {
+        int Id PK
+        string ClientCode FK
+        int ProductId FK
+        string RfidCode
+        int BranchId FK
+        int CounterId FK
+        int CategoryId FK
+        datetime BalanceDate
+        int OpeningQuantity
+        int ClosingQuantity
+        int AddedQuantity
+        int SoldQuantity
+        int ReturnedQuantity
+        int TransferredInQuantity
+        int TransferredOutQuantity
+        decimal OpeningValue
+        decimal ClosingValue
+        decimal AddedValue
+        decimal SoldValue
+        decimal ReturnedValue
+        datetime CreatedOn
+        datetime UpdatedOn
+    }
+
+    StockTransfer {
+        int Id PK
+        string ClientCode FK
+        string TransferNumber UK
+        int ProductId FK
+        string RfidCode
+        string TransferType
+        int SourceBranchId FK
+        int SourceCounterId FK
+        int SourceBoxId FK
+        int DestinationBranchId FK
+        int DestinationCounterId FK
+        int DestinationBoxId FK
+        string Status
+        datetime TransferDate
+        datetime CompletedDate
+        string Reason
+        string Remarks
+        string ApprovedBy
+        datetime ApprovedOn
+        string RejectedBy
+        datetime RejectedOn
+        string RejectionReason
+        datetime CreatedOn
+        datetime UpdatedOn
+        bool IsActive
+    }
+
+    %% ========================================
+    %% RELATIONSHIPS
+    %% ========================================
+    
+    %% User Management Relationships
+    User ||--o{ UserRole : "has"
+    Role ||--o{ UserRole : "assigned_to"
+    Role ||--o{ Permission : "has"
+    
+    %% Master Data Relationships
+    BranchMaster ||--o{ CounterMaster : "contains"
+    BranchMaster ||--o{ ProductDetails : "located_at"
+    CounterMaster ||--o{ ProductDetails : "displayed_at"
+    CategoryMaster ||--o{ ProductDetails : "categorizes"
+    ProductMaster ||--o{ ProductDetails : "defines_type"
+    DesignMaster ||--o{ ProductDetails : "defines_design"
+    PurityMaster ||--o{ ProductDetails : "defines_purity"
+    
+    %% RFID Relationships
+    Rfid ||--o{ ProductRfidAssignment : "assigned_to"
+    ProductDetails ||--o{ ProductRfidAssignment : "has_rfid"
+    Rfid ||--o{ StockMovement : "tracked_in"
+    Rfid ||--o{ DailyStockBalance : "balanced_for"
+    Rfid ||--o{ StockTransfer : "transferred"
+    
+    %% Product Relationships
+    ProductDetails ||--o{ ProductImage : "has_images"
+    ProductDetails ||--o{ Invoice : "sold_in"
+    ProductDetails ||--o{ StockMovement : "moved_in"
+    ProductDetails ||--o{ DailyStockBalance : "balanced_for"
+    ProductDetails ||--o{ StockTransfer : "transferred"
+    ProductDetails ||--o{ StockVerificationDetail : "verified_in"
+    
+    %% Stock Management Relationships
+    StockVerification ||--o{ StockVerificationDetail : "contains"
+    BranchMaster ||--o{ StockVerification : "verified_at"
+    CounterMaster ||--o{ StockVerification : "verified_at"
+    CategoryMaster ||--o{ StockVerification : "verified_for"
+    
+    %% Transfer Relationships
+    BranchMaster ||--o{ StockTransfer : "source_branch"
+    BranchMaster ||--o{ StockTransfer : "destination_branch"
+    CounterMaster ||--o{ StockTransfer : "source_counter"
+    CounterMaster ||--o{ StockTransfer : "destination_counter"
+    BoxMaster ||--o{ StockTransfer : "source_box"
+    BoxMaster ||--o{ StockTransfer : "destination_box"
+```
+
+2. SIMPLIFIED BUSINESS VIEW DIAGRAM
+
+```mermaid
+erDiagram
+    %% ========================================
+    %% CORE BUSINESS ENTITIES
+    %% ========================================
+    
+    %% Master Data (Lookup Tables)
+    CategoryMaster {
+        int CategoryId PK
+        string CategoryName
+    }
+    
+    ProductMaster {
+        int ProductId PK
+        string ProductName
+    }
+    
+    DesignMaster {
+        int DesignId PK
+        string DesignName
+    }
+    
+    PurityMaster {
+        int PurityId PK
+        string PurityName
+    }
+    
+    BranchMaster {
+        int BranchId PK
+        string BranchName
+        string ClientCode
+    }
+    
+    CounterMaster {
+        int CounterId PK
+        string CounterName
+        int BranchId FK
+        string ClientCode
+    }
+    
+    %% Core Business Tables
+    ProductDetails {
+        int Id PK
+        string ClientCode
+        string ItemCode
+        int CategoryId FK
+        int ProductId FK
+        int DesignId FK
+        int PurityId FK
+        int BranchId FK
+        int CounterId FK
+        float GrossWeight
+        float NetWeight
+        decimal Mrp
+        string Status
+    }
+    
+    Rfid {
+        string RFIDCode PK
+        string EPCValue
+        string ClientCode
+        bool IsActive
+    }
+    
+    ProductRfidAssignment {
+        int Id PK
+        int ProductId FK
+        string RFIDCode FK
+        bool IsActive
+    }
+    
+    %% Stock Management
+    StockVerification {
+        int Id PK
+        string ClientCode
+        string VerificationSessionName
+        int BranchId FK
+        int CounterId FK
+        int CategoryId FK
+        string Status
+        int TotalItemsScanned
+        int MatchedItemsCount
+        int UnmatchedItemsCount
+    }
+    
+    StockVerificationDetail {
+        int Id PK
+        int StockVerificationId FK
+        string ItemCode
+        string RfidCode
+        string VerificationStatus
+    }
+    
+    %% Sales & Movement
+    Invoice {
+        int Id PK
+        string ClientCode
+        string InvoiceNumber
+        int ProductId FK
+        string RfidCode
+        decimal FinalAmount
+        string CustomerName
+        datetime SoldOn
+    }
+    
+    StockMovement {
+        int Id PK
+        string ClientCode
+        int ProductId FK
+        string MovementType
+        int Quantity
+        decimal TotalAmount
+        int BranchId FK
+        int CounterId FK
+    }
+    
+    %% User Management
+    User {
+        int UserId PK
+        string UserName
+        string Email
+        string ClientCode
+        string OrganisationName
+    }
+    
+    Role {
+        int RoleId PK
+        string RoleName
+    }
+    
+    UserRole {
+        int UserRoleId PK
+        int UserId FK
+        int RoleId FK
+    }
+    
+    %% ========================================
+    %% KEY RELATIONSHIPS
+    %% ========================================
+    
+    %% Master Data Relationships
+    BranchMaster ||--o{ CounterMaster : "contains"
+    CategoryMaster ||--o{ ProductDetails : "categorizes"
+    ProductMaster ||--o{ ProductDetails : "defines_type"
+    DesignMaster ||--o{ ProductDetails : "defines_design"
+    PurityMaster ||--o{ ProductDetails : "defines_purity"
+    BranchMaster ||--o{ ProductDetails : "located_at"
+    CounterMaster ||--o{ ProductDetails : "displayed_at"
+    
+    %% RFID Relationships
+    ProductDetails ||--o{ ProductRfidAssignment : "assigned_to"
+    Rfid ||--o{ ProductRfidAssignment : "assigned_to"
+    
+    %% Stock Management
+    ProductDetails ||--o{ StockVerificationDetail : "verified_in"
+    StockVerification ||--o{ StockVerificationDetail : "contains"
+    BranchMaster ||--o{ StockVerification : "verified_at"
+    CounterMaster ||--o{ StockVerification : "verified_at"
+    
+    %% Sales & Movement
+    ProductDetails ||--o{ Invoice : "sold_in"
+    ProductDetails ||--o{ StockMovement : "moved_in"
+    BranchMaster ||--o{ StockMovement : "located_at"
+    CounterMaster ||--o{ StockMovement : "displayed_at"
+    
+    %% User Management
+    User ||--o{ UserRole : "has"
+    Role ||--o{ UserRole : "assigned_to"
+```
+
+3. MULTI-TENANT ARCHITECTURE DIAGRAM
+
+```mermaid
+graph TB
+    subgraph "Master Database (AppDbContext)"
+        A[User Management]
+        B[Authentication]
+        C[Client Registration]
+    end
+    
+    subgraph "Client Database 1 (ClientDbContext)"
+        D1[Product Data]
+        E1[RFID Data]
+        F1[Stock Data]
+        G1[Sales Data]
+    end
+    
+    subgraph "Client Database 2 (ClientDbContext)"
+        D2[Product Data]
+        E2[RFID Data]
+        F2[Stock Data]
+        G2[Sales Data]
+    end
+    
+    subgraph "Client Database N (ClientDbContext)"
+        D3[Product Data]
+        E3[RFID Data]
+        F3[Stock Data]
+        G3[Sales Data]
+    end
+    
+    A --> D1
+    A --> D2
+    A --> D3
+    B --> E1
+    B --> E2
+    B --> E3
+    C --> F1
+    C --> F2
+    C --> F3
+    
+    style A fill:#e1f5fe
+    style B fill:#e1f5fe
+    style C fill:#e1f5fe
+    style D1 fill:#f3e5f5
+    style E1 fill:#f3e5f5
+    style F1 fill:#f3e5f5
+    style G1 fill:#f3e5f5
+    style D2 fill:#e8f5e8
+    style E2 fill:#e8f5e8
+    style F2 fill:#e8f5e8
+    style G2 fill:#e8f5e8
+    style D3 fill:#fff3e0
+    style E3 fill:#fff3e0
+    style F3 fill:#fff3e0
+    style G3 fill:#fff3e0
+```
+
+4. RFID WORKFLOW DIAGRAM
+
+```mermaid
+flowchart TD
+    A[RFID Tag Created] --> B[Assign to Product]
+    B --> C[Product in Inventory]
+    C --> D{Stock Movement?}
+    D -->|Yes| E[Update Stock Movement]
+    D -->|No| F[Daily Stock Balance]
+    E --> F
+    F --> G{Stock Verification?}
+    G -->|Yes| H[Scan RFID Tags]
+    G -->|No| I[Continue Normal Operations]
+    H --> J{Match Found?}
+    J -->|Yes| K[Update Verification Status]
+    J -->|No| L[Flag for Investigation]
+    K --> I
+    L --> I
+    I --> M{Sale Transaction?}
+    M -->|Yes| N[Create Invoice]
+    M -->|No| O[Return to Inventory]
+    N --> P[Update Stock Movement]
+    P --> Q[Update Daily Balance]
+    O --> Q
+    Q --> R[RFID Status Updated]
+```
+
+5. STOCK TRANSFER WORKFLOW
+
+```mermaid
+flowchart TD
+    A[Create Transfer Request] --> B[Validate Source Location]
+    B --> C[Validate Destination Location]
+    C --> D[Check Product Availability]
+    D --> E{Product Available?}
+    E -->|Yes| F[Create Transfer Record]
+    E -->|No| G[Reject Transfer]
+    F --> H[Update Source Stock]
+    H --> I[Update Destination Stock]
+    I --> J[Generate Transfer Number]
+    J --> K[Send for Approval]
+    K --> L{Approved?}
+    L -->|Yes| M[Execute Transfer]
+    L -->|No| N[Reject Transfer]
+    M --> O[Update Stock Movement]
+    O --> P[Update Daily Balance]
+    P --> Q[Transfer Complete]
+    N --> R[Transfer Cancelled]
+```
+
+6. PERFORMANCE INDEXES DIAGRAM
+
+```mermaid
+graph LR
+    subgraph "Primary Indexes"
+        A1[UserId PK]
+        A2[ProductId PK]
+        A3[RFIDCode PK]
+        A4[InvoiceId PK]
+    end
+    
+    subgraph "Unique Indexes"
+        B1[Email UK]
+        B2[ClientCode UK]
+        B3[ItemCode UK]
+        B4[InvoiceNumber UK]
+        B5[TransferNumber UK]
+    end
+    
+    subgraph "Composite Indexes"
+        C1[ClientCode + IsActive]
+        C2[BranchId + CounterId]
+        C3[ProductId + Status]
+        C4[MovementDate + Type]
+    end
+    
+    subgraph "Performance Indexes"
+        D1[Status Index]
+        D2[Date Indexes]
+        D3[Category Indexes]
+        D4[RFID Status Index]
+    end
+    
+    A1 --> B1
+    A2 --> B2
+    A3 --> B3
+    A4 --> B4
+    C1 --> D1
+    C2 --> D2
+    C3 --> D3
+    C4 --> D4
+```
+
+USAGE INSTRUCTIONS:
+
+1. Copy any of the Mermaid code blocks above
+2. Paste into Mermaid Live Editor: https://mermaid.live/
+3. Or use in GitHub/GitLab markdown files
+4. Or integrate into documentation tools that support Mermaid
+
+DIAGRAM DESCRIPTIONS:
+
+1. Complete ER Diagram: Full database schema with all tables and relationships
+2. Simplified Business View: Core business entities for stakeholders
+3. Multi-Tenant Architecture: Shows database isolation between clients
+4. RFID Workflow: Complete RFID lifecycle from creation to sale
+5. Stock Transfer Workflow: Stock transfer approval and execution process
+6. Performance Indexes: Database optimization strategy visualization

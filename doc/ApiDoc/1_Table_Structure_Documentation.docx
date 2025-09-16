@@ -1,0 +1,294 @@
+RFID Jewelry Inventory System - Complete Table Structure Documentation
+
+1. USER MANAGEMENT & AUTHENTICATION TABLES
+
+1.1 tblUser (Master Database)
+- UserId (INT, PK, Identity)
+- UserName (NVARCHAR(100), UK)
+- Email (NVARCHAR(100), UK)
+- PasswordHash (NVARCHAR(255))
+- FullName (NVARCHAR(150))
+- MobileNumber (NVARCHAR(20))
+- FaxNumber (NVARCHAR(50))
+- City (NVARCHAR(100))
+- Address (NVARCHAR(255))
+- OrganisationName (NVARCHAR(150))
+- ShowroomType (NVARCHAR(100))
+- ClientCode (NVARCHAR(50), UK)
+- DatabaseName (NVARCHAR(255))
+- ConnectionString (NVARCHAR(500))
+- IsActive (BIT)
+- CreatedOn (DATETIME2)
+
+1.2 tblRole (Master Database)
+- RoleId (INT, PK, Identity)
+- RoleName (NVARCHAR(100), UK)
+- Description (NVARCHAR(255))
+
+1.3 tblUserRole (Master Database)
+- UserRoleId (INT, PK, Identity)
+- UserId (INT, FK)
+- RoleId (INT, FK)
+
+1.4 tblPermission (Master Database)
+- PermissionId (INT, PK, Identity)
+- RoleId (INT, FK)
+- PageName (NVARCHAR(100))
+- CanView (BIT)
+- CanEdit (BIT)
+- CanDelete (BIT)
+
+2. MASTER DATA TABLES (Client Database)
+
+2.1 tblCategoryMaster
+- CategoryId (INT, PK, Identity)
+- CategoryName (NVARCHAR(100), UK)
+
+2.2 tblProductMaster
+- ProductId (INT, PK, Identity)
+- ProductName (NVARCHAR(100), UK)
+
+2.3 tblDesignMaster
+- DesignId (INT, PK, Identity)
+- DesignName (NVARCHAR(100), UK)
+
+2.4 tblPurityMaster
+- PurityId (INT, PK, Identity)
+- PurityName (NVARCHAR(100), UK)
+
+2.5 tblBranchMaster
+- BranchId (INT, PK, Identity)
+- BranchName (NVARCHAR(100), UK)
+- ClientCode (NVARCHAR(50))
+
+2.6 tblCounterMaster
+- CounterId (INT, PK, Identity)
+- CounterName (NVARCHAR(100), UK)
+- BranchId (INT, FK)
+- ClientCode (NVARCHAR(50))
+
+2.7 tblBoxMaster
+- BoxId (INT, PK, Identity)
+- BoxName (NVARCHAR(100), UK)
+- ClientCode (NVARCHAR(50))
+
+3. CORE PRODUCT & RFID TABLES (Client Database)
+
+3.1 tblProductDetails
+- Id (INT, PK, Identity)
+- ClientCode (NVARCHAR(50))
+- BranchId (INT, FK)
+- CounterId (INT, FK)
+- ItemCode (NVARCHAR(100), UK)
+- CategoryId (INT, FK)
+- ProductId (INT, FK)
+- DesignId (INT, FK)
+- PurityId (INT, FK)
+- GrossWeight (FLOAT)
+- StoneWeight (FLOAT)
+- DiamondHeight (FLOAT)
+- NetWeight (FLOAT)
+- BoxDetails (NVARCHAR(100))
+- Size (INT)
+- StoneAmount (DECIMAL(18,2))
+- DiamondAmount (DECIMAL(18,2))
+- HallmarkAmount (DECIMAL(18,2))
+- MakingPerGram (DECIMAL(18,2))
+- MakingPercentage (DECIMAL(18,2))
+- MakingFixedAmount (DECIMAL(18,2))
+- Mrp (DECIMAL(18,2))
+- ImageUrl (NVARCHAR(500))
+- Status (NVARCHAR(50))
+- CreatedOn (DATETIME2)
+
+3.2 tblRFID
+- RFIDCode (NVARCHAR(50), PK)
+- EPCValue (NVARCHAR(100))
+- ClientCode (NVARCHAR(50))
+- IsActive (BIT)
+- CreatedOn (DATETIME2)
+
+3.3 tblProductRFIDAssignment
+- Id (INT, PK, Identity)
+- ProductId (INT, FK)
+- RFIDCode (NVARCHAR(50), FK)
+- AssignedOn (DATETIME2)
+- UnassignedOn (DATETIME2)
+- IsActive (BIT)
+
+3.4 tblProductImage
+- Id (INT, PK, Identity)
+- ClientCode (NVARCHAR(50))
+- ProductId (INT, FK)
+- FileName (NVARCHAR(255))
+- FilePath (NVARCHAR(500))
+- ContentType (NVARCHAR(100))
+- FileSize (BIGINT)
+- OriginalFileName (NVARCHAR(255))
+- ImageType (NVARCHAR(50))
+- DisplayOrder (INT)
+- IsActive (BIT)
+- CreatedOn (DATETIME2)
+- UpdatedOn (DATETIME2)
+
+4. STOCK VERIFICATION TABLES (Client Database)
+
+4.1 tblStockVerification
+- Id (INT, PK, Identity)
+- ClientCode (NVARCHAR(50))
+- VerificationSessionName (NVARCHAR(100))
+- BranchId (INT, FK)
+- CounterId (INT, FK)
+- CategoryId (INT, FK)
+- Status (NVARCHAR(50))
+- TotalItemsScanned (INT)
+- MatchedItemsCount (INT)
+- UnmatchedItemsCount (INT)
+- CreatedOn (DATETIME2)
+- UpdatedOn (DATETIME2)
+- IsActive (BIT)
+
+4.2 tblStockVerificationDetail
+- Id (INT, PK, Identity)
+- StockVerificationId (INT, FK)
+- ClientCode (NVARCHAR(50))
+- ItemCode (NVARCHAR(100))
+- RfidCode (NVARCHAR(50))
+- VerificationStatus (NVARCHAR(50))
+- CreatedOn (DATETIME2)
+- IsActive (BIT)
+
+5. INVOICE & SALES TABLES (Client Database)
+
+5.1 tblInvoice
+- Id (INT, PK, Identity)
+- ClientCode (NVARCHAR(50))
+- InvoiceNumber (NVARCHAR(50), UK)
+- ProductId (INT, FK)
+- RfidCode (NVARCHAR(50))
+- SellingPrice (DECIMAL(18,2))
+- DiscountAmount (DECIMAL(18,2))
+- FinalAmount (DECIMAL(18,2))
+- InvoiceType (NVARCHAR(20))
+- CustomerName (NVARCHAR(100))
+- CustomerPhone (NVARCHAR(15))
+- CustomerAddress (NVARCHAR(200))
+- PaymentMethod (NVARCHAR(50))
+- PaymentReference (NVARCHAR(100))
+- SoldOn (DATETIME2)
+- CreatedOn (DATETIME2)
+- UpdatedOn (DATETIME2)
+- Remarks (NVARCHAR(500))
+- IsActive (BIT)
+
+6. STOCK TRACKING & MOVEMENT TABLES (Client Database)
+
+6.1 tblStockMovement
+- Id (INT, PK, Identity)
+- ClientCode (NVARCHAR(50))
+- ProductId (INT, FK)
+- RfidCode (NVARCHAR(50))
+- MovementType (NVARCHAR(20))
+- Quantity (INT)
+- UnitPrice (DECIMAL(18,2))
+- TotalAmount (DECIMAL(18,2))
+- BranchId (INT, FK)
+- CounterId (INT, FK)
+- CategoryId (INT, FK)
+- ReferenceNumber (NVARCHAR(100))
+- ReferenceType (NVARCHAR(50))
+- Remarks (NVARCHAR(500))
+- MovementDate (DATETIME2)
+- CreatedOn (DATETIME2)
+- UpdatedOn (DATETIME2)
+- IsActive (BIT)
+
+6.2 tblDailyStockBalance
+- Id (INT, PK, Identity)
+- ClientCode (NVARCHAR(50))
+- ProductId (INT, FK)
+- RfidCode (NVARCHAR(50))
+- BranchId (INT, FK)
+- CounterId (INT, FK)
+- CategoryId (INT, FK)
+- BalanceDate (DATETIME2)
+- OpeningQuantity (INT)
+- ClosingQuantity (INT)
+- AddedQuantity (INT)
+- SoldQuantity (INT)
+- ReturnedQuantity (INT)
+- TransferredInQuantity (INT)
+- TransferredOutQuantity (INT)
+- OpeningValue (DECIMAL(18,2))
+- ClosingValue (DECIMAL(18,2))
+- AddedValue (DECIMAL(18,2))
+- SoldValue (DECIMAL(18,2))
+- ReturnedValue (DECIMAL(18,2))
+- CreatedOn (DATETIME2)
+- UpdatedOn (DATETIME2)
+
+6.3 tblStockTransfer
+- Id (INT, PK, Identity)
+- ClientCode (NVARCHAR(50))
+- TransferNumber (NVARCHAR(50), UK)
+- ProductId (INT, FK)
+- RfidCode (NVARCHAR(50))
+- TransferType (NVARCHAR(20))
+- SourceBranchId (INT, FK)
+- SourceCounterId (INT, FK)
+- SourceBoxId (INT, FK)
+- DestinationBranchId (INT, FK)
+- DestinationCounterId (INT, FK)
+- DestinationBoxId (INT, FK)
+- Status (NVARCHAR(20))
+- TransferDate (DATETIME2)
+- CompletedDate (DATETIME2)
+- Reason (NVARCHAR(500))
+- Remarks (NVARCHAR(500))
+- ApprovedBy (NVARCHAR(100))
+- ApprovedOn (DATETIME2)
+- RejectedBy (NVARCHAR(100))
+- RejectedOn (DATETIME2)
+- RejectionReason (NVARCHAR(500))
+- CreatedOn (DATETIME2)
+- UpdatedOn (DATETIME2)
+- IsActive (BIT)
+
+KEY RELATIONSHIPS:
+- User.ClientCode → BranchMaster.ClientCode
+- CounterMaster.BranchId → BranchMaster.BranchId
+- ProductDetails.CategoryId → CategoryMaster.CategoryId
+- ProductDetails.ProductId → ProductMaster.ProductId
+- ProductDetails.DesignId → DesignMaster.DesignId
+- ProductDetails.PurityId → PurityMaster.PurityId
+- ProductDetails.BranchId → BranchMaster.BranchId
+- ProductDetails.CounterId → CounterMaster.CounterId
+- ProductRfidAssignment.ProductId → ProductDetails.Id
+- ProductRfidAssignment.RFIDCode → Rfid.RFIDCode
+- ProductImage.ProductId → ProductDetails.Id
+- Invoice.ProductId → ProductDetails.Id
+- StockMovement.ProductId → ProductDetails.Id
+- StockMovement.BranchId → BranchMaster.BranchId
+- StockMovement.CounterId → CounterMaster.CounterId
+- StockMovement.CategoryId → CategoryMaster.CategoryId
+- DailyStockBalance.ProductId → ProductDetails.Id
+- DailyStockBalance.BranchId → BranchMaster.BranchId
+- DailyStockBalance.CounterId → CounterMaster.CounterId
+- DailyStockBalance.CategoryId → CategoryMaster.CategoryId
+- StockVerification.BranchId → BranchMaster.BranchId
+- StockVerification.CounterId → CounterMaster.CounterId
+- StockVerification.CategoryId → CategoryMaster.CategoryId
+- StockVerificationDetail.StockVerificationId → StockVerification.Id
+- StockTransfer.ProductId → ProductDetails.Id
+- StockTransfer.SourceBranchId → BranchMaster.BranchId
+- StockTransfer.SourceCounterId → CounterMaster.CounterId
+- StockTransfer.DestinationBranchId → BranchMaster.BranchId
+- StockTransfer.DestinationCounterId → CounterMaster.CounterId
+
+PERFORMANCE INDEXES:
+- All primary keys are auto-indexed
+- Unique constraints create unique indexes
+- Composite indexes for multi-column queries
+- Foreign key indexes for join operations
+- Status and date indexes for filtering
+- ClientCode indexes for multi-tenant isolation

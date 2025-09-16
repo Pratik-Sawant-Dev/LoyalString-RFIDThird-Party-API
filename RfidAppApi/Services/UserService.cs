@@ -46,6 +46,9 @@ namespace RfidAppApi.Services
             // Hash password
             var passwordHash = HashPassword(createUserDto.Password);
 
+            // Check if this is the first user (main admin)
+            var isFirstUser = !await _context.Users.AnyAsync();
+
             // Create user
             var user = new User
             {
@@ -61,6 +64,9 @@ namespace RfidAppApi.Services
                 ShowroomType = createUserDto.ShowroomType,
                 ClientCode = clientCode, // Auto-generated
                 DatabaseName = databaseName,
+                IsAdmin = isFirstUser, // First user is automatically admin
+                UserType = isFirstUser ? "MainAdmin" : "User",
+                AdminUserId = null, // Main admin has no parent admin
                 IsActive = true,
                 CreatedOn = DateTime.UtcNow
             };
@@ -84,7 +90,9 @@ namespace RfidAppApi.Services
                 ClientCode = user.ClientCode,
                 DatabaseName = user.DatabaseName,
                 IsActive = user.IsActive,
-                CreatedOn = user.CreatedOn
+                CreatedOn = user.CreatedOn,
+                IsAdmin = user.IsAdmin,
+                UserType = user.UserType
             };
         }
 
@@ -109,8 +117,12 @@ namespace RfidAppApi.Services
                 ShowroomType = user.ShowroomType,
                 ClientCode = user.ClientCode,
                 DatabaseName = user.DatabaseName,
+                IsAdmin = user.IsAdmin,
+                UserType = user.UserType,
+                AdminUserId = user.AdminUserId,
                 IsActive = user.IsActive,
-                CreatedOn = user.CreatedOn
+                CreatedOn = user.CreatedOn,
+                LastLoginDate = user.LastLoginDate
             };
         }
 
@@ -135,8 +147,12 @@ namespace RfidAppApi.Services
                 ShowroomType = user.ShowroomType,
                 ClientCode = user.ClientCode,
                 DatabaseName = user.DatabaseName,
+                IsAdmin = user.IsAdmin,
+                UserType = user.UserType,
+                AdminUserId = user.AdminUserId,
                 IsActive = user.IsActive,
-                CreatedOn = user.CreatedOn
+                CreatedOn = user.CreatedOn,
+                LastLoginDate = user.LastLoginDate
             };
         }
 
@@ -161,8 +177,12 @@ namespace RfidAppApi.Services
                 ShowroomType = user.ShowroomType,
                 ClientCode = user.ClientCode,
                 DatabaseName = user.DatabaseName,
+                IsAdmin = user.IsAdmin,
+                UserType = user.UserType,
+                AdminUserId = user.AdminUserId,
                 IsActive = user.IsActive,
-                CreatedOn = user.CreatedOn
+                CreatedOn = user.CreatedOn,
+                LastLoginDate = user.LastLoginDate
             };
         }
 
@@ -245,7 +265,35 @@ namespace RfidAppApi.Services
             if (user == null) return false;
 
             var hashedPassword = HashPassword(password);
-            return user.PasswordHash == hashedPassword;
+            var isValid = user.PasswordHash == hashedPassword;
+
+            if (isValid)
+            {
+                // Update last login date
+                user.LastLoginDate = DateTime.UtcNow;
+                await _context.SaveChangesAsync();
+
+                // Log login activity
+                await LogLoginActivityAsync(user.UserId, user.ClientCode);
+            }
+
+            return isValid;
+        }
+
+        private async Task LogLoginActivityAsync(int userId, string clientCode)
+        {
+            var activity = new UserActivity
+            {
+                UserId = userId,
+                ClientCode = clientCode,
+                ActivityType = "Authentication",
+                Action = "Login",
+                Description = "User logged in",
+                CreatedOn = DateTime.UtcNow
+            };
+
+            _context.UserActivities.Add(activity);
+            await _context.SaveChangesAsync();
         }
 
         public Task<string> GenerateJwtTokenAsync(UserDto user)
@@ -264,7 +312,10 @@ namespace RfidAppApi.Services
                     new Claim(ClaimTypes.Email, user.Email),
                     new Claim(ClaimTypes.Name, user.UserName),
                     new Claim("ClientCode", user.ClientCode),
-                    new Claim("OrganisationName", user.OrganisationName)
+                    new Claim("OrganisationName", user.OrganisationName),
+                    new Claim("IsAdmin", user.IsAdmin.ToString()),
+                    new Claim("UserType", user.UserType),
+                    new Claim("AdminUserId", user.AdminUserId?.ToString() ?? "")
                 }),
                 Expires = DateTime.UtcNow.AddHours(24),
                 Issuer = issuer,

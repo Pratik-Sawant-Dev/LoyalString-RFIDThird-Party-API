@@ -56,9 +56,20 @@ namespace RfidAppApi.Models
         [StringLength(500)]
         public string? ConnectionString { get; set; }
 
+        // Admin-User Hierarchy
+        public bool IsAdmin { get; set; } = false;
+        public int? AdminUserId { get; set; } // Reference to admin user (null for main admin)
+        
+        [StringLength(50)]
+        public string UserType { get; set; } = "User"; // "MainAdmin", "Admin", "User"
+
         // Status
         public bool IsActive { get; set; } = true;
         
         public DateTime CreatedOn { get; set; } = DateTime.UtcNow;
+        public DateTime? LastLoginDate { get; set; }
+
+        // Navigation property
+        public virtual User? AdminUser { get; set; }
     }
 } 

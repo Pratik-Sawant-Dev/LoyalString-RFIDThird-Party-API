@@ -15,11 +15,13 @@ namespace RfidAppApi.Controllers
     public class RfidController : ControllerBase
     {
         private readonly IRfidService _rfidService;
+        private readonly IRfidExcelService _rfidExcelService;
         private readonly IClientService _clientService;
 
-        public RfidController(IRfidService rfidService, IClientService clientService)
+        public RfidController(IRfidService rfidService, IRfidExcelService rfidExcelService, IClientService clientService)
         {
             _rfidService = rfidService;
+            _rfidExcelService = rfidExcelService;
             _clientService = clientService;
         }
 
@@ -392,6 +394,104 @@ namespace RfidAppApi.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, new { error = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Upload RFID data from Excel file
+        /// </summary>
+        /// <param name="uploadDto">Excel upload request with file and options</param>
+        /// <returns>Upload processing results</returns>
+        /// <response code="200">Excel upload processed successfully</response>
+        /// <response code="400">Invalid request or validation errors</response>
+        /// <response code="500">Internal server error</response>
+        [HttpPost("upload-excel")]
+        [ProducesResponseType(typeof(RfidExcelUploadResponseDto), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<ActionResult<RfidExcelUploadResponseDto>> UploadRfidFromExcel([FromForm] RfidExcelUploadDto uploadDto)
+        {
+            try
+            {
+                var clientCode = GetClientCodeFromToken();
+                if (string.IsNullOrEmpty(clientCode))
+                {
+                    return BadRequest(new { message = "Client code not found in token." });
+                }
+
+                // Validate file
+                if (uploadDto.ExcelFile == null || uploadDto.ExcelFile.Length == 0)
+                {
+                    return BadRequest(new { message = "Excel file is required." });
+                }
+
+                // Check file extension
+                var allowedExtensions = new[] { ".xlsx", ".xls" };
+                var fileExtension = Path.GetExtension(uploadDto.ExcelFile.FileName).ToLowerInvariant();
+                if (!allowedExtensions.Contains(fileExtension))
+                {
+                    return BadRequest(new { message = "Only Excel files (.xlsx, .xls) are allowed." });
+                }
+
+                // Check file size (max 10MB)
+                if (uploadDto.ExcelFile.Length > 10 * 1024 * 1024)
+                {
+                    return BadRequest(new { message = "File size cannot exceed 10MB." });
+                }
+
+                var result = await _rfidExcelService.UploadRfidFromExcelAsync(uploadDto, clientCode);
+                
+                return Ok(new
+                {
+                    success = true,
+                    message = "Excel upload processed successfully",
+                    data = result
+                });
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    message = ex.Message
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = "An error occurred while processing the Excel file",
+                    error = ex.Message
+                });
+            }
+        }
+
+        /// <summary>
+        /// Download Excel template for RFID upload
+        /// </summary>
+        /// <returns>Excel template file</returns>
+        /// <response code="200">Template downloaded successfully</response>
+        /// <response code="500">Internal server error</response>
+        [HttpGet("download-template")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> DownloadExcelTemplate()
+        {
+            try
+            {
+                var templateBytes = await _rfidExcelService.GenerateExcelTemplateAsync();
+                
+                return File(templateBytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "RFID_Upload_Template.xlsx");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = "An error occurred while generating the template",
+                    error = ex.Message
+                });
             }
         }
 

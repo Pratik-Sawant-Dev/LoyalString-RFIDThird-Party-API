@@ -356,4 +356,8 @@ C:\Users\sagar\Desktop\ThirdPartyNewAPI_RFID\RfidAppApi\obj\Debug\net9.0\win-x64
 C:\Users\sagar\Desktop\ThirdPartyNewAPI_RFID\RfidAppApi\obj\Debug\net9.0\win-x64\RfidAppApi.pdb
 C:\Users\sagar\Desktop\ThirdPartyNewAPI_RFID\RfidAppApi\obj\Debug\net9.0\win-x64\RfidAppApi.genruntimeconfig.cache
 C:\Users\sagar\Desktop\ThirdPartyNewAPI_RFID\RfidAppApi\obj\Debug\net9.0\win-x64\ref\RfidAppApi.dll
+C:\Users\sagar\Desktop\ThirdPartyNewAPI_RFID\RfidAppApi\bin\Debug\net9.0\win-x64\EPPlus.dll
+C:\Users\sagar\Desktop\ThirdPartyNewAPI_RFID\RfidAppApi\bin\Debug\net9.0\win-x64\EPPlus.Interfaces.dll
+C:\Users\sagar\Desktop\ThirdPartyNewAPI_RFID\RfidAppApi\bin\Debug\net9.0\win-x64\EPPlus.System.Drawing.dll
+C:\Users\sagar\Desktop\ThirdPartyNewAPI_RFID\RfidAppApi\bin\Debug\net9.0\win-x64\Microsoft.IO.RecyclableMemoryStream.dll
 C:\Users\sagar\Desktop\ThirdPartyNewAPI_RFID\RfidAppApi\obj\Debug\net9.0\win-x64\staticwebassets.upToDateCheck.txt
