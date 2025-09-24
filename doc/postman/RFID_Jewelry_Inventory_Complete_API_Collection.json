@@ -2946,6 +2946,1059 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Update User",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"fullName\": \"Updated User Name\",\n  \"mobileNumber\": \"+91-9876543210\",\n  \"city\": \"Updated City\",\n  \"address\": \"Updated Address\",\n  \"isActive\": true\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/Admin/users/{{subUserId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "Admin", "users", "{{subUserId}}"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete User",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/Admin/users/{{subUserId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "Admin", "users", "{{subUserId}}"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Activate User",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"userId\": {{subUserId}},\n  \"isActive\": true,\n  \"remarks\": \"User activated by admin\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/Admin/activate-user",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "Admin", "activate-user"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Deactivate User",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"userId\": {{subUserId}},\n  \"isActive\": false,\n  \"remarks\": \"User deactivated by admin\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/Admin/deactivate-user",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "Admin", "deactivate-user"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Reset User Password",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"newPassword\": \"NewPassword@123\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/Admin/users/{{subUserId}}/reset-password",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "Admin", "users", "{{subUserId}}", "reset-password"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "🏢 Master Data Management System",
+			"item": [
+				{
+					"name": "📋 Category Master",
+					"item": [
+						{
+							"name": "Get All Categories",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/MasterData/categories",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "MasterData", "categories"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Category by ID",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/MasterData/categories/1",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "MasterData", "categories", "1"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Category",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"categoryName\": \"Gold Rings\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/MasterData/categories",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "MasterData", "categories"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Category",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"categoryId\": 1,\n  \"categoryName\": \"Premium Gold Rings\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/MasterData/categories",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "MasterData", "categories"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Category",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/MasterData/categories/1",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "MasterData", "categories", "1"]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "💎 Purity Master",
+					"item": [
+						{
+							"name": "Get All Purities",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/MasterData/purities",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "MasterData", "purities"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Purity by ID",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/MasterData/purities/1",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "MasterData", "purities", "1"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Purity",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"purityName\": \"22K\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/MasterData/purities",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "MasterData", "purities"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Purity",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"purityId\": 1,\n  \"purityName\": \"22 Karat\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/MasterData/purities",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "MasterData", "purities"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Purity",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/MasterData/purities/1",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "MasterData", "purities", "1"]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "🎨 Design Master",
+					"item": [
+						{
+							"name": "Get All Designs",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/MasterData/designs",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "MasterData", "designs"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Design by ID",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/MasterData/designs/1",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "MasterData", "designs", "1"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Design",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"designName\": \"Classic Solitaire\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/MasterData/designs",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "MasterData", "designs"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Design",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"designId\": 1,\n  \"designName\": \"Premium Solitaire\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/MasterData/designs",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "MasterData", "designs"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Design",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/MasterData/designs/1",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "MasterData", "designs", "1"]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "📦 Box Master",
+					"item": [
+						{
+							"name": "Get All Boxes",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/MasterData/boxes",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "MasterData", "boxes"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Active Boxes",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/MasterData/boxes/active",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "MasterData", "boxes", "active"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Boxes by Type",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/MasterData/boxes/type/Wooden",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "MasterData", "boxes", "type", "Wooden"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Box by ID",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/MasterData/boxes/1",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "MasterData", "boxes", "1"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Box",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"boxName\": \"Premium Wooden Box\",\n  \"description\": \"High quality wooden jewelry box\",\n  \"boxType\": \"Wooden\",\n  \"size\": \"Medium\",\n  \"color\": \"Brown\",\n  \"material\": \"Wood\",\n  \"isActive\": true\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/MasterData/boxes",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "MasterData", "boxes"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Box",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"boxId\": 1,\n  \"boxName\": \"Premium Wooden Box\",\n  \"description\": \"High quality wooden jewelry box with velvet lining\",\n  \"boxType\": \"Wooden\",\n  \"size\": \"Large\",\n  \"color\": \"Dark Brown\",\n  \"material\": \"Wood\",\n  \"isActive\": true\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/MasterData/boxes",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "MasterData", "boxes"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Box",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/MasterData/boxes/1",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "MasterData", "boxes", "1"]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "🏢 Branch Master",
+					"item": [
+						{
+							"name": "Get All Branches",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/MasterData/branches",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "MasterData", "branches"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Branches by Client",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/MasterData/branches/client/{{clientCode}}",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "MasterData", "branches", "client", "{{clientCode}}"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Branch by ID",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/MasterData/branches/1",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "MasterData", "branches", "1"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Branch",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"branchName\": \"Main Branch\",\n  \"clientCode\": \"{{clientCode}}\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/MasterData/branches",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "MasterData", "branches"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Branch",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"branchId\": 1,\n  \"branchName\": \"Main Branch - Downtown\",\n  \"clientCode\": \"{{clientCode}}\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/MasterData/branches",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "MasterData", "branches"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Branch",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/MasterData/branches/1",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "MasterData", "branches", "1"]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "🏪 Counter Master",
+					"item": [
+						{
+							"name": "Get All Counters",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/MasterData/counters",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "MasterData", "counters"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Counters by Client",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/MasterData/counters/client/{{clientCode}}",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "MasterData", "counters", "client", "{{clientCode}}"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Counters by Branch",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/MasterData/counters/branch/1",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "MasterData", "counters", "branch", "1"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Counter by ID",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/MasterData/counters/1",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "MasterData", "counters", "1"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Counter",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"counterName\": \"Counter 1\",\n  \"branchId\": 1,\n  \"clientCode\": \"{{clientCode}}\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/MasterData/counters",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "MasterData", "counters"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Counter",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"counterId\": 1,\n  \"counterName\": \"Premium Counter 1\",\n  \"branchId\": 1,\n  \"clientCode\": \"{{clientCode}}\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/MasterData/counters",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "MasterData", "counters"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Counter",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/MasterData/counters/1",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "MasterData", "counters", "1"]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "📦 Product Master",
+					"item": [
+						{
+							"name": "Get All Products",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/MasterData/products",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "MasterData", "products"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Product by ID",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/MasterData/products/1",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "MasterData", "products", "1"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Product",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"productName\": \"Gold Ring\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/MasterData/products",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "MasterData", "products"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Product",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"productId\": 1,\n  \"productName\": \"Premium Gold Ring\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/MasterData/products",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "MasterData", "products"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Product",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/MasterData/products/1",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "MasterData", "products", "1"]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "📊 Master Data Summary",
+					"item": [
+						{
+							"name": "Get Master Data Summary",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/MasterData/summary",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "MasterData", "summary"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Master Data Counts",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/MasterData/counts",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "MasterData", "counts"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Master Data Summary by Client",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/MasterData/summary/client/{{clientCode}}",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "MasterData", "summary", "client", "{{clientCode}}"]
+								}
+							},
+							"response": []
+						}
+					]
 				}
 			]
 		},

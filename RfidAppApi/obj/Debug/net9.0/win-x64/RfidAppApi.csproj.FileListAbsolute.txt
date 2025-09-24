@@ -189,6 +189,9 @@ C:\Users\sagar\Desktop\ThirdPartyNewAPI_RFID\RfidAppApi\bin\Debug\net9.0\win-x64
 C:\Users\sagar\Desktop\ThirdPartyNewAPI_RFID\RfidAppApi\bin\Debug\net9.0\win-x64\RfidAppApi.xml
 C:\Users\sagar\Desktop\ThirdPartyNewAPI_RFID\RfidAppApi\bin\Debug\net9.0\win-x64\Azure.Core.dll
 C:\Users\sagar\Desktop\ThirdPartyNewAPI_RFID\RfidAppApi\bin\Debug\net9.0\win-x64\Azure.Identity.dll
+C:\Users\sagar\Desktop\ThirdPartyNewAPI_RFID\RfidAppApi\bin\Debug\net9.0\win-x64\EPPlus.dll
+C:\Users\sagar\Desktop\ThirdPartyNewAPI_RFID\RfidAppApi\bin\Debug\net9.0\win-x64\EPPlus.Interfaces.dll
+C:\Users\sagar\Desktop\ThirdPartyNewAPI_RFID\RfidAppApi\bin\Debug\net9.0\win-x64\EPPlus.System.Drawing.dll
 C:\Users\sagar\Desktop\ThirdPartyNewAPI_RFID\RfidAppApi\bin\Debug\net9.0\win-x64\Humanizer.dll
 C:\Users\sagar\Desktop\ThirdPartyNewAPI_RFID\RfidAppApi\bin\Debug\net9.0\win-x64\Microsoft.AspNetCore.Authentication.JwtBearer.dll
 C:\Users\sagar\Desktop\ThirdPartyNewAPI_RFID\RfidAppApi\bin\Debug\net9.0\win-x64\Microsoft.AspNetCore.OpenApi.dll
@@ -231,6 +234,7 @@ C:\Users\sagar\Desktop\ThirdPartyNewAPI_RFID\RfidAppApi\bin\Debug\net9.0\win-x64
 C:\Users\sagar\Desktop\ThirdPartyNewAPI_RFID\RfidAppApi\bin\Debug\net9.0\win-x64\Microsoft.IdentityModel.Protocols.dll
 C:\Users\sagar\Desktop\ThirdPartyNewAPI_RFID\RfidAppApi\bin\Debug\net9.0\win-x64\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
 C:\Users\sagar\Desktop\ThirdPartyNewAPI_RFID\RfidAppApi\bin\Debug\net9.0\win-x64\Microsoft.IdentityModel.Tokens.dll
+C:\Users\sagar\Desktop\ThirdPartyNewAPI_RFID\RfidAppApi\bin\Debug\net9.0\win-x64\Microsoft.IO.RecyclableMemoryStream.dll
 C:\Users\sagar\Desktop\ThirdPartyNewAPI_RFID\RfidAppApi\bin\Debug\net9.0\win-x64\Microsoft.OpenApi.dll
 C:\Users\sagar\Desktop\ThirdPartyNewAPI_RFID\RfidAppApi\bin\Debug\net9.0\win-x64\Microsoft.SqlServer.Server.dll
 C:\Users\sagar\Desktop\ThirdPartyNewAPI_RFID\RfidAppApi\bin\Debug\net9.0\win-x64\Microsoft.Win32.SystemEvents.dll
@@ -356,10 +360,6 @@ C:\Users\sagar\Desktop\ThirdPartyNewAPI_RFID\RfidAppApi\obj\Debug\net9.0\win-x64
 C:\Users\sagar\Desktop\ThirdPartyNewAPI_RFID\RfidAppApi\obj\Debug\net9.0\win-x64\RfidAppApi.pdb
 C:\Users\sagar\Desktop\ThirdPartyNewAPI_RFID\RfidAppApi\obj\Debug\net9.0\win-x64\RfidAppApi.genruntimeconfig.cache
 C:\Users\sagar\Desktop\ThirdPartyNewAPI_RFID\RfidAppApi\obj\Debug\net9.0\win-x64\ref\RfidAppApi.dll
-C:\Users\sagar\Desktop\ThirdPartyNewAPI_RFID\RfidAppApi\bin\Debug\net9.0\win-x64\EPPlus.dll
-C:\Users\sagar\Desktop\ThirdPartyNewAPI_RFID\RfidAppApi\bin\Debug\net9.0\win-x64\EPPlus.Interfaces.dll
-C:\Users\sagar\Desktop\ThirdPartyNewAPI_RFID\RfidAppApi\bin\Debug\net9.0\win-x64\EPPlus.System.Drawing.dll
-C:\Users\sagar\Desktop\ThirdPartyNewAPI_RFID\RfidAppApi\bin\Debug\net9.0\win-x64\Microsoft.IO.RecyclableMemoryStream.dll
 C:\Users\sagar\Desktop\ThirdPartyNewAPI_RFID\RfidAppApi\obj\Debug\net9.0\win-x64\staticwebassets.upToDateCheck.txt
 F:\my project\RFID Advance\LoyalString-RFIDThird-Party-API\RfidAppApi\bin\Debug\net9.0\win-x64\appsettings.Development.json
 F:\my project\RFID Advance\LoyalString-RFIDThird-Party-API\RfidAppApi\bin\Debug\net9.0\win-x64\appsettings.json
