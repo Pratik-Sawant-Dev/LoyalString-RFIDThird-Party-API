@@ -18,5 +18,11 @@ namespace RfidAppApi.Services
         Task<List<InvoiceResponseDto>> GetInvoicesByPaymentMethodAsync(string paymentMethod, string clientCode);
         Task<InvoiceResponseDto?> GetInvoiceByNumberAsync(string invoiceNumber, string clientCode);
         Task<InvoiceCountDto> GetInvoiceCountByStatusAsync(string clientCode);
+        
+        // Enhanced methods for multiple payment methods
+        Task<InvoiceWithPaymentsResponseDto> CreateInvoiceWithMultiplePaymentsAsync(CreateInvoiceWithMultiplePaymentsDto createDto, string clientCode);
+        Task<InvoiceWithPaymentsResponseDto> CreateInvoiceByItemCodeAsync(CreateInvoiceByItemCodeDto createDto, string clientCode);
+        Task<InvoiceWithPaymentsResponseDto?> GetInvoiceWithPaymentsAsync(int invoiceId, string clientCode);
+        Task<List<InvoiceWithPaymentsResponseDto>> GetAllInvoicesWithPaymentsAsync(string clientCode);
     }
 }

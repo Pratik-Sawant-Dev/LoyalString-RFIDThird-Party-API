@@ -384,6 +384,26 @@
             Export invoices to CSV format
             </summary>
         </member>
+        <member name="M:RfidAppApi.Controllers.InvoiceController.CreateInvoiceWithMultiplePayments(RfidAppApi.DTOs.CreateInvoiceWithMultiplePaymentsDto)">
+            <summary>
+            Create invoice with multiple payment methods
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.InvoiceController.CreateInvoiceByItemCode(RfidAppApi.DTOs.CreateInvoiceByItemCodeDto)">
+            <summary>
+            Create invoice by item code
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.InvoiceController.GetInvoiceWithPayments(System.Int32)">
+            <summary>
+            Get invoice with payment details
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.InvoiceController.GetAllInvoicesWithPayments">
+            <summary>
+            Get all invoices with payment details
+            </summary>
+        </member>
         <member name="T:RfidAppApi.Controllers.PaginatedInvoiceResponseDto">
             <summary>
             DTO for paginated invoice response
@@ -2431,6 +2451,26 @@
             DTO for invoice statistics
             </summary>
         </member>
+        <member name="T:RfidAppApi.DTOs.PaymentMethodDto">
+            <summary>
+            DTO for individual payment method in an invoice
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.CreateInvoiceWithMultiplePaymentsDto">
+            <summary>
+            Enhanced DTO for creating invoice with multiple payment methods
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.CreateInvoiceByItemCodeDto">
+            <summary>
+            DTO for creating invoice by item code
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.InvoiceWithPaymentsResponseDto">
+            <summary>
+            Enhanced DTO for invoice response with multiple payment methods
+            </summary>
+        </member>
         <member name="T:RfidAppApi.Models.BoxMaster">
             <summary>
             Master table for jewelry box types and specifications
@@ -2445,6 +2485,11 @@
         <member name="T:RfidAppApi.Models.Invoice">
             <summary>
             Model for storing invoice information in client database
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.Models.InvoicePayment">
+            <summary>
+            Model for storing individual payment methods for an invoice
             </summary>
         </member>
         <member name="T:RfidAppApi.Models.ProductImage">
@@ -2586,6 +2631,31 @@
         <member name="M:RfidAppApi.Services.InvoiceService.GetInvoiceCountByStatusAsync(System.String)">
             <summary>
             Get invoice count by status
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Services.InvoiceService.CreateInvoiceWithMultiplePaymentsAsync(RfidAppApi.DTOs.CreateInvoiceWithMultiplePaymentsDto,System.String)">
+            <summary>
+            Create invoice with multiple payment methods
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Services.InvoiceService.CreateInvoiceByItemCodeAsync(RfidAppApi.DTOs.CreateInvoiceByItemCodeDto,System.String)">
+            <summary>
+            Create invoice by item code
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Services.InvoiceService.GetInvoiceWithPaymentsAsync(System.Int32,System.String)">
+            <summary>
+            Get invoice with payment details
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Services.InvoiceService.GetAllInvoicesWithPaymentsAsync(System.String)">
+            <summary>
+            Get all invoices with payment details
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Services.InvoiceService.CalculateGstAmounts(System.Decimal,System.Decimal,System.Decimal,System.Boolean)">
+            <summary>
+            Calculate GST amounts based on selling price and discount
             </summary>
         </member>
         <member name="T:RfidAppApi.Services.InvoiceCountDto">

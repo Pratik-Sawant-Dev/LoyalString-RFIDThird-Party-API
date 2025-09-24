@@ -1615,7 +1615,33 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"productId\": 1,\n  \"rfidCode\": \"RFID001\",\n  \"customerName\": \"John Smith\",\n  \"customerPhone\": \"+91-9876543210\",\n  \"sellingPrice\": 95000.00,\n  \"discountAmount\": 5000.00,\n  \"finalAmount\": 90000.00,\n  \"invoiceType\": \"Sale\",\n  \"paymentMethod\": \"Cash\",\n  \"soldOn\": \"2024-01-15T10:00:00Z\",\n  \"remarks\": \"Customer preferred cash payment\"\n}"
+							"raw": "{\n  \"productId\": 1,\n  \"rfidCode\": \"RFID001\",\n  \"customerName\": \"John Smith\",\n  \"customerPhone\": \"+91-9876543210\",\n  \"sellingPrice\": 95000.00,\n  \"discountAmount\": 5000.00,\n  \"finalAmount\": 90000.00,\n  \"isGstApplied\": false,\n  \"gstPercentage\": 3.00,\n  \"invoiceType\": \"Sale\",\n  \"paymentMethod\": \"Cash\",\n  \"soldOn\": \"2024-01-15T10:00:00Z\",\n  \"remarks\": \"Kaccha Bill - No GST applied\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/Invoice",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "Invoice"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Invoice with GST (Pakka Bill)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"productId\": 2,\n  \"rfidCode\": \"RFID002\",\n  \"customerName\": \"Alice Johnson\",\n  \"customerPhone\": \"+91-9876543211\",\n  \"sellingPrice\": 100000.00,\n  \"discountAmount\": 5000.00,\n  \"finalAmount\": 97850.00,\n  \"isGstApplied\": true,\n  \"gstPercentage\": 3.00,\n  \"invoiceType\": \"Sale\",\n  \"paymentMethod\": \"Card\",\n  \"soldOn\": \"2024-01-15T11:00:00Z\",\n  \"remarks\": \"Pakka Bill - GST applied (3% on 95000 = 2850)\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/Invoice",
@@ -2051,6 +2077,146 @@
 									"value": "Sale"
 								}
 							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Invoice with Multiple Payment Methods",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"productId\": 1,\n  \"rfidCode\": \"RFID001\",\n  \"customerName\": \"John Smith\",\n  \"customerPhone\": \"+91-9876543210\",\n  \"sellingPrice\": 95000.00,\n  \"discountAmount\": 5000.00,\n  \"finalAmount\": 90000.00,\n  \"isGstApplied\": false,\n  \"gstPercentage\": 3.00,\n  \"invoiceType\": \"Sale\",\n  \"paymentMethods\": [\n    {\n      \"paymentMethod\": \"Cash\",\n      \"amount\": 50000.00,\n      \"paymentReference\": \"CASH001\",\n      \"remarks\": \"Cash payment\"\n    },\n    {\n      \"paymentMethod\": \"UPI\",\n      \"amount\": 40000.00,\n      \"paymentReference\": \"UPI123456789\",\n      \"remarks\": \"UPI payment via PhonePe\"\n    }\n  ],\n  \"soldOn\": \"2024-01-15T10:00:00Z\",\n  \"remarks\": \"Kaccha Bill - Customer paid partially in cash and rest via UPI\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/Invoice/with-multiple-payments",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "Invoice", "with-multiple-payments"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Invoice with Multiple Payment Methods and GST (Pakka Bill)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"productId\": 2,\n  \"rfidCode\": \"RFID002\",\n  \"customerName\": \"Alice Johnson\",\n  \"customerPhone\": \"+91-9876543211\",\n  \"sellingPrice\": 100000.00,\n  \"discountAmount\": 5000.00,\n  \"finalAmount\": 97850.00,\n  \"isGstApplied\": true,\n  \"gstPercentage\": 3.00,\n  \"invoiceType\": \"Sale\",\n  \"paymentMethods\": [\n    {\n      \"paymentMethod\": \"Cash\",\n      \"amount\": 50000.00,\n      \"paymentReference\": \"CASH002\",\n      \"remarks\": \"Cash payment\"\n    },\n    {\n      \"paymentMethod\": \"Card\",\n      \"amount\": 47850.00,\n      \"paymentReference\": \"CARD123456789\",\n      \"remarks\": \"Credit card payment\"\n    }\n  ],\n  \"soldOn\": \"2024-01-15T11:00:00Z\",\n  \"remarks\": \"Pakka Bill - GST applied (3% on 95000 = 2850)\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/Invoice/with-multiple-payments",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "Invoice", "with-multiple-payments"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Invoice by Item Code",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"itemCode\": \"GOLD001\",\n  \"rfidCode\": \"RFID002\",\n  \"customerName\": \"Alice Johnson\",\n  \"customerPhone\": \"+91-9876543211\",\n  \"sellingPrice\": 75000.00,\n  \"discountAmount\": 3000.00,\n  \"finalAmount\": 72000.00,\n  \"isGstApplied\": false,\n  \"gstPercentage\": 3.00,\n  \"invoiceType\": \"Sale\",\n  \"paymentMethods\": [\n    {\n      \"paymentMethod\": \"Card\",\n      \"amount\": 72000.00,\n      \"paymentReference\": \"CARD123456789\",\n      \"remarks\": \"Credit card payment\"\n    }\n  ],\n  \"soldOn\": \"2024-01-15T11:00:00Z\",\n  \"remarks\": \"Kaccha Bill - Customer paid via credit card\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/Invoice/by-item-code",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "Invoice", "by-item-code"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Invoice by Item Code with GST (Pakka Bill)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"itemCode\": \"GOLD002\",\n  \"rfidCode\": \"RFID003\",\n  \"customerName\": \"Bob Wilson\",\n  \"customerPhone\": \"+91-9876543212\",\n  \"sellingPrice\": 80000.00,\n  \"discountAmount\": 2000.00,\n  \"finalAmount\": 80340.00,\n  \"isGstApplied\": true,\n  \"gstPercentage\": 3.00,\n  \"invoiceType\": \"Sale\",\n  \"paymentMethods\": [\n    {\n      \"paymentMethod\": \"UPI\",\n      \"amount\": 80340.00,\n      \"paymentReference\": \"UPI987654321\",\n      \"remarks\": \"UPI payment via Google Pay\"\n    }\n  ],\n  \"soldOn\": \"2024-01-15T12:00:00Z\",\n  \"remarks\": \"Pakka Bill - GST applied (3% on 78000 = 2340)\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/Invoice/by-item-code",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "Invoice", "by-item-code"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Invoice with Payment Details",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/Invoice/1/with-payments",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "Invoice", "1", "with-payments"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Invoices with Payment Details",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/Invoice/with-payments",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "Invoice", "with-payments"]
 						}
 					},
 					"response": []

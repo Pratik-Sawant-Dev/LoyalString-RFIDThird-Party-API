@@ -1622,6 +1622,32 @@
   },
   {
     "ContainingType": "RfidAppApi.Controllers.InvoiceController",
+    "Method": "GetInvoiceWithPayments",
+    "RelativePath": "api/Invoice/{invoiceId}/with-payments",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "invoiceId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "RfidAppApi.DTOs.InvoiceWithPaymentsResponseDto",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "RfidAppApi.Controllers.InvoiceController",
     "Method": "CreateBulkInvoices",
     "RelativePath": "api/Invoice/bulk",
     "HttpMethod": "POST",
@@ -1694,6 +1720,32 @@
     "ReturnTypes": [
       {
         "Type": "System.Collections.Generic.List\u00601[[RfidAppApi.DTOs.InvoiceResponseDto, RfidAppApi, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "RfidAppApi.Controllers.InvoiceController",
+    "Method": "CreateInvoiceByItemCode",
+    "RelativePath": "api/Invoice/by-item-code",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "createDto",
+        "Type": "RfidAppApi.DTOs.CreateInvoiceByItemCodeDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "RfidAppApi.DTOs.InvoiceWithPaymentsResponseDto",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -1864,6 +1916,52 @@
     "ReturnTypes": [
       {
         "Type": "System.Collections.Generic.List\u00601[[RfidAppApi.Controllers.TopProductDto, RfidAppApi, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "RfidAppApi.Controllers.InvoiceController",
+    "Method": "CreateInvoiceWithMultiplePayments",
+    "RelativePath": "api/Invoice/with-multiple-payments",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "createDto",
+        "Type": "RfidAppApi.DTOs.CreateInvoiceWithMultiplePaymentsDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "RfidAppApi.DTOs.InvoiceWithPaymentsResponseDto",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "RfidAppApi.Controllers.InvoiceController",
+    "Method": "GetAllInvoicesWithPayments",
+    "RelativePath": "api/Invoice/with-payments",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.List\u00601[[RfidAppApi.DTOs.InvoiceWithPaymentsResponseDto, RfidAppApi, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",

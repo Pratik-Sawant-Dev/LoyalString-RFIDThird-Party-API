@@ -37,6 +37,21 @@ namespace RfidAppApi.Models
         [Column(TypeName = "decimal(18,2)")]
         public decimal FinalAmount { get; set; }
 
+        // GST Related Fields
+        public bool IsGstApplied { get; set; } = false; // true = Pakka Bill, false = Kaccha Bill
+        
+        [Column(TypeName = "decimal(5,2)")]
+        public decimal GstPercentage { get; set; } = 3.00m; // Default 3% GST for jewelry
+        
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal GstAmount { get; set; } = 0; // Calculated GST amount
+        
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal AmountBeforeGst { get; set; } = 0; // Amount before GST (SellingPrice - DiscountAmount)
+        
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal TotalAmountWithGst { get; set; } = 0; // Final amount including GST
+
         [StringLength(20)]
         public string InvoiceType { get; set; } = "Sale"; // Sale, Return, Exchange
 
@@ -66,8 +81,10 @@ namespace RfidAppApi.Models
 
         public bool IsActive { get; set; } = true;
 
-        // Navigation property
+        // Navigation properties
         [ForeignKey("ProductId")]
         public virtual ProductDetails? Product { get; set; }
+
+        public virtual ICollection<InvoicePayment> Payments { get; set; } = new List<InvoicePayment>();
     }
 }
