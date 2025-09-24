@@ -877,6 +877,72 @@
 			"value": "Import",
 			"type": "default",
 			"enabled": true
+		},
+		{
+			"key": "testCategoryId",
+			"value": "1",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testPurityId",
+			"value": "1",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testDesignId",
+			"value": "1",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testBoxId",
+			"value": "1",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testBranchId",
+			"value": "1",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testCounterId",
+			"value": "1",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testProductMasterId",
+			"value": "1",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testBoxType",
+			"value": "Wooden",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testBoxSize",
+			"value": "Medium",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testBoxColor",
+			"value": "Brown",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testBoxMaterial",
+			"value": "Wood",
+			"type": "default",
+			"enabled": true
 		}
 	],
 	"_postman_variable_scope": "environment",

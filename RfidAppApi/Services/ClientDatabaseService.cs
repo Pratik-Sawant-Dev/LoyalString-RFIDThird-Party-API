@@ -27,11 +27,11 @@ namespace RfidAppApi.Services
             if (lastUser == null)
             {
                 // First client - start with LS0001
-                return "LS0001";
+                return "LS00001";
             }
 
-            // Extract number from last client code (e.g., "LS0001" -> 1)
-            if (lastUser.ClientCode.StartsWith("LS") && lastUser.ClientCode.Length == 6)
+            // Extract number from last client code (e.g., "LS00001" -> 1)
+            if (lastUser.ClientCode.StartsWith("LS") && lastUser.ClientCode.Length == 7)
             {
                 if (int.TryParse(lastUser.ClientCode.Substring(2), out int lastNumber))
                 {
@@ -42,7 +42,7 @@ namespace RfidAppApi.Services
             }
 
             // Fallback - if parsing fails, start from LS0001
-            return "LS0001";
+            return "LS00001";
         }
 
         public async Task<string> CreateClientDatabaseAsync(string organisationName, string clientCode)

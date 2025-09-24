@@ -2609,6 +2609,1302 @@
         }
       }
     },
+    "/api/MasterData/categories": {
+      "get": {
+        "tags": [
+          "MasterData"
+        ],
+        "summary": "Get all categories",
+        "operationId": "MasterData_GetAllCategories",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "MasterData"
+        ],
+        "summary": "Create new category",
+        "operationId": "MasterData_CreateCategory",
+        "requestBody": {
+          "x-name": "createDto",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCategoryMasterDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "MasterData"
+        ],
+        "summary": "Update category",
+        "operationId": "MasterData_UpdateCategory",
+        "requestBody": {
+          "x-name": "updateDto",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCategoryMasterDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/MasterData/categories/{categoryId}": {
+      "get": {
+        "tags": [
+          "MasterData"
+        ],
+        "summary": "Get category by ID",
+        "operationId": "MasterData_GetCategoryById",
+        "parameters": [
+          {
+            "name": "categoryId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "MasterData"
+        ],
+        "summary": "Delete category",
+        "operationId": "MasterData_DeleteCategory",
+        "parameters": [
+          {
+            "name": "categoryId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/MasterData/purities": {
+      "get": {
+        "tags": [
+          "MasterData"
+        ],
+        "summary": "Get all purities",
+        "operationId": "MasterData_GetAllPurities",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "MasterData"
+        ],
+        "summary": "Create new purity",
+        "operationId": "MasterData_CreatePurity",
+        "requestBody": {
+          "x-name": "createDto",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePurityMasterDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "MasterData"
+        ],
+        "summary": "Update purity",
+        "operationId": "MasterData_UpdatePurity",
+        "requestBody": {
+          "x-name": "updateDto",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePurityMasterDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/MasterData/purities/{purityId}": {
+      "get": {
+        "tags": [
+          "MasterData"
+        ],
+        "summary": "Get purity by ID",
+        "operationId": "MasterData_GetPurityById",
+        "parameters": [
+          {
+            "name": "purityId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "MasterData"
+        ],
+        "summary": "Delete purity",
+        "operationId": "MasterData_DeletePurity",
+        "parameters": [
+          {
+            "name": "purityId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/MasterData/designs": {
+      "get": {
+        "tags": [
+          "MasterData"
+        ],
+        "summary": "Get all designs",
+        "operationId": "MasterData_GetAllDesigns",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "MasterData"
+        ],
+        "summary": "Create new design",
+        "operationId": "MasterData_CreateDesign",
+        "requestBody": {
+          "x-name": "createDto",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateDesignMasterDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "MasterData"
+        ],
+        "summary": "Update design",
+        "operationId": "MasterData_UpdateDesign",
+        "requestBody": {
+          "x-name": "updateDto",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateDesignMasterDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/MasterData/designs/{designId}": {
+      "get": {
+        "tags": [
+          "MasterData"
+        ],
+        "summary": "Get design by ID",
+        "operationId": "MasterData_GetDesignById",
+        "parameters": [
+          {
+            "name": "designId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "MasterData"
+        ],
+        "summary": "Delete design",
+        "operationId": "MasterData_DeleteDesign",
+        "parameters": [
+          {
+            "name": "designId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/MasterData/boxes": {
+      "get": {
+        "tags": [
+          "MasterData"
+        ],
+        "summary": "Get all boxes",
+        "operationId": "MasterData_GetAllBoxes",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "MasterData"
+        ],
+        "summary": "Create new box",
+        "operationId": "MasterData_CreateBox",
+        "requestBody": {
+          "x-name": "createDto",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateBoxMasterDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "MasterData"
+        ],
+        "summary": "Update box",
+        "operationId": "MasterData_UpdateBox",
+        "requestBody": {
+          "x-name": "updateDto",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateBoxMasterDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/MasterData/boxes/active": {
+      "get": {
+        "tags": [
+          "MasterData"
+        ],
+        "summary": "Get active boxes only",
+        "operationId": "MasterData_GetActiveBoxes",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/MasterData/boxes/type/{boxType}": {
+      "get": {
+        "tags": [
+          "MasterData"
+        ],
+        "summary": "Get boxes by type",
+        "operationId": "MasterData_GetBoxesByType",
+        "parameters": [
+          {
+            "name": "boxType",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/MasterData/boxes/{boxId}": {
+      "get": {
+        "tags": [
+          "MasterData"
+        ],
+        "summary": "Get box by ID",
+        "operationId": "MasterData_GetBoxById",
+        "parameters": [
+          {
+            "name": "boxId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "MasterData"
+        ],
+        "summary": "Delete box",
+        "operationId": "MasterData_DeleteBox",
+        "parameters": [
+          {
+            "name": "boxId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/MasterData/counters": {
+      "get": {
+        "tags": [
+          "MasterData"
+        ],
+        "summary": "Get all counters",
+        "operationId": "MasterData_GetAllCounters",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "MasterData"
+        ],
+        "summary": "Create new counter",
+        "operationId": "MasterData_CreateCounter",
+        "requestBody": {
+          "x-name": "createDto",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCounterMasterDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "MasterData"
+        ],
+        "summary": "Update counter",
+        "operationId": "MasterData_UpdateCounter",
+        "requestBody": {
+          "x-name": "updateDto",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCounterMasterDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/MasterData/counters/client/{clientCode}": {
+      "get": {
+        "tags": [
+          "MasterData"
+        ],
+        "summary": "Get counters by client",
+        "operationId": "MasterData_GetCountersByClient",
+        "parameters": [
+          {
+            "name": "clientCode",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/MasterData/counters/branch/{branchId}": {
+      "get": {
+        "tags": [
+          "MasterData"
+        ],
+        "summary": "Get counters by branch",
+        "operationId": "MasterData_GetCountersByBranch",
+        "parameters": [
+          {
+            "name": "branchId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/MasterData/counters/{counterId}": {
+      "get": {
+        "tags": [
+          "MasterData"
+        ],
+        "summary": "Get counter by ID",
+        "operationId": "MasterData_GetCounterById",
+        "parameters": [
+          {
+            "name": "counterId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "MasterData"
+        ],
+        "summary": "Delete counter",
+        "operationId": "MasterData_DeleteCounter",
+        "parameters": [
+          {
+            "name": "counterId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/MasterData/branches": {
+      "get": {
+        "tags": [
+          "MasterData"
+        ],
+        "summary": "Get all branches",
+        "operationId": "MasterData_GetAllBranches",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "MasterData"
+        ],
+        "summary": "Create new branch",
+        "operationId": "MasterData_CreateBranch",
+        "requestBody": {
+          "x-name": "createDto",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateBranchMasterDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "MasterData"
+        ],
+        "summary": "Update branch",
+        "operationId": "MasterData_UpdateBranch",
+        "requestBody": {
+          "x-name": "updateDto",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateBranchMasterDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/MasterData/branches/client/{clientCode}": {
+      "get": {
+        "tags": [
+          "MasterData"
+        ],
+        "summary": "Get branches by client",
+        "operationId": "MasterData_GetBranchesByClient",
+        "parameters": [
+          {
+            "name": "clientCode",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/MasterData/branches/{branchId}": {
+      "get": {
+        "tags": [
+          "MasterData"
+        ],
+        "summary": "Get branch by ID",
+        "operationId": "MasterData_GetBranchById",
+        "parameters": [
+          {
+            "name": "branchId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "MasterData"
+        ],
+        "summary": "Delete branch",
+        "operationId": "MasterData_DeleteBranch",
+        "parameters": [
+          {
+            "name": "branchId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/MasterData/products": {
+      "get": {
+        "tags": [
+          "MasterData"
+        ],
+        "summary": "Get all products",
+        "operationId": "MasterData_GetAllProducts",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "MasterData"
+        ],
+        "summary": "Create new product",
+        "operationId": "MasterData_CreateProduct",
+        "requestBody": {
+          "x-name": "createDto",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateProductMasterDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "MasterData"
+        ],
+        "summary": "Update product",
+        "operationId": "MasterData_UpdateProduct",
+        "requestBody": {
+          "x-name": "updateDto",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateProductMasterDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/MasterData/products/{productId}": {
+      "get": {
+        "tags": [
+          "MasterData"
+        ],
+        "summary": "Get product by ID",
+        "operationId": "MasterData_GetProductById",
+        "parameters": [
+          {
+            "name": "productId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "MasterData"
+        ],
+        "summary": "Delete product",
+        "operationId": "MasterData_DeleteProduct",
+        "parameters": [
+          {
+            "name": "productId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/MasterData/summary": {
+      "get": {
+        "tags": [
+          "MasterData"
+        ],
+        "summary": "Get master data summary",
+        "operationId": "MasterData_GetMasterDataSummary",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/MasterData/counts": {
+      "get": {
+        "tags": [
+          "MasterData"
+        ],
+        "summary": "Get master data counts",
+        "operationId": "MasterData_GetMasterDataCounts",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/MasterData/summary/client/{clientCode}": {
+      "get": {
+        "tags": [
+          "MasterData"
+        ],
+        "summary": "Get master data summary by client",
+        "operationId": "MasterData_GetMasterDataSummaryByClient",
+        "parameters": [
+          {
+            "name": "clientCode",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Product/create": {
       "post": {
         "tags": [
@@ -9236,6 +10532,337 @@
             "items": {
               "$ref": "#/components/schemas/CreateInvoiceDto"
             }
+          }
+        }
+      },
+      "CreateCategoryMasterDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "categoryName"
+        ],
+        "properties": {
+          "categoryName": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 0
+          }
+        }
+      },
+      "UpdateCategoryMasterDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "categoryId",
+          "categoryName"
+        ],
+        "properties": {
+          "categoryId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "categoryName": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 0
+          }
+        }
+      },
+      "CreatePurityMasterDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "purityName"
+        ],
+        "properties": {
+          "purityName": {
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 0
+          }
+        }
+      },
+      "UpdatePurityMasterDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "purityId",
+          "purityName"
+        ],
+        "properties": {
+          "purityId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "purityName": {
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 0
+          }
+        }
+      },
+      "CreateDesignMasterDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "designName"
+        ],
+        "properties": {
+          "designName": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 0
+          }
+        }
+      },
+      "UpdateDesignMasterDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "designId",
+          "designName"
+        ],
+        "properties": {
+          "designId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "designName": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 0
+          }
+        }
+      },
+      "CreateBoxMasterDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "boxName"
+        ],
+        "properties": {
+          "boxName": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 0
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 200,
+            "minLength": 0,
+            "nullable": true
+          },
+          "boxType": {
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 0,
+            "nullable": true
+          },
+          "size": {
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 0,
+            "nullable": true
+          },
+          "color": {
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 0,
+            "nullable": true
+          },
+          "material": {
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 0,
+            "nullable": true
+          },
+          "isActive": {
+            "type": "boolean"
+          }
+        }
+      },
+      "UpdateBoxMasterDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "boxId",
+          "boxName"
+        ],
+        "properties": {
+          "boxId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "boxName": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 0
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 200,
+            "minLength": 0,
+            "nullable": true
+          },
+          "boxType": {
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 0,
+            "nullable": true
+          },
+          "size": {
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 0,
+            "nullable": true
+          },
+          "color": {
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 0,
+            "nullable": true
+          },
+          "material": {
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 0,
+            "nullable": true
+          },
+          "isActive": {
+            "type": "boolean"
+          }
+        }
+      },
+      "CreateCounterMasterDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "counterName",
+          "branchId",
+          "clientCode"
+        ],
+        "properties": {
+          "counterName": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 0
+          },
+          "branchId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "clientCode": {
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 0
+          }
+        }
+      },
+      "UpdateCounterMasterDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "counterId",
+          "counterName",
+          "branchId",
+          "clientCode"
+        ],
+        "properties": {
+          "counterId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "counterName": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 0
+          },
+          "branchId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "clientCode": {
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 0
+          }
+        }
+      },
+      "CreateBranchMasterDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "branchName",
+          "clientCode"
+        ],
+        "properties": {
+          "branchName": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 0
+          },
+          "clientCode": {
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 0
+          }
+        }
+      },
+      "UpdateBranchMasterDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "branchId",
+          "branchName",
+          "clientCode"
+        ],
+        "properties": {
+          "branchId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "branchName": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 0
+          },
+          "clientCode": {
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 0
+          }
+        }
+      },
+      "CreateProductMasterDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "productName"
+        ],
+        "properties": {
+          "productName": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 0
+          }
+        }
+      },
+      "UpdateProductMasterDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "productId",
+          "productName"
+        ],
+        "properties": {
+          "productId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "productName": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 0
           }
         }
       },

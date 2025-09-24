@@ -1874,6 +1874,634 @@
     ]
   },
   {
+    "ContainingType": "RfidAppApi.Controllers.MasterDataController",
+    "Method": "GetAllBoxes",
+    "RelativePath": "api/MasterData/boxes",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "RfidAppApi.Controllers.MasterDataController",
+    "Method": "CreateBox",
+    "RelativePath": "api/MasterData/boxes",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "createDto",
+        "Type": "RfidAppApi.DTOs.CreateBoxMasterDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "RfidAppApi.Controllers.MasterDataController",
+    "Method": "UpdateBox",
+    "RelativePath": "api/MasterData/boxes",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "updateDto",
+        "Type": "RfidAppApi.DTOs.UpdateBoxMasterDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "RfidAppApi.Controllers.MasterDataController",
+    "Method": "GetBoxById",
+    "RelativePath": "api/MasterData/boxes/{boxId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "boxId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "RfidAppApi.Controllers.MasterDataController",
+    "Method": "DeleteBox",
+    "RelativePath": "api/MasterData/boxes/{boxId}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "boxId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "RfidAppApi.Controllers.MasterDataController",
+    "Method": "GetActiveBoxes",
+    "RelativePath": "api/MasterData/boxes/active",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "RfidAppApi.Controllers.MasterDataController",
+    "Method": "GetBoxesByType",
+    "RelativePath": "api/MasterData/boxes/type/{boxType}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "boxType",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "RfidAppApi.Controllers.MasterDataController",
+    "Method": "GetAllBranches",
+    "RelativePath": "api/MasterData/branches",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "RfidAppApi.Controllers.MasterDataController",
+    "Method": "CreateBranch",
+    "RelativePath": "api/MasterData/branches",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "createDto",
+        "Type": "RfidAppApi.DTOs.CreateBranchMasterDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "RfidAppApi.Controllers.MasterDataController",
+    "Method": "UpdateBranch",
+    "RelativePath": "api/MasterData/branches",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "updateDto",
+        "Type": "RfidAppApi.DTOs.UpdateBranchMasterDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "RfidAppApi.Controllers.MasterDataController",
+    "Method": "GetBranchById",
+    "RelativePath": "api/MasterData/branches/{branchId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "branchId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "RfidAppApi.Controllers.MasterDataController",
+    "Method": "DeleteBranch",
+    "RelativePath": "api/MasterData/branches/{branchId}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "branchId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "RfidAppApi.Controllers.MasterDataController",
+    "Method": "GetBranchesByClient",
+    "RelativePath": "api/MasterData/branches/client/{clientCode}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "clientCode",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "RfidAppApi.Controllers.MasterDataController",
+    "Method": "GetAllCategories",
+    "RelativePath": "api/MasterData/categories",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "RfidAppApi.Controllers.MasterDataController",
+    "Method": "CreateCategory",
+    "RelativePath": "api/MasterData/categories",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "createDto",
+        "Type": "RfidAppApi.DTOs.CreateCategoryMasterDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "RfidAppApi.Controllers.MasterDataController",
+    "Method": "UpdateCategory",
+    "RelativePath": "api/MasterData/categories",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "updateDto",
+        "Type": "RfidAppApi.DTOs.UpdateCategoryMasterDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "RfidAppApi.Controllers.MasterDataController",
+    "Method": "GetCategoryById",
+    "RelativePath": "api/MasterData/categories/{categoryId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "categoryId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "RfidAppApi.Controllers.MasterDataController",
+    "Method": "DeleteCategory",
+    "RelativePath": "api/MasterData/categories/{categoryId}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "categoryId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "RfidAppApi.Controllers.MasterDataController",
+    "Method": "GetAllCounters",
+    "RelativePath": "api/MasterData/counters",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "RfidAppApi.Controllers.MasterDataController",
+    "Method": "CreateCounter",
+    "RelativePath": "api/MasterData/counters",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "createDto",
+        "Type": "RfidAppApi.DTOs.CreateCounterMasterDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "RfidAppApi.Controllers.MasterDataController",
+    "Method": "UpdateCounter",
+    "RelativePath": "api/MasterData/counters",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "updateDto",
+        "Type": "RfidAppApi.DTOs.UpdateCounterMasterDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "RfidAppApi.Controllers.MasterDataController",
+    "Method": "GetCounterById",
+    "RelativePath": "api/MasterData/counters/{counterId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "counterId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "RfidAppApi.Controllers.MasterDataController",
+    "Method": "DeleteCounter",
+    "RelativePath": "api/MasterData/counters/{counterId}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "counterId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "RfidAppApi.Controllers.MasterDataController",
+    "Method": "GetCountersByBranch",
+    "RelativePath": "api/MasterData/counters/branch/{branchId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "branchId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "RfidAppApi.Controllers.MasterDataController",
+    "Method": "GetCountersByClient",
+    "RelativePath": "api/MasterData/counters/client/{clientCode}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "clientCode",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "RfidAppApi.Controllers.MasterDataController",
+    "Method": "GetMasterDataCounts",
+    "RelativePath": "api/MasterData/counts",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "RfidAppApi.Controllers.MasterDataController",
+    "Method": "GetAllDesigns",
+    "RelativePath": "api/MasterData/designs",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "RfidAppApi.Controllers.MasterDataController",
+    "Method": "CreateDesign",
+    "RelativePath": "api/MasterData/designs",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "createDto",
+        "Type": "RfidAppApi.DTOs.CreateDesignMasterDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "RfidAppApi.Controllers.MasterDataController",
+    "Method": "UpdateDesign",
+    "RelativePath": "api/MasterData/designs",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "updateDto",
+        "Type": "RfidAppApi.DTOs.UpdateDesignMasterDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "RfidAppApi.Controllers.MasterDataController",
+    "Method": "GetDesignById",
+    "RelativePath": "api/MasterData/designs/{designId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "designId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "RfidAppApi.Controllers.MasterDataController",
+    "Method": "DeleteDesign",
+    "RelativePath": "api/MasterData/designs/{designId}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "designId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "RfidAppApi.Controllers.MasterDataController",
+    "Method": "GetAllProducts",
+    "RelativePath": "api/MasterData/products",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "RfidAppApi.Controllers.MasterDataController",
+    "Method": "CreateProduct",
+    "RelativePath": "api/MasterData/products",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "createDto",
+        "Type": "RfidAppApi.DTOs.CreateProductMasterDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "RfidAppApi.Controllers.MasterDataController",
+    "Method": "UpdateProduct",
+    "RelativePath": "api/MasterData/products",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "updateDto",
+        "Type": "RfidAppApi.DTOs.UpdateProductMasterDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "RfidAppApi.Controllers.MasterDataController",
+    "Method": "GetProductById",
+    "RelativePath": "api/MasterData/products/{productId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "productId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "RfidAppApi.Controllers.MasterDataController",
+    "Method": "DeleteProduct",
+    "RelativePath": "api/MasterData/products/{productId}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "productId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "RfidAppApi.Controllers.MasterDataController",
+    "Method": "GetAllPurities",
+    "RelativePath": "api/MasterData/purities",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "RfidAppApi.Controllers.MasterDataController",
+    "Method": "CreatePurity",
+    "RelativePath": "api/MasterData/purities",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "createDto",
+        "Type": "RfidAppApi.DTOs.CreatePurityMasterDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "RfidAppApi.Controllers.MasterDataController",
+    "Method": "UpdatePurity",
+    "RelativePath": "api/MasterData/purities",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "updateDto",
+        "Type": "RfidAppApi.DTOs.UpdatePurityMasterDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "RfidAppApi.Controllers.MasterDataController",
+    "Method": "GetPurityById",
+    "RelativePath": "api/MasterData/purities/{purityId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "purityId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "RfidAppApi.Controllers.MasterDataController",
+    "Method": "DeletePurity",
+    "RelativePath": "api/MasterData/purities/{purityId}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "purityId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "RfidAppApi.Controllers.MasterDataController",
+    "Method": "GetMasterDataSummary",
+    "RelativePath": "api/MasterData/summary",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "RfidAppApi.Controllers.MasterDataController",
+    "Method": "GetMasterDataSummaryByClient",
+    "RelativePath": "api/MasterData/summary/client/{clientCode}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "clientCode",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "RfidAppApi.Controllers.ProductController",
     "Method": "GetProduct",
     "RelativePath": "api/Product/{id}",

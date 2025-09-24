@@ -64,9 +64,18 @@ builder.Services.AddScoped<IReportingService, ReportingService>();
 builder.Services.AddScoped<IStockVerificationService, StockVerificationService>();
 builder.Services.AddScoped<IStockTransferService, StockTransferService>();
 
+// Register ClientDbContextFactory
+builder.Services.AddScoped<ClientDbContextFactory>();
+
 // Register Admin and Activity Services
 builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<IActivityLoggingService, ActivityLoggingService>();
+
+// Register Master Data Services
+builder.Services.AddScoped<IMasterDataService, MasterDataService>();
+
+// Register HttpContextAccessor
+builder.Services.AddHttpContextAccessor();
 
 // Configure JWT Authentication
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");

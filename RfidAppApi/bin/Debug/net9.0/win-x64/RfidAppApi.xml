@@ -419,6 +419,221 @@
             DTO for top performing products
             </summary>
         </member>
+        <member name="M:RfidAppApi.Controllers.MasterDataController.GetAllCategories">
+            <summary>
+            Get all categories
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.MasterDataController.GetCategoryById(System.Int32)">
+            <summary>
+            Get category by ID
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.MasterDataController.CreateCategory(RfidAppApi.DTOs.CreateCategoryMasterDto)">
+            <summary>
+            Create new category
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.MasterDataController.UpdateCategory(RfidAppApi.DTOs.UpdateCategoryMasterDto)">
+            <summary>
+            Update category
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.MasterDataController.DeleteCategory(System.Int32)">
+            <summary>
+            Delete category
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.MasterDataController.GetAllPurities">
+            <summary>
+            Get all purities
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.MasterDataController.GetPurityById(System.Int32)">
+            <summary>
+            Get purity by ID
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.MasterDataController.CreatePurity(RfidAppApi.DTOs.CreatePurityMasterDto)">
+            <summary>
+            Create new purity
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.MasterDataController.UpdatePurity(RfidAppApi.DTOs.UpdatePurityMasterDto)">
+            <summary>
+            Update purity
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.MasterDataController.DeletePurity(System.Int32)">
+            <summary>
+            Delete purity
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.MasterDataController.GetAllDesigns">
+            <summary>
+            Get all designs
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.MasterDataController.GetDesignById(System.Int32)">
+            <summary>
+            Get design by ID
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.MasterDataController.CreateDesign(RfidAppApi.DTOs.CreateDesignMasterDto)">
+            <summary>
+            Create new design
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.MasterDataController.UpdateDesign(RfidAppApi.DTOs.UpdateDesignMasterDto)">
+            <summary>
+            Update design
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.MasterDataController.DeleteDesign(System.Int32)">
+            <summary>
+            Delete design
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.MasterDataController.GetAllBoxes">
+            <summary>
+            Get all boxes
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.MasterDataController.GetActiveBoxes">
+            <summary>
+            Get active boxes only
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.MasterDataController.GetBoxesByType(System.String)">
+            <summary>
+            Get boxes by type
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.MasterDataController.GetBoxById(System.Int32)">
+            <summary>
+            Get box by ID
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.MasterDataController.CreateBox(RfidAppApi.DTOs.CreateBoxMasterDto)">
+            <summary>
+            Create new box
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.MasterDataController.UpdateBox(RfidAppApi.DTOs.UpdateBoxMasterDto)">
+            <summary>
+            Update box
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.MasterDataController.DeleteBox(System.Int32)">
+            <summary>
+            Delete box
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.MasterDataController.GetAllCounters">
+            <summary>
+            Get all counters
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.MasterDataController.GetCountersByClient(System.String)">
+            <summary>
+            Get counters by client
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.MasterDataController.GetCountersByBranch(System.Int32)">
+            <summary>
+            Get counters by branch
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.MasterDataController.GetCounterById(System.Int32)">
+            <summary>
+            Get counter by ID
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.MasterDataController.CreateCounter(RfidAppApi.DTOs.CreateCounterMasterDto)">
+            <summary>
+            Create new counter
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.MasterDataController.UpdateCounter(RfidAppApi.DTOs.UpdateCounterMasterDto)">
+            <summary>
+            Update counter
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.MasterDataController.DeleteCounter(System.Int32)">
+            <summary>
+            Delete counter
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.MasterDataController.GetAllBranches">
+            <summary>
+            Get all branches
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.MasterDataController.GetBranchesByClient(System.String)">
+            <summary>
+            Get branches by client
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.MasterDataController.GetBranchById(System.Int32)">
+            <summary>
+            Get branch by ID
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.MasterDataController.CreateBranch(RfidAppApi.DTOs.CreateBranchMasterDto)">
+            <summary>
+            Create new branch
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.MasterDataController.UpdateBranch(RfidAppApi.DTOs.UpdateBranchMasterDto)">
+            <summary>
+            Update branch
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.MasterDataController.DeleteBranch(System.Int32)">
+            <summary>
+            Delete branch
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.MasterDataController.GetAllProducts">
+            <summary>
+            Get all products
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.MasterDataController.GetProductById(System.Int32)">
+            <summary>
+            Get product by ID
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.MasterDataController.CreateProduct(RfidAppApi.DTOs.CreateProductMasterDto)">
+            <summary>
+            Create new product
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.MasterDataController.UpdateProduct(RfidAppApi.DTOs.UpdateProductMasterDto)">
+            <summary>
+            Update product
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.MasterDataController.DeleteProduct(System.Int32)">
+            <summary>
+            Delete product
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.MasterDataController.GetMasterDataSummary">
+            <summary>
+            Get master data summary
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.MasterDataController.GetMasterDataCounts">
+            <summary>
+            Get master data counts
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.MasterDataController.GetMasterDataSummaryByClient(System.String)">
+            <summary>
+            Get master data summary by client
+            </summary>
+        </member>
         <member name="M:RfidAppApi.Controllers.ProductController.CreateProduct(RfidAppApi.DTOs.UserFriendlyCreateProductDto)">
             <summary>
             Create a new product with user-friendly inputs
