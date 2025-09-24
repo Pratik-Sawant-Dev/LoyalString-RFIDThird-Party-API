@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("RfidAppApi")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f7d26be83573f4bd317c7fde512cc4debc3253ea")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+64a730fe738af70407dedbbef196f2ffe63823df")]
 [assembly: System.Reflection.AssemblyProductAttribute("RfidAppApi")]
 [assembly: System.Reflection.AssemblyTitleAttribute("RfidAppApi")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
