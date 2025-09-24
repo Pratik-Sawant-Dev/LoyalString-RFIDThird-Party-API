@@ -2946,6 +2946,128 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Update User",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"fullName\": \"Updated User Name\",\n  \"mobileNumber\": \"+91-9876543210\",\n  \"city\": \"Updated City\",\n  \"address\": \"Updated Address\",\n  \"isActive\": true\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/Admin/users/{{subUserId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "Admin", "users", "{{subUserId}}"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete User",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/Admin/users/{{subUserId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "Admin", "users", "{{subUserId}}"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Activate User",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"userId\": {{subUserId}},\n  \"isActive\": true,\n  \"remarks\": \"User activated by admin\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/Admin/activate-user",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "Admin", "activate-user"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Deactivate User",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"userId\": {{subUserId}},\n  \"isActive\": false,\n  \"remarks\": \"User deactivated by admin\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/Admin/deactivate-user",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "Admin", "deactivate-user"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Reset User Password",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"newPassword\": \"NewPassword@123\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/Admin/users/{{subUserId}}/reset-password",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "Admin", "users", "{{subUserId}}", "reset-password"]
+						}
+					},
+					"response": []
 				}
 			]
 		},
