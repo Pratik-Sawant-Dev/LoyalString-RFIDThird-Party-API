@@ -1,10 +1,10 @@
 {
 	"info": {
-		"_postman_id": "rfid-jewelry-inventory-complete-v4",
-		"name": "RFID Jewelry Inventory System - Complete API Collection v4",
-		"description": "Complete API collection for RFID Jewelry Inventory Management System with Multi-Tenant Architecture, Admin-User Hierarchy System, Granular Permissions, Activity Tracking, Product Management, Image Upload, RFID Tracking, Comprehensive Reporting System, RFID Usage Analytics, and Database Management. All endpoints with real data examples and proper localhost URLs.",
+		"_postman_id": "rfid-jewelry-inventory-complete-v5",
+		"name": "RFID Jewelry Inventory System - Complete API Collection v5",
+		"description": "Complete API collection for RFID Jewelry Inventory Management System with Multi-Tenant Architecture, Admin-User Hierarchy System, Granular Permissions, Activity Tracking, Product Management, Image Upload, RFID Tracking, Comprehensive Reporting System, RFID Usage Analytics, Database Management, and Branch/Counter Assignment for Sub-User Registration. All endpoints with real data examples and proper localhost URLs.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "rfid-jewelry-system-v4"
+		"_exporter_id": "rfid-jewelry-system-v5"
 	},
 	"item": [
 		{
@@ -2568,7 +2568,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"userName\": \"user1@jewelrystore.com\",\n  \"email\": \"user1@jewelrystore.com\",\n  \"password\": \"User@123\",\n  \"fullName\": \"John User\",\n  \"mobileNumber\": \"+91-9876543212\",\n  \"city\": \"Mumbai\",\n  \"address\": \"789 User Street, Mumbai, Maharashtra, India\",\n  \"organisationName\": \"Premium Jewelry Store\",\n  \"showroomType\": \"Premium\",\n  \"isAdmin\": false,\n  \"userType\": \"User\",\n  \"adminUserId\": {{adminUserId}}\n}"
+							"raw": "{\n  \"userName\": \"user1@jewelrystore.com\",\n  \"email\": \"user1@jewelrystore.com\",\n  \"password\": \"User@123\",\n  \"fullName\": \"John User\",\n  \"mobileNumber\": \"+91-9876543212\",\n  \"city\": \"Mumbai\",\n  \"address\": \"789 User Street, Mumbai, Maharashtra, India\",\n  \"organisationName\": \"Premium Jewelry Store\",\n  \"showroomType\": \"Premium\",\n  \"isAdmin\": false,\n  \"branchId\": 1,\n  \"counterId\": 1,\n  \"permissions\": [\n    {\n      \"module\": \"Product\",\n      \"canView\": true,\n      \"canCreate\": true,\n      \"canEdit\": true,\n      \"canDelete\": false,\n      \"canExport\": true,\n      \"canImport\": false\n    },\n    {\n      \"module\": \"RFID\",\n      \"canView\": true,\n      \"canCreate\": true,\n      \"canEdit\": true,\n      \"canDelete\": false,\n      \"canExport\": true,\n      \"canImport\": false\n    },\n    {\n      \"module\": \"Invoice\",\n      \"canView\": true,\n      \"canCreate\": true,\n      \"canEdit\": true,\n      \"canDelete\": false,\n      \"canExport\": true,\n      \"canImport\": false\n    }\n  ]\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/Admin/register-sub-user",
@@ -3231,6 +3231,227 @@
 							"raw": "{{baseUrl}}/api/Admin/users/{{subUserId}}/reset-password",
 							"host": ["{{baseUrl}}"],
 							"path": ["api", "Admin", "users", "{{subUserId}}", "reset-password"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "🏢 Branch and Counter Management",
+					"item": [
+						{
+							"name": "Get All Branches",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/Admin/branches",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "Admin", "branches"]
+								}
+							},
+							"response": [],
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"if (pm.response.code === 200) {",
+											"    const response = pm.response.json();",
+											"    if (response && response.length > 0) {",
+											"        pm.environment.set('branchId', response[0].branchId);",
+											"        console.log('Branches retrieved successfully. First branch ID:', response[0].branchId);",
+											"    }",
+											"}"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						},
+						{
+							"name": "Get Counters by Branch",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/Admin/branches/{{branchId}}/counters",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "Admin", "branches", "{{branchId}}", "counters"]
+								}
+							},
+							"response": [],
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"if (pm.response.code === 200) {",
+											"    const response = pm.response.json();",
+											"    if (response && response.length > 0) {",
+											"        pm.environment.set('counterId', response[0].counterId);",
+											"        console.log('Counters retrieved successfully. First counter ID:', response[0].counterId);",
+											"    }",
+											"}"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						},
+						{
+							"name": "Get Users by Branch",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/Admin/users/by-location?branchId={{branchId}}",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "Admin", "users", "by-location"],
+									"query": [
+										{
+											"key": "branchId",
+											"value": "{{branchId}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Users by Counter",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/Admin/users/by-location?counterId={{counterId}}",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "Admin", "users", "by-location"],
+									"query": [
+										{
+											"key": "counterId",
+											"value": "{{counterId}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Users by Branch and Counter",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/Admin/users/by-location?branchId={{branchId}}&counterId={{counterId}}",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "Admin", "users", "by-location"],
+									"query": [
+										{
+											"key": "branchId",
+											"value": "{{branchId}}"
+										},
+										{
+											"key": "counterId",
+											"value": "{{counterId}}"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Register Sub-User with Branch/Counter (Updated)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"userName\": \"counter_user@jewelrystore.com\",\n  \"email\": \"counter_user@jewelrystore.com\",\n  \"password\": \"User@123\",\n  \"fullName\": \"Counter User\",\n  \"mobileNumber\": \"+91-9876543213\",\n  \"city\": \"Mumbai\",\n  \"address\": \"101 Counter Street, Mumbai, Maharashtra, India\",\n  \"showroomType\": \"Premium\",\n  \"isAdmin\": false,\n  \"branchId\": {{branchId}},\n  \"counterId\": {{counterId}},\n  \"permissions\": [\n    {\n      \"module\": \"Product\",\n      \"canView\": true,\n      \"canCreate\": true,\n      \"canEdit\": true,\n      \"canDelete\": false,\n      \"canExport\": true,\n      \"canImport\": false\n    },\n    {\n      \"module\": \"RFID\",\n      \"canView\": true,\n      \"canCreate\": true,\n      \"canEdit\": true,\n      \"canDelete\": false,\n      \"canExport\": true,\n      \"canImport\": false\n    },\n    {\n      \"module\": \"Invoice\",\n      \"canView\": true,\n      \"canCreate\": true,\n      \"canEdit\": true,\n      \"canDelete\": false,\n      \"canExport\": true,\n      \"canImport\": false\n    }\n  ]\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/Admin/register-sub-user",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "Admin", "register-sub-user"]
+						}
+					},
+					"response": [],
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    if (response.userId) {",
+									"        pm.environment.set('counterUserId', response.userId);",
+									"        console.log('Counter user registered successfully with ID:', response.userId);",
+									"        console.log('Assigned to Branch ID:', response.branchId, 'Counter ID:', response.counterId);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
+				},
+				{
+					"name": "Update User Branch/Counter Assignment",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"fullName\": \"Counter User Updated\",\n  \"branchId\": {{branchId}},\n  \"counterId\": {{counterId}},\n  \"permissions\": [\n    {\n      \"module\": \"Product\",\n      \"canView\": true,\n      \"canCreate\": true,\n      \"canEdit\": true,\n      \"canDelete\": true,\n      \"canExport\": true,\n      \"canImport\": true\n    },\n    {\n      \"module\": \"RFID\",\n      \"canView\": true,\n      \"canCreate\": true,\n      \"canEdit\": true,\n      \"canDelete\": true,\n      \"canExport\": true,\n      \"canImport\": true\n    },\n    {\n      \"module\": \"Invoice\",\n      \"canView\": true,\n      \"canCreate\": true,\n      \"canEdit\": true,\n      \"canDelete\": true,\n      \"canExport\": true,\n      \"canImport\": true\n    }\n  ]\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/Admin/users/{{counterUserId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "Admin", "users", "{{counterUserId}}"]
 						}
 					},
 					"response": []

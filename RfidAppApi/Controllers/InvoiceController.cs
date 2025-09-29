@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RfidAppApi.DTOs;
 using RfidAppApi.Services;
+using RfidAppApi.Extensions;
 using System.Security.Claims;
 
 namespace RfidAppApi.Controllers
@@ -16,15 +17,18 @@ namespace RfidAppApi.Controllers
     {
         private readonly IInvoiceService _invoiceService;
         private readonly IReportingService _reportingService;
+        private readonly IAccessControlService _accessControlService;
         private readonly ILogger<InvoiceController> _logger;
 
         public InvoiceController(
             IInvoiceService invoiceService,
             IReportingService reportingService,
+            IAccessControlService accessControlService,
             ILogger<InvoiceController> logger)
         {
             _invoiceService = invoiceService;
             _reportingService = reportingService;
+            _accessControlService = accessControlService;
             _logger = logger;
         }
 
@@ -41,6 +45,29 @@ namespace RfidAppApi.Controllers
                 var clientCode = User.FindFirst("ClientCode")?.Value;
                 if (string.IsNullOrEmpty(clientCode))
                     return BadRequest("Client code not found in token");
+
+                // Check if user can access the product's branch and counter
+                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+                var userId = userIdClaim != null ? int.Parse(userIdClaim.Value) : 0;
+                
+                if (userId > 0)
+                {
+                    // Get product details to check branch and counter
+                    var product = await _invoiceService.GetProductDetailsAsync(createDto.ProductId, clientCode);
+                    if (product != null)
+                    {
+                        // Check if user can access the product's branch and counter
+                        var canAccess = await _accessControlService.CanAccessBranchAndCounterAsync(userId, product.BranchId, product.CounterId);
+                        if (!canAccess)
+                        {
+                            return BadRequest(new
+                        {
+                            success = false,
+                            message = $"Access denied. You don't have permission to access branch ID {product.BranchId}."
+                        });
+                        }
+                    }
+                }
 
                 // Validate required fields
                 if (createDto.ProductId <= 0)
@@ -91,7 +118,7 @@ namespace RfidAppApi.Controllers
                         MovementDate = createDto.SoldOn ?? DateTime.UtcNow
                     };
 
-                    await _reportingService.CreateStockMovementAsync(stockMovementDto, clientCode);
+                    await _reportingService.CreateStockMovementAsync(stockMovementDto, clientCode, userId);
                     _logger.LogInformation("Stock movement created for invoice: {InvoiceNumber}", result.InvoiceNumber);
                 }
                 catch (Exception ex)

@@ -8,7 +8,7 @@ namespace RfidAppApi.Services
     public interface IReportingService
     {
         // Stock Movement Methods
-        Task<StockMovementDto> CreateStockMovementAsync(CreateStockMovementDto movementDto, string clientCode);
+        Task<StockMovementDto> CreateStockMovementAsync(CreateStockMovementDto movementDto, string clientCode, int? userId = null);
         Task<List<StockMovementDto>> CreateBulkStockMovementsAsync(BulkStockMovementDto bulkDto, string clientCode);
         Task<List<StockMovementDto>> GetStockMovementsAsync(ReportFilterDto filter, string clientCode);
         Task<StockMovementDto?> GetStockMovementByIdAsync(int movementId, string clientCode);

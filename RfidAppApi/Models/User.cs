@@ -63,13 +63,17 @@ namespace RfidAppApi.Models
         [StringLength(50)]
         public string UserType { get; set; } = "User"; // "MainAdmin", "Admin", "User"
 
+        // Branch and Counter assignment for sub-users
+        public int? BranchId { get; set; } // Reference to branch (null for main admin and admin users)
+        public int? CounterId { get; set; } // Reference to counter (null for main admin and admin users)
+
         // Status
         public bool IsActive { get; set; } = true;
         
         public DateTime CreatedOn { get; set; } = DateTime.UtcNow;
         public DateTime? LastLoginDate { get; set; }
 
-        // Navigation property
+        // Navigation properties
         public virtual User? AdminUser { get; set; }
     }
 } 

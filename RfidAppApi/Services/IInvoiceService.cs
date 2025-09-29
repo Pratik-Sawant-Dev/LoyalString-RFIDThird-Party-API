@@ -1,9 +1,11 @@
 using RfidAppApi.DTOs;
+using RfidAppApi.Models;
 
 namespace RfidAppApi.Services
 {
     public interface IInvoiceService
     {
+        Task<ProductDetails?> GetProductDetailsAsync(int productId, string clientCode);
         Task<InvoiceResponseDto> CreateInvoiceAsync(CreateInvoiceDto createDto, string clientCode);
         Task<InvoiceResponseDto?> GetInvoiceAsync(int invoiceId, string clientCode);
         Task<List<InvoiceResponseDto>> GetAllInvoicesAsync(string clientCode);

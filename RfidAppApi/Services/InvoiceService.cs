@@ -16,6 +16,16 @@ namespace RfidAppApi.Services
             _logger = logger;
         }
 
+        public async Task<ProductDetails?> GetProductDetailsAsync(int productId, string clientCode)
+        {
+            using var context = await _clientService.GetClientDbContextAsync(clientCode);
+            return await context.ProductDetails
+                .Include(p => p.Branch)
+                .Include(p => p.Counter)
+                .Include(p => p.Category)
+                .FirstOrDefaultAsync(p => p.Id == productId);
+        }
+
         public async Task<InvoiceResponseDto> CreateInvoiceAsync(CreateInvoiceDto createDto, string clientCode)
         {
             try

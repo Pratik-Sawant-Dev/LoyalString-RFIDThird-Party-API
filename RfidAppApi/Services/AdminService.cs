@@ -12,11 +12,13 @@ namespace RfidAppApi.Services
     {
         private readonly AppDbContext _context;
         private readonly IClientDatabaseService _clientDatabaseService;
+        private readonly ClientDbContextFactory _clientDbContextFactory;
 
-        public AdminService(AppDbContext context, IClientDatabaseService clientDatabaseService)
+        public AdminService(AppDbContext context, IClientDatabaseService clientDatabaseService, ClientDbContextFactory clientDbContextFactory)
         {
             _context = context;
             _clientDatabaseService = clientDatabaseService;
+            _clientDbContextFactory = clientDbContextFactory;
         }
 
         public async Task<AdminUserDto> CreateUserAsync(CreateUserByAdminDto createUserDto, int adminUserId)
@@ -62,6 +64,12 @@ namespace RfidAppApi.Services
                 // Hash password
                 var passwordHash = HashPassword(createUserDto.Password);
 
+                // Validate branch and counter if provided (only for regular users, not admins)
+                if (!createUserDto.IsAdmin && (createUserDto.BranchId.HasValue || createUserDto.CounterId.HasValue))
+                {
+                    await ValidateBranchAndCounterAsync(createUserDto.BranchId, createUserDto.CounterId, adminUser.ClientCode);
+                }
+
                 // Create user
                 var user = new User
                 {
@@ -79,6 +87,9 @@ namespace RfidAppApi.Services
                     IsAdmin = createUserDto.IsAdmin,
                     AdminUserId = adminUserId,
                     UserType = createUserDto.IsAdmin ? "Admin" : "User",
+                    // Assign branch and counter only for regular users (not admins)
+                    BranchId = createUserDto.IsAdmin ? null : createUserDto.BranchId,
+                    CounterId = createUserDto.IsAdmin ? null : createUserDto.CounterId,
                     IsActive = true,
                     CreatedOn = DateTime.UtcNow
                 };
@@ -147,7 +158,9 @@ namespace RfidAppApi.Services
                 user.Address,
                 user.ShowroomType,
                 user.IsActive,
-                user.IsAdmin
+                user.IsAdmin,
+                user.BranchId,
+                user.CounterId
             };
 
             // Update properties
@@ -175,6 +188,29 @@ namespace RfidAppApi.Services
                 user.UserType = updateUserDto.IsAdmin.Value ? "Admin" : "User";
             }
 
+            // Update branch and counter assignment (only for regular users, not admins)
+            if (!user.IsAdmin)
+            {
+                // Validate branch and counter if provided
+                if (updateUserDto.BranchId.HasValue || updateUserDto.CounterId.HasValue)
+                {
+                    await ValidateBranchAndCounterAsync(updateUserDto.BranchId, updateUserDto.CounterId, user.ClientCode);
+                }
+
+                // Update branch and counter
+                if (updateUserDto.BranchId.HasValue)
+                    user.BranchId = updateUserDto.BranchId.Value;
+                
+                if (updateUserDto.CounterId.HasValue)
+                    user.CounterId = updateUserDto.CounterId.Value;
+            }
+            else
+            {
+                // Clear branch and counter for admin users
+                user.BranchId = null;
+                user.CounterId = null;
+            }
+
             await _context.SaveChangesAsync();
 
             // Update permissions if provided
@@ -191,7 +227,9 @@ namespace RfidAppApi.Services
                 user.Address,
                 user.ShowroomType,
                 user.IsActive,
-                user.IsAdmin
+                user.IsAdmin,
+                user.BranchId,
+                user.CounterId
             };
 
             // Log activity
@@ -239,6 +277,17 @@ namespace RfidAppApi.Services
 
             var permissions = await GetUserPermissionsAsync(userId);
 
+            // Get branch and counter information if assigned
+            string? branchName = null;
+            string? counterName = null;
+            
+            if (user.BranchId.HasValue || user.CounterId.HasValue)
+            {
+                var branchCounterInfo = await GetBranchAndCounterInfoAsync(user.BranchId, user.CounterId, user.ClientCode);
+                branchName = branchCounterInfo.BranchName;
+                counterName = branchCounterInfo.CounterName;
+            }
+
             return new AdminUserDto
             {
                 UserId = user.UserId,
@@ -258,6 +307,10 @@ namespace RfidAppApi.Services
                 IsActive = user.IsActive,
                 CreatedOn = user.CreatedOn,
                 LastLoginDate = user.LastLoginDate,
+                BranchId = user.BranchId,
+                BranchName = branchName,
+                CounterId = user.CounterId,
+                CounterName = counterName,
                 Permissions = permissions.ToList()
             };
         }
@@ -276,6 +329,18 @@ namespace RfidAppApi.Services
             foreach (var user in users)
             {
                 var permissions = await GetUserPermissionsAsync(user.UserId);
+                
+                // Get branch and counter information if assigned
+                string? branchName = null;
+                string? counterName = null;
+                
+                if (user.BranchId.HasValue || user.CounterId.HasValue)
+                {
+                    var branchCounterInfo = await GetBranchAndCounterInfoAsync(user.BranchId, user.CounterId, user.ClientCode);
+                    branchName = branchCounterInfo.BranchName;
+                    counterName = branchCounterInfo.CounterName;
+                }
+
                 result.Add(new AdminUserDto
                 {
                     UserId = user.UserId,
@@ -295,6 +360,10 @@ namespace RfidAppApi.Services
                     IsActive = user.IsActive,
                     CreatedOn = user.CreatedOn,
                     LastLoginDate = user.LastLoginDate,
+                    BranchId = user.BranchId,
+                    BranchName = branchName,
+                    CounterId = user.CounterId,
+                    CounterName = counterName,
                     Permissions = permissions.ToList()
                 });
             }
@@ -973,6 +1042,206 @@ namespace RfidAppApi.Services
                 var hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
                 return Convert.ToBase64String(hashedBytes);
             }
+        }
+
+        /// <summary>
+        /// Validates that the provided branch and counter IDs exist and belong to the client
+        /// </summary>
+        private async Task ValidateBranchAndCounterAsync(int? branchId, int? counterId, string clientCode)
+        {
+            using var clientContext = await _clientDbContextFactory.CreateAsync(clientCode);
+            
+            if (branchId.HasValue)
+            {
+                var branch = await clientContext.BranchMasters
+                    .FirstOrDefaultAsync(b => b.BranchId == branchId.Value);
+                
+                if (branch == null)
+                {
+                    throw new InvalidOperationException($"Branch with ID {branchId.Value} not found.");
+                }
+
+                if (branch.ClientCode != clientCode)
+                {
+                    throw new InvalidOperationException($"Branch with ID {branchId.Value} does not belong to this client.");
+                }
+            }
+
+            if (counterId.HasValue)
+            {
+                var counter = await clientContext.CounterMasters
+                    .Include(c => c.Branch)
+                    .FirstOrDefaultAsync(c => c.CounterId == counterId.Value);
+                
+                if (counter == null)
+                {
+                    throw new InvalidOperationException($"Counter with ID {counterId.Value} not found.");
+                }
+
+                // Check if counter belongs to the client (either by ClientCode or by Branch's ClientCode)
+                var counterBelongsToClient = !string.IsNullOrEmpty(counter.ClientCode) 
+                    ? counter.ClientCode == clientCode 
+                    : counter.Branch?.ClientCode == clientCode;
+
+                if (!counterBelongsToClient)
+                {
+                    throw new InvalidOperationException($"Counter with ID {counterId.Value} does not belong to this client.");
+                }
+
+                // If both branch and counter are provided, validate that counter belongs to the specified branch
+                if (branchId.HasValue && counter.BranchId != branchId.Value)
+                {
+                    throw new InvalidOperationException($"Counter {counter.CounterName} does not belong to the specified branch.");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets branch and counter information for a user
+        /// </summary>
+        private async Task<(string? BranchName, string? CounterName)> GetBranchAndCounterInfoAsync(int? branchId, int? counterId, string clientCode)
+        {
+            string? branchName = null;
+            string? counterName = null;
+
+            try
+            {
+                using var clientContext = await _clientDbContextFactory.CreateAsync(clientCode);
+
+                if (branchId.HasValue)
+                {
+                    var branch = await clientContext.BranchMasters
+                        .FirstOrDefaultAsync(b => b.BranchId == branchId.Value);
+                    branchName = branch?.BranchName;
+                }
+
+                if (counterId.HasValue)
+                {
+                    var counter = await clientContext.CounterMasters
+                        .Include(c => c.Branch)
+                        .FirstOrDefaultAsync(c => c.CounterId == counterId.Value);
+                    counterName = counter?.CounterName;
+                }
+            }
+            catch
+            {
+                // If there's an error accessing the client database, return null values
+                // This ensures the main functionality doesn't break if client database is unavailable
+            }
+
+            return (branchName, counterName);
+        }
+
+        /// <summary>
+        /// Gets all branches for a client
+        /// </summary>
+        public async Task<IEnumerable<BranchMasterDto>> GetBranchesAsync(string clientCode)
+        {
+            using var clientContext = await _clientDbContextFactory.CreateAsync(clientCode);
+            var branches = await clientContext.BranchMasters
+                .Where(b => b.ClientCode == clientCode)
+                .ToListAsync();
+
+            return branches.Select(b => new BranchMasterDto
+            {
+                BranchId = b.BranchId,
+                BranchName = b.BranchName,
+                ClientCode = b.ClientCode,
+                CounterCount = clientContext.CounterMasters.Count(c => c.BranchId == b.BranchId)
+            });
+        }
+
+        /// <summary>
+        /// Gets counters for a specific branch
+        /// </summary>
+        public async Task<IEnumerable<CounterMasterDto>> GetCountersByBranchAsync(int branchId, string clientCode)
+        {
+            using var clientContext = await _clientDbContextFactory.CreateAsync(clientCode);
+            var counters = await clientContext.CounterMasters
+                .Include(c => c.Branch)
+                .Where(c => c.BranchId == branchId && c.ClientCode == clientCode)
+                .ToListAsync();
+
+            return counters.Select(c => new CounterMasterDto
+            {
+                CounterId = c.CounterId,
+                CounterName = c.CounterName,
+                BranchId = c.BranchId,
+                ClientCode = c.ClientCode,
+                BranchName = c.Branch.BranchName
+            });
+        }
+
+        /// <summary>
+        /// Gets users by branch and counter location
+        /// </summary>
+        public async Task<IEnumerable<AdminUserDto>> GetUsersByLocationAsync(int adminUserId, int? branchId = null, int? counterId = null)
+        {
+            var adminUser = await _context.Users.FindAsync(adminUserId);
+            if (adminUser == null) return new List<AdminUserDto>();
+
+            var query = _context.Users
+                .Include(u => u.AdminUser)
+                .Where(u => u.ClientCode == adminUser.ClientCode && u.IsActive);
+
+            // Filter by branch if specified
+            if (branchId.HasValue)
+            {
+                query = query.Where(u => u.BranchId == branchId.Value);
+            }
+
+            // Filter by counter if specified
+            if (counterId.HasValue)
+            {
+                query = query.Where(u => u.CounterId == counterId.Value);
+            }
+
+            var users = await query.ToListAsync();
+            var result = new List<AdminUserDto>();
+
+            foreach (var user in users)
+            {
+                var permissions = await GetUserPermissionsAsync(user.UserId);
+                
+                // Get branch and counter information if assigned
+                string? branchName = null;
+                string? counterName = null;
+                
+                if (user.BranchId.HasValue || user.CounterId.HasValue)
+                {
+                    var branchCounterInfo = await GetBranchAndCounterInfoAsync(user.BranchId, user.CounterId, user.ClientCode);
+                    branchName = branchCounterInfo.BranchName;
+                    counterName = branchCounterInfo.CounterName;
+                }
+
+                result.Add(new AdminUserDto
+                {
+                    UserId = user.UserId,
+                    UserName = user.UserName,
+                    Email = user.Email,
+                    FullName = user.FullName,
+                    MobileNumber = user.MobileNumber,
+                    City = user.City,
+                    Address = user.Address,
+                    OrganisationName = user.OrganisationName,
+                    ShowroomType = user.ShowroomType,
+                    ClientCode = user.ClientCode,
+                    DatabaseName = user.DatabaseName,
+                    IsAdmin = user.IsAdmin,
+                    AdminUserId = user.AdminUserId,
+                    UserType = user.UserType,
+                    IsActive = user.IsActive,
+                    CreatedOn = user.CreatedOn,
+                    LastLoginDate = user.LastLoginDate,
+                    BranchId = user.BranchId,
+                    BranchName = branchName,
+                    CounterId = user.CounterId,
+                    CounterName = counterName,
+                    Permissions = permissions.ToList()
+                });
+            }
+
+            return result;
         }
     }
 }

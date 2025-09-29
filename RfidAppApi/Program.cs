@@ -70,6 +70,7 @@ builder.Services.AddScoped<ClientDbContextFactory>();
 // Register Admin and Activity Services
 builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<IActivityLoggingService, ActivityLoggingService>();
+builder.Services.AddScoped<IAccessControlService, AccessControlService>();
 
 // Register Master Data Services
 builder.Services.AddScoped<IMasterDataService, MasterDataService>();

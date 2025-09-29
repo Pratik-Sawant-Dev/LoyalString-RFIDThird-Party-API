@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RfidAppApi.DTOs;
 using RfidAppApi.Services;
+using RfidAppApi.Extensions;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Hosting;
 
@@ -14,11 +15,13 @@ namespace RfidAppApi.Controllers
     {
         private readonly IUserFriendlyProductService _productService;
         private readonly IWebHostEnvironment _environment;
+        private readonly IAccessControlService _accessControlService;
 
-        public ProductController(IUserFriendlyProductService productService, IWebHostEnvironment environment)
+        public ProductController(IUserFriendlyProductService productService, IWebHostEnvironment environment, IAccessControlService accessControlService)
         {
             _productService = productService;
             _environment = environment;
+            _accessControlService = accessControlService;
         }
 
         /// <summary>
@@ -31,6 +34,29 @@ namespace RfidAppApi.Controllers
             try
             {
                 var clientCode = GetClientCodeFromToken();
+                
+                // Check if user can access the specified branch and counter
+                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+                var userId = userIdClaim != null ? int.Parse(userIdClaim.Value) : 0;
+                
+                if (userId > 0)
+                {
+                    // Get user's access information
+                    var userAccess = await _accessControlService.GetUserAccessInfoAsync(userId);
+                    if (userAccess != null && !userAccess.IsAdmin)
+                    {
+                        // For sub-users, check if they're trying to create product in their assigned branch/counter
+                        if (userAccess.BranchName != createDto.BranchName || userAccess.CounterName != createDto.CounterName)
+                        {
+                            return BadRequest(new
+                            {
+                                success = false,
+                                message = $"Access denied. You can only create products in your assigned branch '{userAccess.BranchName}' and counter '{userAccess.CounterName}'. You tried to create in branch '{createDto.BranchName}' and counter '{createDto.CounterName}'."
+                            });
+                        }
+                    }
+                }
+                
                 var result = await _productService.CreateProductAsync(createDto, clientCode);
                 
                 return Ok(new
@@ -76,6 +102,32 @@ namespace RfidAppApi.Controllers
             try
             {
                 var clientCode = GetClientCodeFromToken();
+                
+                // Check if user can access the specified branch and counter for all products
+                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+                var userId = userIdClaim != null ? int.Parse(userIdClaim.Value) : 0;
+                
+                if (userId > 0)
+                {
+                    // Get user's access information
+                    var userAccess = await _accessControlService.GetUserAccessInfoAsync(userId);
+                    if (userAccess != null && !userAccess.IsAdmin)
+                    {
+                        // For sub-users, check if they're trying to create products in their assigned branch/counter
+                        foreach (var product in bulkDto.Products)
+                        {
+                            if (userAccess.BranchName != product.BranchName || userAccess.CounterName != product.CounterName)
+                            {
+                                return BadRequest(new
+                            {
+                                success = false,
+                                message = $"Access denied. You can only create products in your assigned branch '{userAccess.BranchName}' and counter '{userAccess.CounterName}'. You tried to create a product in branch '{product.BranchName}' and counter '{product.CounterName}'."
+                            });
+                            }
+                        }
+                    }
+                }
+                
                 var result = await _productService.CreateBulkProductsAsync(bulkDto, clientCode);
                 
                 // Determine if the operation was truly successful
@@ -131,6 +183,29 @@ namespace RfidAppApi.Controllers
             try
             {
                 var clientCode = GetClientCodeFromToken();
+                
+                // Check if user can access the specified branch and counter
+                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+                var userId = userIdClaim != null ? int.Parse(userIdClaim.Value) : 0;
+                
+                if (userId > 0)
+                {
+                    // Get user's access information
+                    var userAccess = await _accessControlService.GetUserAccessInfoAsync(userId);
+                    if (userAccess != null && !userAccess.IsAdmin)
+                    {
+                        // For sub-users, check if they're trying to create product in their assigned branch/counter
+                        if (userAccess.BranchName != createDto.BranchName || userAccess.CounterName != createDto.CounterName)
+                        {
+                            return BadRequest(new
+                            {
+                                success = false,
+                                message = $"Access denied. You can only create products in your assigned branch '{userAccess.BranchName}' and counter '{userAccess.CounterName}'. You tried to create in branch '{createDto.BranchName}' and counter '{createDto.CounterName}'."
+                            });
+                        }
+                    }
+                }
+                
                 var result = await _productService.CreateProductWithImagesAsync(createDto, images, clientCode);
                 
                 return Ok(new
