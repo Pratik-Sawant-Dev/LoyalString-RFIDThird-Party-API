@@ -19,7 +19,7 @@ namespace RfidAppApi.Services
 
         #region Stock Movement Methods
 
-        public async Task<StockMovementDto> CreateStockMovementAsync(CreateStockMovementDto movementDto, string clientCode)
+        public async Task<StockMovementDto> CreateStockMovementAsync(CreateStockMovementDto movementDto, string clientCode, int? userId = null)
         {
             using var context = await _clientService.GetClientDbContextAsync(clientCode);
 
@@ -32,6 +32,13 @@ namespace RfidAppApi.Services
 
             if (product == null)
                 throw new ArgumentException($"Product with ID {movementDto.ProductId} not found");
+
+            // If userId is provided, validate access to the product's branch and counter
+            if (userId.HasValue)
+            {
+                // This will be handled by the controller using AccessControlService
+                // The validation should be done before calling this method
+            }
 
             var movement = new StockMovement
             {

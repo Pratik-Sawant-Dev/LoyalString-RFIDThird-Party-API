@@ -52,5 +52,10 @@ namespace RfidAppApi.Services
         // Validation
         Task<bool> CanUserAccessUserAsync(int adminUserId, int targetUserId);
         Task<bool> HasPermissionAsync(int userId, string module, string action);
+
+        // Branch and Counter Management
+        Task<IEnumerable<BranchMasterDto>> GetBranchesAsync(string clientCode);
+        Task<IEnumerable<CounterMasterDto>> GetCountersByBranchAsync(int branchId, string clientCode);
+        Task<IEnumerable<AdminUserDto>> GetUsersByLocationAsync(int adminUserId, int? branchId = null, int? counterId = null);
     }
 }

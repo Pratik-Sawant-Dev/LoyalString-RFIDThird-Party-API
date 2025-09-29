@@ -339,7 +339,11 @@ namespace RfidAppApi.Services
         {
             using var context = await _clientService.GetClientDbContextAsync(clientCode);
 
-            var products = await context.ProductDetails.ToListAsync();
+            // Get all products that are not sold (no active invoices)
+            var products = await context.ProductDetails
+                .Where(p => !context.Invoices.Any(i => i.ProductId == p.Id && i.IsActive))
+                .ToListAsync();
+            
             var result = new List<UserFriendlyProductResponseDto>();
 
             foreach (var product in products)

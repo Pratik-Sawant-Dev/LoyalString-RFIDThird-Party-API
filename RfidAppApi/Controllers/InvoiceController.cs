@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RfidAppApi.DTOs;
 using RfidAppApi.Services;
+using RfidAppApi.Extensions;
 using System.Security.Claims;
 
 namespace RfidAppApi.Controllers
@@ -16,15 +17,18 @@ namespace RfidAppApi.Controllers
     {
         private readonly IInvoiceService _invoiceService;
         private readonly IReportingService _reportingService;
+        private readonly IAccessControlService _accessControlService;
         private readonly ILogger<InvoiceController> _logger;
 
         public InvoiceController(
             IInvoiceService invoiceService,
             IReportingService reportingService,
+            IAccessControlService accessControlService,
             ILogger<InvoiceController> logger)
         {
             _invoiceService = invoiceService;
             _reportingService = reportingService;
+            _accessControlService = accessControlService;
             _logger = logger;
         }
 
@@ -42,6 +46,29 @@ namespace RfidAppApi.Controllers
                 if (string.IsNullOrEmpty(clientCode))
                     return BadRequest("Client code not found in token");
 
+                // Check if user can access the product's branch and counter
+                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+                var userId = userIdClaim != null ? int.Parse(userIdClaim.Value) : 0;
+                
+                if (userId > 0)
+                {
+                    // Get product details to check branch and counter
+                    var product = await _invoiceService.GetProductDetailsAsync(createDto.ProductId, clientCode);
+                    if (product != null)
+                    {
+                        // Check if user can access the product's branch and counter
+                        var canAccess = await _accessControlService.CanAccessBranchAndCounterAsync(userId, product.BranchId, product.CounterId);
+                        if (!canAccess)
+                        {
+                            return BadRequest(new
+                        {
+                            success = false,
+                            message = $"Access denied. You don't have permission to access branch ID {product.BranchId}."
+                        });
+                        }
+                    }
+                }
+
                 // Validate required fields
                 if (createDto.ProductId <= 0)
                     return BadRequest("ProductId is required and must be greater than 0");
@@ -56,9 +83,21 @@ namespace RfidAppApi.Controllers
                 if (createDto.DiscountAmount > createDto.SellingPrice)
                     return BadRequest("Discount amount cannot be greater than selling price");
 
-                var expectedFinalAmount = createDto.SellingPrice - createDto.DiscountAmount;
+                // Validate GST percentage
+                if (createDto.GstPercentage < 0 || createDto.GstPercentage > 100)
+                    return BadRequest("GST percentage must be between 0 and 100");
+
+                // Calculate expected final amount based on GST application
+                var amountBeforeGst = createDto.SellingPrice - createDto.DiscountAmount;
+                var expectedFinalAmount = createDto.IsGstApplied 
+                    ? amountBeforeGst + Math.Round(amountBeforeGst * (createDto.GstPercentage / 100), 2)
+                    : amountBeforeGst;
+
                 if (Math.Abs(createDto.FinalAmount - expectedFinalAmount) > 0.01m)
-                    return BadRequest($"Final amount should be {expectedFinalAmount} (Selling Price - Discount)");
+                {
+                    var billType = createDto.IsGstApplied ? "Pakka Bill (with GST)" : "Kaccha Bill (without GST)";
+                    return BadRequest($"Final amount should be {expectedFinalAmount} for {billType}");
+                }
 
                 var result = await _invoiceService.CreateInvoiceAsync(createDto, clientCode);
                 
@@ -79,7 +118,7 @@ namespace RfidAppApi.Controllers
                         MovementDate = createDto.SoldOn ?? DateTime.UtcNow
                     };
 
-                    await _reportingService.CreateStockMovementAsync(stockMovementDto, clientCode);
+                    await _reportingService.CreateStockMovementAsync(stockMovementDto, clientCode, userId);
                     _logger.LogInformation("Stock movement created for invoice: {InvoiceNumber}", result.InvoiceNumber);
                 }
                 catch (Exception ex)
@@ -703,6 +742,239 @@ namespace RfidAppApi.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error exporting invoices to CSV");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        #endregion
+
+        #region Enhanced Invoice Operations
+
+        /// <summary>
+        /// Create invoice with multiple payment methods
+        /// </summary>
+        [HttpPost("with-multiple-payments")]
+        public async Task<ActionResult<InvoiceWithPaymentsResponseDto>> CreateInvoiceWithMultiplePayments([FromBody] CreateInvoiceWithMultiplePaymentsDto createDto)
+        {
+            try
+            {
+                var clientCode = User.FindFirst("ClientCode")?.Value;
+                if (string.IsNullOrEmpty(clientCode))
+                    return BadRequest("Client code not found in token");
+
+                // Validate required fields
+                if (createDto.ProductId <= 0)
+                    return BadRequest("ProductId is required and must be greater than 0");
+
+                if (createDto.SellingPrice <= 0)
+                    return BadRequest("Selling price must be greater than 0");
+
+                if (createDto.FinalAmount <= 0)
+                    return BadRequest("Final amount must be greater than 0");
+
+                // Validate discount logic
+                if (createDto.DiscountAmount > createDto.SellingPrice)
+                    return BadRequest("Discount amount cannot be greater than selling price");
+
+                // Validate GST percentage
+                if (createDto.GstPercentage < 0 || createDto.GstPercentage > 100)
+                    return BadRequest("GST percentage must be between 0 and 100");
+
+                // Calculate expected final amount based on GST application
+                var amountBeforeGst = createDto.SellingPrice - createDto.DiscountAmount;
+                var expectedFinalAmount = createDto.IsGstApplied 
+                    ? amountBeforeGst + Math.Round(amountBeforeGst * (createDto.GstPercentage / 100), 2)
+                    : amountBeforeGst;
+
+                if (Math.Abs(createDto.FinalAmount - expectedFinalAmount) > 0.01m)
+                {
+                    var billType = createDto.IsGstApplied ? "Pakka Bill (with GST)" : "Kaccha Bill (without GST)";
+                    return BadRequest($"Final amount should be {expectedFinalAmount} for {billType}");
+                }
+
+                // Validate payment methods
+                if (createDto.PaymentMethods == null || !createDto.PaymentMethods.Any())
+                    return BadRequest("At least one payment method is required");
+
+                var totalPaymentAmount = createDto.PaymentMethods.Sum(p => p.Amount);
+                if (Math.Abs(totalPaymentAmount - createDto.FinalAmount) > 0.01m)
+                    return BadRequest($"Total payment amount ({totalPaymentAmount}) must equal final amount ({createDto.FinalAmount})");
+
+                var result = await _invoiceService.CreateInvoiceWithMultiplePaymentsAsync(createDto, clientCode);
+                
+                // Create stock movement for the sale
+                try
+                {
+                    var stockMovementDto = new CreateStockMovementDto
+                    {
+                        ProductId = createDto.ProductId,
+                        RfidCode = createDto.RfidCode,
+                        MovementType = "Sale",
+                        Quantity = 1,
+                        UnitPrice = createDto.SellingPrice,
+                        TotalAmount = createDto.FinalAmount,
+                        ReferenceNumber = result.InvoiceNumber,
+                        ReferenceType = "Invoice",
+                        Remarks = $"Invoice: {result.InvoiceNumber} - {createDto.CustomerName}",
+                        MovementDate = createDto.SoldOn ?? DateTime.UtcNow
+                    };
+
+                    await _reportingService.CreateStockMovementAsync(stockMovementDto, clientCode);
+                    _logger.LogInformation("Stock movement created for invoice: {InvoiceNumber}", result.InvoiceNumber);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "Failed to create stock movement for invoice: {InvoiceNumber}", result.InvoiceNumber);
+                    // Don't fail the invoice creation if stock movement fails
+                }
+
+                return CreatedAtAction(nameof(GetInvoiceWithPayments), new { invoiceId = result.Id }, result);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error creating invoice with multiple payments");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Create invoice by item code
+        /// </summary>
+        [HttpPost("by-item-code")]
+        public async Task<ActionResult<InvoiceWithPaymentsResponseDto>> CreateInvoiceByItemCode([FromBody] CreateInvoiceByItemCodeDto createDto)
+        {
+            try
+            {
+                var clientCode = User.FindFirst("ClientCode")?.Value;
+                if (string.IsNullOrEmpty(clientCode))
+                    return BadRequest("Client code not found in token");
+
+                // Validate required fields
+                if (string.IsNullOrWhiteSpace(createDto.ItemCode))
+                    return BadRequest("ItemCode is required");
+
+                if (createDto.SellingPrice <= 0)
+                    return BadRequest("Selling price must be greater than 0");
+
+                if (createDto.FinalAmount <= 0)
+                    return BadRequest("Final amount must be greater than 0");
+
+                // Validate discount logic
+                if (createDto.DiscountAmount > createDto.SellingPrice)
+                    return BadRequest("Discount amount cannot be greater than selling price");
+
+                // Validate GST percentage
+                if (createDto.GstPercentage < 0 || createDto.GstPercentage > 100)
+                    return BadRequest("GST percentage must be between 0 and 100");
+
+                // Calculate expected final amount based on GST application
+                var amountBeforeGst = createDto.SellingPrice - createDto.DiscountAmount;
+                var expectedFinalAmount = createDto.IsGstApplied 
+                    ? amountBeforeGst + Math.Round(amountBeforeGst * (createDto.GstPercentage / 100), 2)
+                    : amountBeforeGst;
+
+                if (Math.Abs(createDto.FinalAmount - expectedFinalAmount) > 0.01m)
+                {
+                    var billType = createDto.IsGstApplied ? "Pakka Bill (with GST)" : "Kaccha Bill (without GST)";
+                    return BadRequest($"Final amount should be {expectedFinalAmount} for {billType}");
+                }
+
+                // Validate payment methods
+                if (createDto.PaymentMethods == null || !createDto.PaymentMethods.Any())
+                    return BadRequest("At least one payment method is required");
+
+                var totalPaymentAmount = createDto.PaymentMethods.Sum(p => p.Amount);
+                if (Math.Abs(totalPaymentAmount - createDto.FinalAmount) > 0.01m)
+                    return BadRequest($"Total payment amount ({totalPaymentAmount}) must equal final amount ({createDto.FinalAmount})");
+
+                var result = await _invoiceService.CreateInvoiceByItemCodeAsync(createDto, clientCode);
+                
+                // Create stock movement for the sale
+                try
+                {
+                    var stockMovementDto = new CreateStockMovementDto
+                    {
+                        ProductId = result.ProductId,
+                        RfidCode = createDto.RfidCode,
+                        MovementType = "Sale",
+                        Quantity = 1,
+                        UnitPrice = createDto.SellingPrice,
+                        TotalAmount = createDto.FinalAmount,
+                        ReferenceNumber = result.InvoiceNumber,
+                        ReferenceType = "Invoice",
+                        Remarks = $"Invoice: {result.InvoiceNumber} - {createDto.CustomerName}",
+                        MovementDate = createDto.SoldOn ?? DateTime.UtcNow
+                    };
+
+                    await _reportingService.CreateStockMovementAsync(stockMovementDto, clientCode);
+                    _logger.LogInformation("Stock movement created for invoice: {InvoiceNumber}", result.InvoiceNumber);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "Failed to create stock movement for invoice: {InvoiceNumber}", result.InvoiceNumber);
+                    // Don't fail the invoice creation if stock movement fails
+                }
+
+                return CreatedAtAction(nameof(GetInvoiceWithPayments), new { invoiceId = result.Id }, result);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error creating invoice by item code");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Get invoice with payment details
+        /// </summary>
+        [HttpGet("{invoiceId}/with-payments")]
+        public async Task<ActionResult<InvoiceWithPaymentsResponseDto>> GetInvoiceWithPayments(int invoiceId)
+        {
+            try
+            {
+                var clientCode = User.FindFirst("ClientCode")?.Value;
+                if (string.IsNullOrEmpty(clientCode))
+                    return BadRequest("Client code not found in token");
+
+                var invoice = await _invoiceService.GetInvoiceWithPaymentsAsync(invoiceId, clientCode);
+                if (invoice == null)
+                    return NotFound($"Invoice with ID {invoiceId} not found");
+
+                return Ok(invoice);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting invoice with payments by ID: {InvoiceId}", invoiceId);
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Get all invoices with payment details
+        /// </summary>
+        [HttpGet("with-payments")]
+        public async Task<ActionResult<List<InvoiceWithPaymentsResponseDto>>> GetAllInvoicesWithPayments()
+        {
+            try
+            {
+                var clientCode = User.FindFirst("ClientCode")?.Value;
+                if (string.IsNullOrEmpty(clientCode))
+                    return BadRequest("Client code not found in token");
+
+                var invoices = await _invoiceService.GetAllInvoicesWithPaymentsAsync(clientCode);
+                return Ok(invoices);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting all invoices with payments");
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }

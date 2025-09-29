@@ -46,8 +46,9 @@ namespace RfidAppApi.Services
             // Hash password
             var passwordHash = HashPassword(createUserDto.Password);
 
-            // Check if this is the first user (main admin)
-            var isFirstUser = !await _context.Users.AnyAsync();
+            // Every user who registers through main registration API is a MainAdmin
+            // because they are creating their own organization and database
+            var isMainAdmin = true;
 
             // Create user
             var user = new User
@@ -64,8 +65,8 @@ namespace RfidAppApi.Services
                 ShowroomType = createUserDto.ShowroomType,
                 ClientCode = clientCode, // Auto-generated
                 DatabaseName = databaseName,
-                IsAdmin = isFirstUser, // First user is automatically admin
-                UserType = isFirstUser ? "MainAdmin" : "User",
+                IsAdmin = isMainAdmin, // Every main registration user is admin
+                UserType = "MainAdmin", // Every main registration user is MainAdmin
                 AdminUserId = null, // Main admin has no parent admin
                 IsActive = true,
                 CreatedOn = DateTime.UtcNow

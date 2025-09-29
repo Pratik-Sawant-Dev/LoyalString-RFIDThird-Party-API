@@ -16,18 +16,44 @@ namespace RfidAppApi.Services
             _logger = logger;
         }
 
+        public async Task<ProductDetails?> GetProductDetailsAsync(int productId, string clientCode)
+        {
+            using var context = await _clientService.GetClientDbContextAsync(clientCode);
+            return await context.ProductDetails
+                .Include(p => p.Branch)
+                .Include(p => p.Counter)
+                .Include(p => p.Category)
+                .FirstOrDefaultAsync(p => p.Id == productId);
+        }
+
         public async Task<InvoiceResponseDto> CreateInvoiceAsync(CreateInvoiceDto createDto, string clientCode)
         {
             try
             {
                 using var context = await _clientService.GetClientDbContextAsync(clientCode);
 
-                // Validate product exists
+                // Validate product exists and is available for sale
                 var product = await context.ProductDetails
                     .FirstOrDefaultAsync(p => p.Id == createDto.ProductId && p.Status == "Active");
                 
                 if (product == null)
                     throw new ArgumentException($"Product with ID {createDto.ProductId} not found or inactive");
+
+                // Check if product is already sold (has an active invoice)
+                var existingInvoice = await context.Invoices
+                    .FirstOrDefaultAsync(i => i.ProductId == createDto.ProductId && i.IsActive);
+                
+                if (existingInvoice != null)
+                    throw new ArgumentException($"Product with ID {createDto.ProductId} (Item Code: {product.ItemCode}) has already been sold. Invoice Number: {existingInvoice.InvoiceNumber}");
+
+                // Calculate GST amounts
+                var (amountBeforeGst, gstAmount, totalAmountWithGst) = CalculateGstAmounts(
+                    createDto.SellingPrice, createDto.DiscountAmount, createDto.GstPercentage, createDto.IsGstApplied);
+
+                // Validate final amount based on GST application
+                var expectedFinalAmount = createDto.IsGstApplied ? totalAmountWithGst : amountBeforeGst;
+                if (Math.Abs(createDto.FinalAmount - expectedFinalAmount) > 0.01m)
+                    throw new ArgumentException($"Final amount should be {expectedFinalAmount} (GST {(createDto.IsGstApplied ? "applied" : "not applied")})");
 
                 var invoice = new Invoice
                 {
@@ -38,6 +64,11 @@ namespace RfidAppApi.Services
                     SellingPrice = createDto.SellingPrice,
                     DiscountAmount = createDto.DiscountAmount,
                     FinalAmount = createDto.FinalAmount,
+                    IsGstApplied = createDto.IsGstApplied,
+                    GstPercentage = createDto.GstPercentage,
+                    GstAmount = gstAmount,
+                    AmountBeforeGst = amountBeforeGst,
+                    TotalAmountWithGst = totalAmountWithGst,
                     InvoiceType = createDto.InvoiceType ?? "Sale",
                     CustomerName = createDto.CustomerName,
                     CustomerPhone = createDto.CustomerPhone,
@@ -452,6 +483,11 @@ namespace RfidAppApi.Services
                     SellingPrice = invoice.SellingPrice,
                     DiscountAmount = invoice.DiscountAmount,
                     FinalAmount = invoice.FinalAmount,
+                    IsGstApplied = invoice.IsGstApplied,
+                    GstPercentage = invoice.GstPercentage,
+                    GstAmount = invoice.GstAmount,
+                    AmountBeforeGst = invoice.AmountBeforeGst,
+                    TotalAmountWithGst = invoice.TotalAmountWithGst,
                     InvoiceType = invoice.InvoiceType,
                     CustomerName = invoice.CustomerName,
                     CustomerPhone = invoice.CustomerPhone,
@@ -469,6 +505,327 @@ namespace RfidAppApi.Services
             {
                 _logger.LogError(ex, "Error mapping invoice to DTO: {InvoiceId}", invoice.Id);
                 throw;
+            }
+        }
+
+        private async Task<InvoiceWithPaymentsResponseDto> MapToPaymentsResponseDtoAsync(Invoice invoice, ProductDetails? product = null)
+        {
+            try
+            {
+                if (product == null && invoice.Product != null)
+                {
+                    product = invoice.Product;
+                }
+
+                return new InvoiceWithPaymentsResponseDto
+                {
+                    Id = invoice.Id,
+                    InvoiceNumber = invoice.InvoiceNumber,
+                    ProductId = invoice.ProductId,
+                    ProductName = product?.ItemCode ?? "Unknown",
+                    RfidCode = invoice.RfidCode,
+                    SellingPrice = invoice.SellingPrice,
+                    DiscountAmount = invoice.DiscountAmount,
+                    FinalAmount = invoice.FinalAmount,
+                    IsGstApplied = invoice.IsGstApplied,
+                    GstPercentage = invoice.GstPercentage,
+                    GstAmount = invoice.GstAmount,
+                    AmountBeforeGst = invoice.AmountBeforeGst,
+                    TotalAmountWithGst = invoice.TotalAmountWithGst,
+                    InvoiceType = invoice.InvoiceType,
+                    CustomerName = invoice.CustomerName,
+                    CustomerPhone = invoice.CustomerPhone,
+                    CustomerAddress = invoice.CustomerAddress,
+                    PaymentMethods = invoice.Payments?.Select(p => new PaymentMethodDto
+                    {
+                        PaymentMethod = p.PaymentMethod,
+                        Amount = p.Amount,
+                        PaymentReference = p.PaymentReference,
+                        Remarks = p.Remarks
+                    }).ToList() ?? new List<PaymentMethodDto>(),
+                    SoldOn = invoice.SoldOn,
+                    Remarks = invoice.Remarks,
+                    IsActive = invoice.IsActive,
+                    CreatedOn = invoice.CreatedOn,
+                    UpdatedOn = invoice.UpdatedOn
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error mapping invoice to payments DTO: {InvoiceId}", invoice.Id);
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Create invoice with multiple payment methods
+        /// </summary>
+        public async Task<InvoiceWithPaymentsResponseDto> CreateInvoiceWithMultiplePaymentsAsync(CreateInvoiceWithMultiplePaymentsDto createDto, string clientCode)
+        {
+            try
+            {
+                using var context = await _clientService.GetClientDbContextAsync(clientCode);
+
+                // Validate product exists and is available for sale
+                var product = await context.ProductDetails
+                    .FirstOrDefaultAsync(p => p.Id == createDto.ProductId && p.Status == "Active");
+                
+                if (product == null)
+                    throw new ArgumentException($"Product with ID {createDto.ProductId} not found or inactive");
+
+                // Check if product is already sold (has an active invoice)
+                var existingInvoice = await context.Invoices
+                    .FirstOrDefaultAsync(i => i.ProductId == createDto.ProductId && i.IsActive);
+                
+                if (existingInvoice != null)
+                    throw new ArgumentException($"Product with ID {createDto.ProductId} (Item Code: {product.ItemCode}) has already been sold. Invoice Number: {existingInvoice.InvoiceNumber}");
+
+                // Calculate GST amounts
+                var (amountBeforeGst, gstAmount, totalAmountWithGst) = CalculateGstAmounts(
+                    createDto.SellingPrice, createDto.DiscountAmount, createDto.GstPercentage, createDto.IsGstApplied);
+
+                // Validate final amount based on GST application
+                var expectedFinalAmount = createDto.IsGstApplied ? totalAmountWithGst : amountBeforeGst;
+                if (Math.Abs(createDto.FinalAmount - expectedFinalAmount) > 0.01m)
+                    throw new ArgumentException($"Final amount should be {expectedFinalAmount} (GST {(createDto.IsGstApplied ? "applied" : "not applied")})");
+
+                // Validate payment methods
+                if (createDto.PaymentMethods == null || !createDto.PaymentMethods.Any())
+                    throw new ArgumentException("At least one payment method is required");
+
+                var totalPaymentAmount = createDto.PaymentMethods.Sum(p => p.Amount);
+                if (Math.Abs(totalPaymentAmount - createDto.FinalAmount) > 0.01m)
+                    throw new ArgumentException($"Total payment amount ({totalPaymentAmount}) must equal final amount ({createDto.FinalAmount})");
+
+                var invoice = new Invoice
+                {
+                    ClientCode = clientCode,
+                    InvoiceNumber = await GenerateInvoiceNumberAsync(context, clientCode),
+                    ProductId = createDto.ProductId,
+                    RfidCode = createDto.RfidCode,
+                    SellingPrice = createDto.SellingPrice,
+                    DiscountAmount = createDto.DiscountAmount,
+                    FinalAmount = createDto.FinalAmount,
+                    IsGstApplied = createDto.IsGstApplied,
+                    GstPercentage = createDto.GstPercentage,
+                    GstAmount = gstAmount,
+                    AmountBeforeGst = amountBeforeGst,
+                    TotalAmountWithGst = totalAmountWithGst,
+                    InvoiceType = createDto.InvoiceType ?? "Sale",
+                    CustomerName = createDto.CustomerName,
+                    CustomerPhone = createDto.CustomerPhone,
+                    CustomerAddress = createDto.CustomerAddress,
+                    PaymentMethod = createDto.PaymentMethods.First().PaymentMethod, // Keep for backward compatibility
+                    PaymentReference = createDto.PaymentMethods.First().PaymentReference,
+                    SoldOn = createDto.SoldOn ?? DateTime.UtcNow,
+                    Remarks = createDto.Remarks,
+                    IsActive = true,
+                    CreatedOn = DateTime.UtcNow
+                };
+
+                context.Invoices.Add(invoice);
+                await context.SaveChangesAsync();
+
+                // Create payment records
+                foreach (var paymentDto in createDto.PaymentMethods)
+                {
+                    var payment = new InvoicePayment
+                    {
+                        InvoiceId = invoice.Id,
+                        PaymentMethod = paymentDto.PaymentMethod,
+                        Amount = paymentDto.Amount,
+                        PaymentReference = paymentDto.PaymentReference,
+                        Remarks = paymentDto.Remarks,
+                        CreatedOn = DateTime.UtcNow
+                    };
+                    context.InvoicePayments.Add(payment);
+                }
+
+                await context.SaveChangesAsync();
+
+                _logger.LogInformation("Invoice with multiple payments created successfully: {InvoiceNumber} for client: {ClientCode}", 
+                    invoice.InvoiceNumber, clientCode);
+
+                return await MapToPaymentsResponseDtoAsync(invoice, product);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error creating invoice with multiple payments for client: {ClientCode}", clientCode);
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Create invoice by item code
+        /// </summary>
+        public async Task<InvoiceWithPaymentsResponseDto> CreateInvoiceByItemCodeAsync(CreateInvoiceByItemCodeDto createDto, string clientCode)
+        {
+            try
+            {
+                using var context = await _clientService.GetClientDbContextAsync(clientCode);
+
+                // Find product by item code and check availability
+                var product = await context.ProductDetails
+                    .FirstOrDefaultAsync(p => p.ItemCode == createDto.ItemCode && p.Status == "Active");
+                
+                if (product == null)
+                    throw new ArgumentException($"Product with item code '{createDto.ItemCode}' not found or inactive");
+
+                // Check if product is already sold (has an active invoice)
+                var existingInvoice = await context.Invoices
+                    .FirstOrDefaultAsync(i => i.ProductId == product.Id && i.IsActive);
+                
+                if (existingInvoice != null)
+                    throw new ArgumentException($"Product with item code '{createDto.ItemCode}' (Product ID: {product.Id}) has already been sold. Invoice Number: {existingInvoice.InvoiceNumber}");
+
+                // Calculate GST amounts
+                var (amountBeforeGst, gstAmount, totalAmountWithGst) = CalculateGstAmounts(
+                    createDto.SellingPrice, createDto.DiscountAmount, createDto.GstPercentage, createDto.IsGstApplied);
+
+                // Validate final amount based on GST application
+                var expectedFinalAmount = createDto.IsGstApplied ? totalAmountWithGst : amountBeforeGst;
+                if (Math.Abs(createDto.FinalAmount - expectedFinalAmount) > 0.01m)
+                    throw new ArgumentException($"Final amount should be {expectedFinalAmount} (GST {(createDto.IsGstApplied ? "applied" : "not applied")})");
+
+                // Validate payment methods
+                if (createDto.PaymentMethods == null || !createDto.PaymentMethods.Any())
+                    throw new ArgumentException("At least one payment method is required");
+
+                var totalPaymentAmount = createDto.PaymentMethods.Sum(p => p.Amount);
+                if (Math.Abs(totalPaymentAmount - createDto.FinalAmount) > 0.01m)
+                    throw new ArgumentException($"Total payment amount ({totalPaymentAmount}) must equal final amount ({createDto.FinalAmount})");
+
+                var invoice = new Invoice
+                {
+                    ClientCode = clientCode,
+                    InvoiceNumber = await GenerateInvoiceNumberAsync(context, clientCode),
+                    ProductId = product.Id,
+                    RfidCode = createDto.RfidCode,
+                    SellingPrice = createDto.SellingPrice,
+                    DiscountAmount = createDto.DiscountAmount,
+                    FinalAmount = createDto.FinalAmount,
+                    IsGstApplied = createDto.IsGstApplied,
+                    GstPercentage = createDto.GstPercentage,
+                    GstAmount = gstAmount,
+                    AmountBeforeGst = amountBeforeGst,
+                    TotalAmountWithGst = totalAmountWithGst,
+                    InvoiceType = createDto.InvoiceType ?? "Sale",
+                    CustomerName = createDto.CustomerName,
+                    CustomerPhone = createDto.CustomerPhone,
+                    CustomerAddress = createDto.CustomerAddress,
+                    PaymentMethod = createDto.PaymentMethods.First().PaymentMethod, // Keep for backward compatibility
+                    PaymentReference = createDto.PaymentMethods.First().PaymentReference,
+                    SoldOn = createDto.SoldOn ?? DateTime.UtcNow,
+                    Remarks = createDto.Remarks,
+                    IsActive = true,
+                    CreatedOn = DateTime.UtcNow
+                };
+
+                context.Invoices.Add(invoice);
+                await context.SaveChangesAsync();
+
+                // Create payment records
+                foreach (var paymentDto in createDto.PaymentMethods)
+                {
+                    var payment = new InvoicePayment
+                    {
+                        InvoiceId = invoice.Id,
+                        PaymentMethod = paymentDto.PaymentMethod,
+                        Amount = paymentDto.Amount,
+                        PaymentReference = paymentDto.PaymentReference,
+                        Remarks = paymentDto.Remarks,
+                        CreatedOn = DateTime.UtcNow
+                    };
+                    context.InvoicePayments.Add(payment);
+                }
+
+                await context.SaveChangesAsync();
+
+                _logger.LogInformation("Invoice by item code created successfully: {InvoiceNumber} for client: {ClientCode}", 
+                    invoice.InvoiceNumber, clientCode);
+
+                return await MapToPaymentsResponseDtoAsync(invoice, product);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error creating invoice by item code for client: {ClientCode}", clientCode);
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Get invoice with payment details
+        /// </summary>
+        public async Task<InvoiceWithPaymentsResponseDto?> GetInvoiceWithPaymentsAsync(int invoiceId, string clientCode)
+        {
+            try
+            {
+                using var context = await _clientService.GetClientDbContextAsync(clientCode);
+
+                var invoice = await context.Invoices
+                    .Include(i => i.Product)
+                    .Include(i => i.Payments)
+                    .FirstOrDefaultAsync(i => i.Id == invoiceId && i.IsActive);
+
+                return invoice != null ? await MapToPaymentsResponseDtoAsync(invoice) : null;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting invoice with payments {InvoiceId} for client: {ClientCode}", invoiceId, clientCode);
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Get all invoices with payment details
+        /// </summary>
+        public async Task<List<InvoiceWithPaymentsResponseDto>> GetAllInvoicesWithPaymentsAsync(string clientCode)
+        {
+            try
+            {
+                using var context = await _clientService.GetClientDbContextAsync(clientCode);
+
+                var invoices = await context.Invoices
+                    .Include(i => i.Product)
+                    .Include(i => i.Payments)
+                    .Where(i => i.IsActive)
+                    .OrderByDescending(i => i.CreatedOn)
+                    .ToListAsync();
+
+                var result = new List<InvoiceWithPaymentsResponseDto>();
+                foreach (var invoice in invoices)
+                {
+                    result.Add(await MapToPaymentsResponseDtoAsync(invoice));
+                }
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting all invoices with payments for client: {ClientCode}", clientCode);
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Calculate GST amounts based on selling price and discount
+        /// </summary>
+        private (decimal amountBeforeGst, decimal gstAmount, decimal totalAmountWithGst) CalculateGstAmounts(
+            decimal sellingPrice, decimal discountAmount, decimal gstPercentage, bool isGstApplied)
+        {
+            var amountBeforeGst = sellingPrice - discountAmount;
+            
+            if (!isGstApplied)
+            {
+                // Kaccha Bill - No GST
+                return (amountBeforeGst, 0, amountBeforeGst);
+            }
+            else
+            {
+                // Pakka Bill - GST applied
+                var gstAmount = Math.Round(amountBeforeGst * (gstPercentage / 100), 2);
+                var totalAmountWithGst = amountBeforeGst + gstAmount;
+                return (amountBeforeGst, gstAmount, totalAmountWithGst);
             }
         }
     }

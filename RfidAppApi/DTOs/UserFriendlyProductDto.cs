@@ -156,6 +156,8 @@ namespace RfidAppApi.DTOs
         public decimal SellingPrice { get; set; }
         public decimal DiscountAmount { get; set; } = 0;
         public decimal FinalAmount { get; set; }
+        public bool IsGstApplied { get; set; } = false; // true = Pakka Bill, false = Kaccha Bill
+        public decimal GstPercentage { get; set; } = 3.00m; // Default 3% GST for jewelry
         public string? InvoiceType { get; set; }
         public string? CustomerName { get; set; }
         public string? CustomerPhone { get; set; }
@@ -174,6 +176,8 @@ namespace RfidAppApi.DTOs
         public decimal? SellingPrice { get; set; }
         public decimal? DiscountAmount { get; set; }
         public decimal? FinalAmount { get; set; }
+        public bool? IsGstApplied { get; set; }
+        public decimal? GstPercentage { get; set; }
         public string? CustomerName { get; set; }
         public string? CustomerPhone { get; set; }
         public string? CustomerAddress { get; set; }
@@ -195,6 +199,11 @@ namespace RfidAppApi.DTOs
         public decimal SellingPrice { get; set; }
         public decimal DiscountAmount { get; set; }
         public decimal FinalAmount { get; set; }
+        public bool IsGstApplied { get; set; }
+        public decimal GstPercentage { get; set; }
+        public decimal GstAmount { get; set; }
+        public decimal AmountBeforeGst { get; set; }
+        public decimal TotalAmountWithGst { get; set; }
         public string InvoiceType { get; set; } = string.Empty;
         public string? CustomerName { get; set; }
         public string? CustomerPhone { get; set; }
@@ -221,5 +230,88 @@ namespace RfidAppApi.DTOs
         public decimal TodayRevenue { get; set; }
         public decimal MonthRevenue { get; set; }
         public decimal YearRevenue { get; set; }
+    }
+
+    /// <summary>
+    /// DTO for individual payment method in an invoice
+    /// </summary>
+    public class PaymentMethodDto
+    {
+        public string PaymentMethod { get; set; } = string.Empty; // Cash, UPI, Card, Online, etc.
+        public decimal Amount { get; set; }
+        public string? PaymentReference { get; set; } // Transaction ID, UPI reference, etc.
+        public string? Remarks { get; set; }
+    }
+
+    /// <summary>
+    /// Enhanced DTO for creating invoice with multiple payment methods
+    /// </summary>
+    public class CreateInvoiceWithMultiplePaymentsDto
+    {
+        public int ProductId { get; set; }
+        public string? RfidCode { get; set; }
+        public decimal SellingPrice { get; set; }
+        public decimal DiscountAmount { get; set; } = 0;
+        public decimal FinalAmount { get; set; }
+        public bool IsGstApplied { get; set; } = false; // true = Pakka Bill, false = Kaccha Bill
+        public decimal GstPercentage { get; set; } = 3.00m; // Default 3% GST for jewelry
+        public string? InvoiceType { get; set; }
+        public string? CustomerName { get; set; }
+        public string? CustomerPhone { get; set; }
+        public string? CustomerAddress { get; set; }
+        public List<PaymentMethodDto> PaymentMethods { get; set; } = new List<PaymentMethodDto>();
+        public DateTime? SoldOn { get; set; }
+        public string? Remarks { get; set; }
+    }
+
+    /// <summary>
+    /// DTO for creating invoice by item code
+    /// </summary>
+    public class CreateInvoiceByItemCodeDto
+    {
+        public string ItemCode { get; set; } = string.Empty;
+        public string? RfidCode { get; set; }
+        public decimal SellingPrice { get; set; }
+        public decimal DiscountAmount { get; set; } = 0;
+        public decimal FinalAmount { get; set; }
+        public bool IsGstApplied { get; set; } = false; // true = Pakka Bill, false = Kaccha Bill
+        public decimal GstPercentage { get; set; } = 3.00m; // Default 3% GST for jewelry
+        public string? InvoiceType { get; set; }
+        public string? CustomerName { get; set; }
+        public string? CustomerPhone { get; set; }
+        public string? CustomerAddress { get; set; }
+        public List<PaymentMethodDto> PaymentMethods { get; set; } = new List<PaymentMethodDto>();
+        public DateTime? SoldOn { get; set; }
+        public string? Remarks { get; set; }
+    }
+
+    /// <summary>
+    /// Enhanced DTO for invoice response with multiple payment methods
+    /// </summary>
+    public class InvoiceWithPaymentsResponseDto
+    {
+        public int Id { get; set; }
+        public string InvoiceNumber { get; set; } = string.Empty;
+        public int ProductId { get; set; }
+        public string ProductName { get; set; } = string.Empty;
+        public string? RfidCode { get; set; }
+        public decimal SellingPrice { get; set; }
+        public decimal DiscountAmount { get; set; }
+        public decimal FinalAmount { get; set; }
+        public bool IsGstApplied { get; set; }
+        public decimal GstPercentage { get; set; }
+        public decimal GstAmount { get; set; }
+        public decimal AmountBeforeGst { get; set; }
+        public decimal TotalAmountWithGst { get; set; }
+        public string InvoiceType { get; set; } = string.Empty;
+        public string? CustomerName { get; set; }
+        public string? CustomerPhone { get; set; }
+        public string? CustomerAddress { get; set; }
+        public List<PaymentMethodDto> PaymentMethods { get; set; } = new List<PaymentMethodDto>();
+        public DateTime SoldOn { get; set; }
+        public string? Remarks { get; set; }
+        public bool IsActive { get; set; }
+        public DateTime CreatedOn { get; set; }
+        public DateTime? UpdatedOn { get; set; }
     }
 }

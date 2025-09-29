@@ -1,10 +1,10 @@
 {
 	"info": {
-		"_postman_id": "rfid-jewelry-inventory-complete-v4",
-		"name": "RFID Jewelry Inventory System - Complete API Collection v4",
-		"description": "Complete API collection for RFID Jewelry Inventory Management System with Multi-Tenant Architecture, Admin-User Hierarchy System, Granular Permissions, Activity Tracking, Product Management, Image Upload, RFID Tracking, Comprehensive Reporting System, RFID Usage Analytics, and Database Management. All endpoints with real data examples and proper localhost URLs.",
+		"_postman_id": "rfid-jewelry-inventory-complete-v5",
+		"name": "RFID Jewelry Inventory System - Complete API Collection v5",
+		"description": "Complete API collection for RFID Jewelry Inventory Management System with Multi-Tenant Architecture, Admin-User Hierarchy System, Granular Permissions, Activity Tracking, Product Management, Image Upload, RFID Tracking, Comprehensive Reporting System, RFID Usage Analytics, Database Management, and Branch/Counter Assignment for Sub-User Registration. All endpoints with real data examples and proper localhost URLs.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "rfid-jewelry-system-v4"
+		"_exporter_id": "rfid-jewelry-system-v5"
 	},
 	"item": [
 		{
@@ -1615,7 +1615,33 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"productId\": 1,\n  \"rfidCode\": \"RFID001\",\n  \"customerName\": \"John Smith\",\n  \"customerPhone\": \"+91-9876543210\",\n  \"sellingPrice\": 95000.00,\n  \"discountAmount\": 5000.00,\n  \"finalAmount\": 90000.00,\n  \"invoiceType\": \"Sale\",\n  \"paymentMethod\": \"Cash\",\n  \"soldOn\": \"2024-01-15T10:00:00Z\",\n  \"remarks\": \"Customer preferred cash payment\"\n}"
+							"raw": "{\n  \"productId\": 1,\n  \"rfidCode\": \"RFID001\",\n  \"customerName\": \"John Smith\",\n  \"customerPhone\": \"+91-9876543210\",\n  \"sellingPrice\": 95000.00,\n  \"discountAmount\": 5000.00,\n  \"finalAmount\": 90000.00,\n  \"isGstApplied\": false,\n  \"gstPercentage\": 3.00,\n  \"invoiceType\": \"Sale\",\n  \"paymentMethod\": \"Cash\",\n  \"soldOn\": \"2024-01-15T10:00:00Z\",\n  \"remarks\": \"Kaccha Bill - No GST applied\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/Invoice",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "Invoice"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Invoice with GST (Pakka Bill)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"productId\": 2,\n  \"rfidCode\": \"RFID002\",\n  \"customerName\": \"Alice Johnson\",\n  \"customerPhone\": \"+91-9876543211\",\n  \"sellingPrice\": 100000.00,\n  \"discountAmount\": 5000.00,\n  \"finalAmount\": 97850.00,\n  \"isGstApplied\": true,\n  \"gstPercentage\": 3.00,\n  \"invoiceType\": \"Sale\",\n  \"paymentMethod\": \"Card\",\n  \"soldOn\": \"2024-01-15T11:00:00Z\",\n  \"remarks\": \"Pakka Bill - GST applied (3% on 95000 = 2850)\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/Invoice",
@@ -2054,6 +2080,146 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Create Invoice with Multiple Payment Methods",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"productId\": 1,\n  \"rfidCode\": \"RFID001\",\n  \"customerName\": \"John Smith\",\n  \"customerPhone\": \"+91-9876543210\",\n  \"sellingPrice\": 95000.00,\n  \"discountAmount\": 5000.00,\n  \"finalAmount\": 90000.00,\n  \"isGstApplied\": false,\n  \"gstPercentage\": 3.00,\n  \"invoiceType\": \"Sale\",\n  \"paymentMethods\": [\n    {\n      \"paymentMethod\": \"Cash\",\n      \"amount\": 50000.00,\n      \"paymentReference\": \"CASH001\",\n      \"remarks\": \"Cash payment\"\n    },\n    {\n      \"paymentMethod\": \"UPI\",\n      \"amount\": 40000.00,\n      \"paymentReference\": \"UPI123456789\",\n      \"remarks\": \"UPI payment via PhonePe\"\n    }\n  ],\n  \"soldOn\": \"2024-01-15T10:00:00Z\",\n  \"remarks\": \"Kaccha Bill - Customer paid partially in cash and rest via UPI\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/Invoice/with-multiple-payments",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "Invoice", "with-multiple-payments"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Invoice with Multiple Payment Methods and GST (Pakka Bill)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"productId\": 2,\n  \"rfidCode\": \"RFID002\",\n  \"customerName\": \"Alice Johnson\",\n  \"customerPhone\": \"+91-9876543211\",\n  \"sellingPrice\": 100000.00,\n  \"discountAmount\": 5000.00,\n  \"finalAmount\": 97850.00,\n  \"isGstApplied\": true,\n  \"gstPercentage\": 3.00,\n  \"invoiceType\": \"Sale\",\n  \"paymentMethods\": [\n    {\n      \"paymentMethod\": \"Cash\",\n      \"amount\": 50000.00,\n      \"paymentReference\": \"CASH002\",\n      \"remarks\": \"Cash payment\"\n    },\n    {\n      \"paymentMethod\": \"Card\",\n      \"amount\": 47850.00,\n      \"paymentReference\": \"CARD123456789\",\n      \"remarks\": \"Credit card payment\"\n    }\n  ],\n  \"soldOn\": \"2024-01-15T11:00:00Z\",\n  \"remarks\": \"Pakka Bill - GST applied (3% on 95000 = 2850)\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/Invoice/with-multiple-payments",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "Invoice", "with-multiple-payments"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Invoice by Item Code",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"itemCode\": \"GOLD001\",\n  \"rfidCode\": \"RFID002\",\n  \"customerName\": \"Alice Johnson\",\n  \"customerPhone\": \"+91-9876543211\",\n  \"sellingPrice\": 75000.00,\n  \"discountAmount\": 3000.00,\n  \"finalAmount\": 72000.00,\n  \"isGstApplied\": false,\n  \"gstPercentage\": 3.00,\n  \"invoiceType\": \"Sale\",\n  \"paymentMethods\": [\n    {\n      \"paymentMethod\": \"Card\",\n      \"amount\": 72000.00,\n      \"paymentReference\": \"CARD123456789\",\n      \"remarks\": \"Credit card payment\"\n    }\n  ],\n  \"soldOn\": \"2024-01-15T11:00:00Z\",\n  \"remarks\": \"Kaccha Bill - Customer paid via credit card\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/Invoice/by-item-code",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "Invoice", "by-item-code"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Invoice by Item Code with GST (Pakka Bill)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"itemCode\": \"GOLD002\",\n  \"rfidCode\": \"RFID003\",\n  \"customerName\": \"Bob Wilson\",\n  \"customerPhone\": \"+91-9876543212\",\n  \"sellingPrice\": 80000.00,\n  \"discountAmount\": 2000.00,\n  \"finalAmount\": 80340.00,\n  \"isGstApplied\": true,\n  \"gstPercentage\": 3.00,\n  \"invoiceType\": \"Sale\",\n  \"paymentMethods\": [\n    {\n      \"paymentMethod\": \"UPI\",\n      \"amount\": 80340.00,\n      \"paymentReference\": \"UPI987654321\",\n      \"remarks\": \"UPI payment via Google Pay\"\n    }\n  ],\n  \"soldOn\": \"2024-01-15T12:00:00Z\",\n  \"remarks\": \"Pakka Bill - GST applied (3% on 78000 = 2340)\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/Invoice/by-item-code",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "Invoice", "by-item-code"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Invoice with Payment Details",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/Invoice/1/with-payments",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "Invoice", "1", "with-payments"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Invoices with Payment Details",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/Invoice/with-payments",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "Invoice", "with-payments"]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -2402,7 +2568,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"userName\": \"user1@jewelrystore.com\",\n  \"email\": \"user1@jewelrystore.com\",\n  \"password\": \"User@123\",\n  \"fullName\": \"John User\",\n  \"mobileNumber\": \"+91-9876543212\",\n  \"city\": \"Mumbai\",\n  \"address\": \"789 User Street, Mumbai, Maharashtra, India\",\n  \"organisationName\": \"Premium Jewelry Store\",\n  \"showroomType\": \"Premium\",\n  \"isAdmin\": false,\n  \"userType\": \"User\",\n  \"adminUserId\": {{adminUserId}}\n}"
+							"raw": "{\n  \"userName\": \"user1@jewelrystore.com\",\n  \"email\": \"user1@jewelrystore.com\",\n  \"password\": \"User@123\",\n  \"fullName\": \"John User\",\n  \"mobileNumber\": \"+91-9876543212\",\n  \"city\": \"Mumbai\",\n  \"address\": \"789 User Street, Mumbai, Maharashtra, India\",\n  \"organisationName\": \"Premium Jewelry Store\",\n  \"showroomType\": \"Premium\",\n  \"isAdmin\": false,\n  \"branchId\": 1,\n  \"counterId\": 1,\n  \"permissions\": [\n    {\n      \"module\": \"Product\",\n      \"canView\": true,\n      \"canCreate\": true,\n      \"canEdit\": true,\n      \"canDelete\": false,\n      \"canExport\": true,\n      \"canImport\": false\n    },\n    {\n      \"module\": \"RFID\",\n      \"canView\": true,\n      \"canCreate\": true,\n      \"canEdit\": true,\n      \"canDelete\": false,\n      \"canExport\": true,\n      \"canImport\": false\n    },\n    {\n      \"module\": \"Invoice\",\n      \"canView\": true,\n      \"canCreate\": true,\n      \"canEdit\": true,\n      \"canDelete\": false,\n      \"canExport\": true,\n      \"canImport\": false\n    }\n  ]\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/Admin/register-sub-user",
@@ -3065,6 +3231,227 @@
 							"raw": "{{baseUrl}}/api/Admin/users/{{subUserId}}/reset-password",
 							"host": ["{{baseUrl}}"],
 							"path": ["api", "Admin", "users", "{{subUserId}}", "reset-password"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "🏢 Branch and Counter Management",
+					"item": [
+						{
+							"name": "Get All Branches",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/Admin/branches",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "Admin", "branches"]
+								}
+							},
+							"response": [],
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"if (pm.response.code === 200) {",
+											"    const response = pm.response.json();",
+											"    if (response && response.length > 0) {",
+											"        pm.environment.set('branchId', response[0].branchId);",
+											"        console.log('Branches retrieved successfully. First branch ID:', response[0].branchId);",
+											"    }",
+											"}"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						},
+						{
+							"name": "Get Counters by Branch",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/Admin/branches/{{branchId}}/counters",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "Admin", "branches", "{{branchId}}", "counters"]
+								}
+							},
+							"response": [],
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"if (pm.response.code === 200) {",
+											"    const response = pm.response.json();",
+											"    if (response && response.length > 0) {",
+											"        pm.environment.set('counterId', response[0].counterId);",
+											"        console.log('Counters retrieved successfully. First counter ID:', response[0].counterId);",
+											"    }",
+											"}"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						},
+						{
+							"name": "Get Users by Branch",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/Admin/users/by-location?branchId={{branchId}}",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "Admin", "users", "by-location"],
+									"query": [
+										{
+											"key": "branchId",
+											"value": "{{branchId}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Users by Counter",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/Admin/users/by-location?counterId={{counterId}}",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "Admin", "users", "by-location"],
+									"query": [
+										{
+											"key": "counterId",
+											"value": "{{counterId}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Users by Branch and Counter",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/Admin/users/by-location?branchId={{branchId}}&counterId={{counterId}}",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "Admin", "users", "by-location"],
+									"query": [
+										{
+											"key": "branchId",
+											"value": "{{branchId}}"
+										},
+										{
+											"key": "counterId",
+											"value": "{{counterId}}"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Register Sub-User with Branch/Counter (Updated)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"userName\": \"counter_user@jewelrystore.com\",\n  \"email\": \"counter_user@jewelrystore.com\",\n  \"password\": \"User@123\",\n  \"fullName\": \"Counter User\",\n  \"mobileNumber\": \"+91-9876543213\",\n  \"city\": \"Mumbai\",\n  \"address\": \"101 Counter Street, Mumbai, Maharashtra, India\",\n  \"showroomType\": \"Premium\",\n  \"isAdmin\": false,\n  \"branchId\": {{branchId}},\n  \"counterId\": {{counterId}},\n  \"permissions\": [\n    {\n      \"module\": \"Product\",\n      \"canView\": true,\n      \"canCreate\": true,\n      \"canEdit\": true,\n      \"canDelete\": false,\n      \"canExport\": true,\n      \"canImport\": false\n    },\n    {\n      \"module\": \"RFID\",\n      \"canView\": true,\n      \"canCreate\": true,\n      \"canEdit\": true,\n      \"canDelete\": false,\n      \"canExport\": true,\n      \"canImport\": false\n    },\n    {\n      \"module\": \"Invoice\",\n      \"canView\": true,\n      \"canCreate\": true,\n      \"canEdit\": true,\n      \"canDelete\": false,\n      \"canExport\": true,\n      \"canImport\": false\n    }\n  ]\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/Admin/register-sub-user",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "Admin", "register-sub-user"]
+						}
+					},
+					"response": [],
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    if (response.userId) {",
+									"        pm.environment.set('counterUserId', response.userId);",
+									"        console.log('Counter user registered successfully with ID:', response.userId);",
+									"        console.log('Assigned to Branch ID:', response.branchId, 'Counter ID:', response.counterId);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
+				},
+				{
+					"name": "Update User Branch/Counter Assignment",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"fullName\": \"Counter User Updated\",\n  \"branchId\": {{branchId}},\n  \"counterId\": {{counterId}},\n  \"permissions\": [\n    {\n      \"module\": \"Product\",\n      \"canView\": true,\n      \"canCreate\": true,\n      \"canEdit\": true,\n      \"canDelete\": true,\n      \"canExport\": true,\n      \"canImport\": true\n    },\n    {\n      \"module\": \"RFID\",\n      \"canView\": true,\n      \"canCreate\": true,\n      \"canEdit\": true,\n      \"canDelete\": true,\n      \"canExport\": true,\n      \"canImport\": true\n    },\n    {\n      \"module\": \"Invoice\",\n      \"canView\": true,\n      \"canCreate\": true,\n      \"canEdit\": true,\n      \"canDelete\": true,\n      \"canExport\": true,\n      \"canImport\": true\n    }\n  ]\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/Admin/users/{{counterUserId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "Admin", "users", "{{counterUserId}}"]
 						}
 					},
 					"response": []

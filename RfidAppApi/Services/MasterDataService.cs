@@ -556,12 +556,16 @@ namespace RfidAppApi.Services
         {
             using var context = await GetClientContextAsync();
             var branches = await context.BranchMasters.ToListAsync();
+            var counterCounts = await context.CounterMasters
+                .GroupBy(c => c.BranchId)
+                .ToDictionaryAsync(g => g.Key, g => g.Count());
+            
             return branches.Select(b => new BranchMasterDto
             {
                 BranchId = b.BranchId,
                 BranchName = b.BranchName,
                 ClientCode = b.ClientCode,
-                CounterCount = context.CounterMasters.Count(c => c.BranchId == b.BranchId)
+                CounterCount = counterCounts.GetValueOrDefault(b.BranchId, 0)
             });
         }
 
@@ -572,12 +576,17 @@ namespace RfidAppApi.Services
                 .Where(b => b.ClientCode == clientCode)
                 .ToListAsync();
             
+            var counterCounts = await context.CounterMasters
+                .Where(c => c.ClientCode == clientCode)
+                .GroupBy(c => c.BranchId)
+                .ToDictionaryAsync(g => g.Key, g => g.Count());
+            
             return branches.Select(b => new BranchMasterDto
             {
                 BranchId = b.BranchId,
                 BranchName = b.BranchName,
                 ClientCode = b.ClientCode,
-                CounterCount = context.CounterMasters.Count(c => c.BranchId == b.BranchId)
+                CounterCount = counterCounts.GetValueOrDefault(b.BranchId, 0)
             });
         }
 
@@ -587,12 +596,14 @@ namespace RfidAppApi.Services
             var branch = await context.BranchMasters.FindAsync(branchId);
             if (branch == null) return null;
 
+            var counterCount = await context.CounterMasters.CountAsync(c => c.BranchId == branch.BranchId);
+
             return new BranchMasterDto
             {
                 BranchId = branch.BranchId,
                 BranchName = branch.BranchName,
                 ClientCode = branch.ClientCode,
-                CounterCount = context.CounterMasters.Count(c => c.BranchId == branch.BranchId)
+                CounterCount = counterCount
             };
         }
 
@@ -629,12 +640,14 @@ namespace RfidAppApi.Services
 
             await context.SaveChangesAsync();
 
+            var counterCount = await context.CounterMasters.CountAsync(c => c.BranchId == branch.BranchId);
+
             return new BranchMasterDto
             {
                 BranchId = branch.BranchId,
                 BranchName = branch.BranchName,
                 ClientCode = branch.ClientCode,
-                CounterCount = context.CounterMasters.Count(c => c.BranchId == branch.BranchId)
+                CounterCount = counterCount
             };
         }
 

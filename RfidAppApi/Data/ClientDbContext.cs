@@ -24,6 +24,7 @@ namespace RfidAppApi.Data
         public DbSet<ProductDetails> ProductDetails { get; set; }
         public DbSet<ProductRfidAssignment> ProductRfidAssignments { get; set; }
         public DbSet<Invoice> Invoices { get; set; }
+        public DbSet<InvoicePayment> InvoicePayments { get; set; }
         public DbSet<ProductImage> ProductImages { get; set; }
         public DbSet<StockMovement> StockMovements { get; set; }
         public DbSet<DailyStockBalance> DailyStockBalances { get; set; }
@@ -47,6 +48,7 @@ namespace RfidAppApi.Data
             modelBuilder.Entity<ProductDetails>().ToTable("tblProductDetails");
             modelBuilder.Entity<ProductRfidAssignment>().ToTable("tblProductRFIDAssignment");
             modelBuilder.Entity<Invoice>().ToTable("tblInvoice");
+            modelBuilder.Entity<InvoicePayment>().ToTable("tblInvoicePayment");
             modelBuilder.Entity<ProductImage>().ToTable("tblProductImage");
             modelBuilder.Entity<StockMovement>().ToTable("tblStockMovement");
             modelBuilder.Entity<DailyStockBalance>().ToTable("tblDailyStockBalance");
@@ -120,6 +122,12 @@ namespace RfidAppApi.Data
                 .WithMany()
                 .HasForeignKey(i => i.ProductId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<InvoicePayment>()
+                .HasOne(ip => ip.Invoice)
+                .WithMany(i => i.Payments)
+                .HasForeignKey(ip => ip.InvoiceId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<ProductImage>()
                 .HasOne(pi => pi.Product)
@@ -248,6 +256,7 @@ namespace RfidAppApi.Data
             modelBuilder.Entity<ProductDetails>().HasQueryFilter(e => e.ClientCode == _clientCode);
             modelBuilder.Entity<ProductRfidAssignment>().HasQueryFilter(e => e.Product.ClientCode == _clientCode);
             modelBuilder.Entity<Invoice>().HasQueryFilter(e => e.ClientCode == _clientCode);
+            modelBuilder.Entity<InvoicePayment>().HasQueryFilter(e => e.Invoice.ClientCode == _clientCode);
             modelBuilder.Entity<ProductImage>().HasQueryFilter(e => e.ClientCode == _clientCode);
             modelBuilder.Entity<StockMovement>().HasQueryFilter(e => e.ClientCode == _clientCode);
             modelBuilder.Entity<DailyStockBalance>().HasQueryFilter(e => e.ClientCode == _clientCode);
@@ -425,6 +434,22 @@ namespace RfidAppApi.Data
 
             modelBuilder.Entity<Invoice>()
                 .HasIndex(i => new { i.ProductId, i.SoldOn });
+
+            // Invoice Payment Table - High Performance Indexes
+            modelBuilder.Entity<InvoicePayment>()
+                .HasIndex(ip => ip.InvoiceId);
+
+            modelBuilder.Entity<InvoicePayment>()
+                .HasIndex(ip => ip.PaymentMethod);
+
+            modelBuilder.Entity<InvoicePayment>()
+                .HasIndex(ip => ip.CreatedOn);
+
+            modelBuilder.Entity<InvoicePayment>()
+                .HasIndex(ip => new { ip.InvoiceId, ip.PaymentMethod });
+
+            modelBuilder.Entity<InvoicePayment>()
+                .HasIndex(ip => new { ip.PaymentMethod, ip.CreatedOn });
 
             // Product Image Table - High Performance Indexes
             modelBuilder.Entity<ProductImage>()

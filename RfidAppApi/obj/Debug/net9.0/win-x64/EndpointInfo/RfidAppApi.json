@@ -1704,6 +1704,145 @@
         }
       }
     },
+    "/api/Admin/branches": {
+      "get": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Get all branches for the current client",
+        "operationId": "Admin_GetBranches",
+        "responses": {
+          "200": {
+            "description": "List of branches",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BranchMasterDto"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Admin/branches/{branchId}/counters": {
+      "get": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Get counters for a specific branch",
+        "operationId": "Admin_GetCountersByBranch",
+        "parameters": [
+          {
+            "name": "branchId",
+            "in": "path",
+            "required": true,
+            "description": "Branch ID",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of counters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CounterMasterDto"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Admin/users/by-location": {
+      "get": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Get users by branch and counter",
+        "operationId": "Admin_GetUsersByLocation",
+        "parameters": [
+          {
+            "name": "branchId",
+            "in": "query",
+            "description": "Branch ID (optional)",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "nullable": true
+            },
+            "x-position": 1
+          },
+          {
+            "name": "counterId",
+            "in": "query",
+            "description": "Counter ID (optional)",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "nullable": true
+            },
+            "x-position": 2
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of users",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AdminUserDto"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/DatabaseMigration/health": {
       "get": {
         "tags": [
@@ -2602,6 +2741,129 @@
                 "schema": {
                   "type": "string",
                   "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Invoice/with-multiple-payments": {
+      "post": {
+        "tags": [
+          "Invoice"
+        ],
+        "summary": "Create invoice with multiple payment methods",
+        "operationId": "Invoice_CreateInvoiceWithMultiplePayments",
+        "requestBody": {
+          "x-name": "createDto",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateInvoiceWithMultiplePaymentsDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvoiceWithPaymentsResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Invoice/by-item-code": {
+      "post": {
+        "tags": [
+          "Invoice"
+        ],
+        "summary": "Create invoice by item code",
+        "operationId": "Invoice_CreateInvoiceByItemCode",
+        "requestBody": {
+          "x-name": "createDto",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateInvoiceByItemCodeDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvoiceWithPaymentsResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Invoice/{invoiceId}/with-payments": {
+      "get": {
+        "tags": [
+          "Invoice"
+        ],
+        "summary": "Get invoice with payment details",
+        "operationId": "Invoice_GetInvoiceWithPayments",
+        "parameters": [
+          {
+            "name": "invoiceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvoiceWithPaymentsResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Invoice/with-payments": {
+      "get": {
+        "tags": [
+          "Invoice"
+        ],
+        "summary": "Get all invoices with payment details",
+        "operationId": "Invoice_GetAllInvoicesWithPayments",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/InvoiceWithPaymentsResponseDto"
+                  }
                 }
               }
             }
@@ -9557,6 +9819,24 @@
             "format": "date-time",
             "nullable": true
           },
+          "branchId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "branchName": {
+            "type": "string",
+            "nullable": true
+          },
+          "counterId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "counterName": {
+            "type": "string",
+            "nullable": true
+          },
           "permissions": {
             "type": "array",
             "items": {
@@ -9706,6 +9986,16 @@
           "isAdmin": {
             "type": "boolean"
           },
+          "branchId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "counterId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
           "permissions": {
             "type": "array",
             "items": {
@@ -9777,6 +10067,16 @@
           },
           "isAdmin": {
             "type": "boolean",
+            "nullable": true
+          },
+          "branchId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "counterId": {
+            "type": "integer",
+            "format": "int32",
             "nullable": true
           },
           "permissions": {
@@ -10133,6 +10433,49 @@
           }
         }
       },
+      "BranchMasterDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "branchId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "branchName": {
+            "type": "string"
+          },
+          "clientCode": {
+            "type": "string"
+          },
+          "counterCount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "CounterMasterDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "counterId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "counterName": {
+            "type": "string"
+          },
+          "branchId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "clientCode": {
+            "type": "string"
+          },
+          "branchName": {
+            "type": "string"
+          }
+        }
+      },
       "InvoiceResponseDto": {
         "type": "object",
         "description": "DTO for invoice response",
@@ -10165,6 +10508,25 @@
             "format": "decimal"
           },
           "finalAmount": {
+            "type": "number",
+            "format": "decimal"
+          },
+          "isGstApplied": {
+            "type": "boolean"
+          },
+          "gstPercentage": {
+            "type": "number",
+            "format": "decimal"
+          },
+          "gstAmount": {
+            "type": "number",
+            "format": "decimal"
+          },
+          "amountBeforeGst": {
+            "type": "number",
+            "format": "decimal"
+          },
+          "totalAmountWithGst": {
             "type": "number",
             "format": "decimal"
           },
@@ -10235,6 +10597,13 @@
             "format": "decimal"
           },
           "finalAmount": {
+            "type": "number",
+            "format": "decimal"
+          },
+          "isGstApplied": {
+            "type": "boolean"
+          },
+          "gstPercentage": {
             "type": "number",
             "format": "decimal"
           },
@@ -10334,6 +10703,15 @@
             "nullable": true
           },
           "finalAmount": {
+            "type": "number",
+            "format": "decimal",
+            "nullable": true
+          },
+          "isGstApplied": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "gstPercentage": {
             "type": "number",
             "format": "decimal",
             "nullable": true
@@ -10532,6 +10910,254 @@
             "items": {
               "$ref": "#/components/schemas/CreateInvoiceDto"
             }
+          }
+        }
+      },
+      "InvoiceWithPaymentsResponseDto": {
+        "type": "object",
+        "description": "Enhanced DTO for invoice response with multiple payment methods",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "invoiceNumber": {
+            "type": "string"
+          },
+          "productId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "productName": {
+            "type": "string"
+          },
+          "rfidCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "sellingPrice": {
+            "type": "number",
+            "format": "decimal"
+          },
+          "discountAmount": {
+            "type": "number",
+            "format": "decimal"
+          },
+          "finalAmount": {
+            "type": "number",
+            "format": "decimal"
+          },
+          "isGstApplied": {
+            "type": "boolean"
+          },
+          "gstPercentage": {
+            "type": "number",
+            "format": "decimal"
+          },
+          "gstAmount": {
+            "type": "number",
+            "format": "decimal"
+          },
+          "amountBeforeGst": {
+            "type": "number",
+            "format": "decimal"
+          },
+          "totalAmountWithGst": {
+            "type": "number",
+            "format": "decimal"
+          },
+          "invoiceType": {
+            "type": "string"
+          },
+          "customerName": {
+            "type": "string",
+            "nullable": true
+          },
+          "customerPhone": {
+            "type": "string",
+            "nullable": true
+          },
+          "customerAddress": {
+            "type": "string",
+            "nullable": true
+          },
+          "paymentMethods": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PaymentMethodDto"
+            }
+          },
+          "soldOn": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "remarks": {
+            "type": "string",
+            "nullable": true
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "createdOn": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedOn": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        }
+      },
+      "PaymentMethodDto": {
+        "type": "object",
+        "description": "DTO for individual payment method in an invoice",
+        "additionalProperties": false,
+        "properties": {
+          "paymentMethod": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "number",
+            "format": "decimal"
+          },
+          "paymentReference": {
+            "type": "string",
+            "nullable": true
+          },
+          "remarks": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "CreateInvoiceWithMultiplePaymentsDto": {
+        "type": "object",
+        "description": "Enhanced DTO for creating invoice with multiple payment methods",
+        "additionalProperties": false,
+        "properties": {
+          "productId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "rfidCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "sellingPrice": {
+            "type": "number",
+            "format": "decimal"
+          },
+          "discountAmount": {
+            "type": "number",
+            "format": "decimal"
+          },
+          "finalAmount": {
+            "type": "number",
+            "format": "decimal"
+          },
+          "isGstApplied": {
+            "type": "boolean"
+          },
+          "gstPercentage": {
+            "type": "number",
+            "format": "decimal"
+          },
+          "invoiceType": {
+            "type": "string",
+            "nullable": true
+          },
+          "customerName": {
+            "type": "string",
+            "nullable": true
+          },
+          "customerPhone": {
+            "type": "string",
+            "nullable": true
+          },
+          "customerAddress": {
+            "type": "string",
+            "nullable": true
+          },
+          "paymentMethods": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PaymentMethodDto"
+            }
+          },
+          "soldOn": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "remarks": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "CreateInvoiceByItemCodeDto": {
+        "type": "object",
+        "description": "DTO for creating invoice by item code",
+        "additionalProperties": false,
+        "properties": {
+          "itemCode": {
+            "type": "string"
+          },
+          "rfidCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "sellingPrice": {
+            "type": "number",
+            "format": "decimal"
+          },
+          "discountAmount": {
+            "type": "number",
+            "format": "decimal"
+          },
+          "finalAmount": {
+            "type": "number",
+            "format": "decimal"
+          },
+          "isGstApplied": {
+            "type": "boolean"
+          },
+          "gstPercentage": {
+            "type": "number",
+            "format": "decimal"
+          },
+          "invoiceType": {
+            "type": "string",
+            "nullable": true
+          },
+          "customerName": {
+            "type": "string",
+            "nullable": true
+          },
+          "customerPhone": {
+            "type": "string",
+            "nullable": true
+          },
+          "customerAddress": {
+            "type": "string",
+            "nullable": true
+          },
+          "paymentMethods": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PaymentMethodDto"
+            }
+          },
+          "soldOn": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "remarks": {
+            "type": "string",
+            "nullable": true
           }
         }
       },

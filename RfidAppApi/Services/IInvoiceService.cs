@@ -1,9 +1,11 @@
 using RfidAppApi.DTOs;
+using RfidAppApi.Models;
 
 namespace RfidAppApi.Services
 {
     public interface IInvoiceService
     {
+        Task<ProductDetails?> GetProductDetailsAsync(int productId, string clientCode);
         Task<InvoiceResponseDto> CreateInvoiceAsync(CreateInvoiceDto createDto, string clientCode);
         Task<InvoiceResponseDto?> GetInvoiceAsync(int invoiceId, string clientCode);
         Task<List<InvoiceResponseDto>> GetAllInvoicesAsync(string clientCode);
@@ -18,5 +20,11 @@ namespace RfidAppApi.Services
         Task<List<InvoiceResponseDto>> GetInvoicesByPaymentMethodAsync(string paymentMethod, string clientCode);
         Task<InvoiceResponseDto?> GetInvoiceByNumberAsync(string invoiceNumber, string clientCode);
         Task<InvoiceCountDto> GetInvoiceCountByStatusAsync(string clientCode);
+        
+        // Enhanced methods for multiple payment methods
+        Task<InvoiceWithPaymentsResponseDto> CreateInvoiceWithMultiplePaymentsAsync(CreateInvoiceWithMultiplePaymentsDto createDto, string clientCode);
+        Task<InvoiceWithPaymentsResponseDto> CreateInvoiceByItemCodeAsync(CreateInvoiceByItemCodeDto createDto, string clientCode);
+        Task<InvoiceWithPaymentsResponseDto?> GetInvoiceWithPaymentsAsync(int invoiceId, string clientCode);
+        Task<List<InvoiceWithPaymentsResponseDto>> GetAllInvoicesWithPaymentsAsync(string clientCode);
     }
 }

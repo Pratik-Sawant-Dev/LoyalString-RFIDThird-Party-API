@@ -998,6 +998,82 @@ namespace RfidAppApi.Controllers
 
         #endregion
 
+        #region Branch and Counter Management
+
+        /// <summary>
+        /// Get all branches for the current client
+        /// </summary>
+        /// <returns>List of branches</returns>
+        [HttpGet("branches")]
+        [ProducesResponseType(typeof(IEnumerable<BranchMasterDto>), 200)]
+        [ProducesResponseType(401)]
+        public async Task<ActionResult<IEnumerable<BranchMasterDto>>> GetBranches()
+        {
+            try
+            {
+                var adminUserId = GetCurrentUserId();
+                var clientCode = GetClientCodeFromToken();
+                
+                var branches = await _adminService.GetBranchesAsync(clientCode);
+                return Ok(branches);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred while retrieving branches.", error = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Get counters for a specific branch
+        /// </summary>
+        /// <param name="branchId">Branch ID</param>
+        /// <returns>List of counters</returns>
+        [HttpGet("branches/{branchId}/counters")]
+        [ProducesResponseType(typeof(IEnumerable<CounterMasterDto>), 200)]
+        [ProducesResponseType(401)]
+        public async Task<ActionResult<IEnumerable<CounterMasterDto>>> GetCountersByBranch(int branchId)
+        {
+            try
+            {
+                var adminUserId = GetCurrentUserId();
+                var clientCode = GetClientCodeFromToken();
+                
+                var counters = await _adminService.GetCountersByBranchAsync(branchId, clientCode);
+                return Ok(counters);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred while retrieving counters.", error = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Get users by branch and counter
+        /// </summary>
+        /// <param name="branchId">Branch ID (optional)</param>
+        /// <param name="counterId">Counter ID (optional)</param>
+        /// <returns>List of users</returns>
+        [HttpGet("users/by-location")]
+        [ProducesResponseType(typeof(IEnumerable<AdminUserDto>), 200)]
+        [ProducesResponseType(401)]
+        public async Task<ActionResult<IEnumerable<AdminUserDto>>> GetUsersByLocation(
+            [FromQuery] int? branchId = null, 
+            [FromQuery] int? counterId = null)
+        {
+            try
+            {
+                var adminUserId = GetCurrentUserId();
+                var users = await _adminService.GetUsersByLocationAsync(adminUserId, branchId, counterId);
+                return Ok(users);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred while retrieving users by location.", error = ex.Message });
+            }
+        }
+
+        #endregion
+
         #region Helper Methods
 
         private int GetCurrentUserId()

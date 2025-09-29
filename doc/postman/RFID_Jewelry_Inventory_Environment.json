@@ -943,6 +943,108 @@
 			"value": "Wood",
 			"type": "default",
 			"enabled": true
+		},
+		{
+			"key": "testItemCode",
+			"value": "GOLD001",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testPaymentMethod1",
+			"value": "Cash",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testPaymentMethod2",
+			"value": "UPI",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testPaymentMethod3",
+			"value": "Card",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testPaymentAmount1",
+			"value": "50000.00",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testPaymentAmount2",
+			"value": "40000.00",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testPaymentReference1",
+			"value": "CASH001",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testPaymentReference2",
+			"value": "UPI123456789",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testGstPercentage",
+			"value": "3.00",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testIsGstApplied",
+			"value": "false",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testIsGstAppliedPakka",
+			"value": "true",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testSellingPriceWithGst",
+			"value": "100000.00",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testDiscountAmountWithGst",
+			"value": "5000.00",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testFinalAmountWithGst",
+			"value": "97850.00",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testGstAmount",
+			"value": "2850.00",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testAmountBeforeGst",
+			"value": "95000.00",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "testTotalAmountWithGst",
+			"value": "97850.00",
+			"type": "default",
+			"enabled": true
 		}
 	],
 	"_postman_variable_scope": "environment",

@@ -234,6 +234,27 @@
             </summary>
             <returns>List of all users in organization</returns>
         </member>
+        <member name="M:RfidAppApi.Controllers.AdminController.GetBranches">
+            <summary>
+            Get all branches for the current client
+            </summary>
+            <returns>List of branches</returns>
+        </member>
+        <member name="M:RfidAppApi.Controllers.AdminController.GetCountersByBranch(System.Int32)">
+            <summary>
+            Get counters for a specific branch
+            </summary>
+            <param name="branchId">Branch ID</param>
+            <returns>List of counters</returns>
+        </member>
+        <member name="M:RfidAppApi.Controllers.AdminController.GetUsersByLocation(System.Nullable{System.Int32},System.Nullable{System.Int32})">
+            <summary>
+            Get users by branch and counter
+            </summary>
+            <param name="branchId">Branch ID (optional)</param>
+            <param name="counterId">Counter ID (optional)</param>
+            <returns>List of users</returns>
+        </member>
         <member name="T:RfidAppApi.Controllers.ResetPasswordDto">
             <summary>
             DTO for password reset
@@ -382,6 +403,26 @@
         <member name="M:RfidAppApi.Controllers.InvoiceController.ExportInvoicesToCsv(System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.String)">
             <summary>
             Export invoices to CSV format
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.InvoiceController.CreateInvoiceWithMultiplePayments(RfidAppApi.DTOs.CreateInvoiceWithMultiplePaymentsDto)">
+            <summary>
+            Create invoice with multiple payment methods
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.InvoiceController.CreateInvoiceByItemCode(RfidAppApi.DTOs.CreateInvoiceByItemCodeDto)">
+            <summary>
+            Create invoice by item code
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.InvoiceController.GetInvoiceWithPayments(System.Int32)">
+            <summary>
+            Get invoice with payment details
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.InvoiceController.GetAllInvoicesWithPayments">
+            <summary>
+            Get all invoices with payment details
             </summary>
         </member>
         <member name="T:RfidAppApi.Controllers.PaginatedInvoiceResponseDto">
@@ -2431,6 +2472,113 @@
             DTO for invoice statistics
             </summary>
         </member>
+        <member name="T:RfidAppApi.DTOs.PaymentMethodDto">
+            <summary>
+            DTO for individual payment method in an invoice
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.CreateInvoiceWithMultiplePaymentsDto">
+            <summary>
+            Enhanced DTO for creating invoice with multiple payment methods
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.CreateInvoiceByItemCodeDto">
+            <summary>
+            DTO for creating invoice by item code
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.InvoiceWithPaymentsResponseDto">
+            <summary>
+            Enhanced DTO for invoice response with multiple payment methods
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.Extensions.ControllerExtensions">
+            <summary>
+            Extension methods for controllers to handle access control
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Extensions.ControllerExtensions.GetCurrentUserId(Microsoft.AspNetCore.Mvc.ControllerBase)">
+            <summary>
+            Get current user ID from JWT token
+            </summary>
+            <param name="controller">Controller instance</param>
+            <returns>User ID or 0 if not found</returns>
+        </member>
+        <member name="M:RfidAppApi.Extensions.ControllerExtensions.GetClientCodeFromToken(Microsoft.AspNetCore.Mvc.ControllerBase)">
+            <summary>
+            Get client code from JWT token
+            </summary>
+            <param name="controller">Controller instance</param>
+            <returns>Client code or empty string if not found</returns>
+        </member>
+        <member name="M:RfidAppApi.Extensions.ControllerExtensions.CanAccessBranchAsync(Microsoft.AspNetCore.Mvc.ControllerBase,RfidAppApi.Services.IAccessControlService,System.Int32)">
+            <summary>
+            Check if current user can access a specific branch
+            </summary>
+            <param name="controller">Controller instance</param>
+            <param name="accessControlService">Access control service</param>
+            <param name="branchId">Branch ID to check</param>
+            <returns>True if user can access the branch</returns>
+        </member>
+        <member name="M:RfidAppApi.Extensions.ControllerExtensions.CanAccessCounterAsync(Microsoft.AspNetCore.Mvc.ControllerBase,RfidAppApi.Services.IAccessControlService,System.Int32)">
+            <summary>
+            Check if current user can access a specific counter
+            </summary>
+            <param name="controller">Controller instance</param>
+            <param name="accessControlService">Access control service</param>
+            <param name="counterId">Counter ID to check</param>
+            <returns>True if user can access the counter</returns>
+        </member>
+        <member name="M:RfidAppApi.Extensions.ControllerExtensions.CanAccessBranchAndCounterAsync(Microsoft.AspNetCore.Mvc.ControllerBase,RfidAppApi.Services.IAccessControlService,System.Int32,System.Int32)">
+            <summary>
+            Check if current user can access a specific branch and counter combination
+            </summary>
+            <param name="controller">Controller instance</param>
+            <param name="accessControlService">Access control service</param>
+            <param name="branchId">Branch ID to check</param>
+            <param name="counterId">Counter ID to check</param>
+            <returns>True if user can access the branch and counter</returns>
+        </member>
+        <member name="M:RfidAppApi.Extensions.ControllerExtensions.IsAdminUserAsync(Microsoft.AspNetCore.Mvc.ControllerBase,RfidAppApi.Services.IAccessControlService)">
+            <summary>
+            Check if current user is an admin
+            </summary>
+            <param name="controller">Controller instance</param>
+            <param name="accessControlService">Access control service</param>
+            <returns>True if user is admin</returns>
+        </member>
+        <member name="M:RfidAppApi.Extensions.ControllerExtensions.GetUserAccessInfoAsync(Microsoft.AspNetCore.Mvc.ControllerBase,RfidAppApi.Services.IAccessControlService)">
+            <summary>
+            Get current user's access information
+            </summary>
+            <param name="controller">Controller instance</param>
+            <param name="accessControlService">Access control service</param>
+            <returns>User access information or null if not found</returns>
+        </member>
+        <member name="M:RfidAppApi.Extensions.ControllerExtensions.AccessDenied(Microsoft.AspNetCore.Mvc.ControllerBase,System.String)">
+            <summary>
+            Create a forbidden response for access denied
+            </summary>
+            <param name="controller">Controller instance</param>
+            <param name="message">Optional custom message</param>
+            <returns>Forbidden result</returns>
+        </member>
+        <member name="M:RfidAppApi.Extensions.ControllerExtensions.BranchAccessDenied(Microsoft.AspNetCore.Mvc.ControllerBase,System.Int32)">
+            <summary>
+            Create a forbidden response for branch access denied
+            </summary>
+            <param name="controller">Controller instance</param>
+            <param name="branchId">Branch ID that was denied</param>
+            <returns>Forbidden result</returns>
+        </member>
+        <member name="M:RfidAppApi.Extensions.ControllerExtensions.CounterAccessDenied(Microsoft.AspNetCore.Mvc.ControllerBase,System.Int32)">
+            <summary>
+            Create a forbidden response for counter access denied
+            </summary>
+            <param name="controller">Controller instance</param>
+            <param name="counterId">Counter ID that was denied</param>
+            <returns>Forbidden result</returns>
+        </member>
         <member name="T:RfidAppApi.Models.BoxMaster">
             <summary>
             Master table for jewelry box types and specifications
@@ -2445,6 +2593,11 @@
         <member name="T:RfidAppApi.Models.Invoice">
             <summary>
             Model for storing invoice information in client database
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.Models.InvoicePayment">
+            <summary>
+            Model for storing individual payment methods for an invoice
             </summary>
         </member>
         <member name="T:RfidAppApi.Models.ProductImage">
@@ -2470,6 +2623,36 @@
         <member name="T:RfidAppApi.Models.StockVerificationDetail">
             <summary>
             Model for individual items in a stock verification session
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.Services.AccessControlService">
+            <summary>
+            Service for managing user access control based on branch and counter assignments
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Services.AdminService.ValidateBranchAndCounterAsync(System.Nullable{System.Int32},System.Nullable{System.Int32},System.String)">
+            <summary>
+            Validates that the provided branch and counter IDs exist and belong to the client
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Services.AdminService.GetBranchAndCounterInfoAsync(System.Nullable{System.Int32},System.Nullable{System.Int32},System.String)">
+            <summary>
+            Gets branch and counter information for a user
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Services.AdminService.GetBranchesAsync(System.String)">
+            <summary>
+            Gets all branches for a client
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Services.AdminService.GetCountersByBranchAsync(System.Int32,System.String)">
+            <summary>
+            Gets counters for a specific branch
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Services.AdminService.GetUsersByLocationAsync(System.Int32,System.Nullable{System.Int32},System.Nullable{System.Int32})">
+            <summary>
+            Gets users by branch and counter location
             </summary>
         </member>
         <member name="M:RfidAppApi.Services.DatabaseMigrationService.MigrateClientDatabaseAsync(System.String)">
@@ -2521,6 +2704,69 @@
         <member name="M:RfidAppApi.Services.DatabaseMigrationService.GetPendingMigrationsAsync(System.String)">
             <summary>
             Get pending migrations for a client
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.Services.IAccessControlService">
+            <summary>
+            Service for managing user access control based on branch and counter assignments
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Services.IAccessControlService.GetUserAccessInfoAsync(System.Int32)">
+            <summary>
+            Get user's assigned branch and counter information
+            </summary>
+            <param name="userId">User ID</param>
+            <returns>User's branch and counter assignment, or null if user not found</returns>
+        </member>
+        <member name="M:RfidAppApi.Services.IAccessControlService.CanAccessBranchAsync(System.Int32,System.Int32)">
+            <summary>
+            Check if user can access a specific branch
+            </summary>
+            <param name="userId">User ID</param>
+            <param name="branchId">Branch ID to check</param>
+            <returns>True if user can access the branch, false otherwise</returns>
+        </member>
+        <member name="M:RfidAppApi.Services.IAccessControlService.CanAccessCounterAsync(System.Int32,System.Int32)">
+            <summary>
+            Check if user can access a specific counter
+            </summary>
+            <param name="userId">User ID</param>
+            <param name="counterId">Counter ID to check</param>
+            <returns>True if user can access the counter, false otherwise</returns>
+        </member>
+        <member name="M:RfidAppApi.Services.IAccessControlService.CanAccessBranchAndCounterAsync(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Check if user can access a specific branch and counter combination
+            </summary>
+            <param name="userId">User ID</param>
+            <param name="branchId">Branch ID to check</param>
+            <param name="counterId">Counter ID to check</param>
+            <returns>True if user can access the branch and counter, false otherwise</returns>
+        </member>
+        <member name="M:RfidAppApi.Services.IAccessControlService.IsAdminUserAsync(System.Int32)">
+            <summary>
+            Check if user is an admin (can access all branches and counters)
+            </summary>
+            <param name="userId">User ID</param>
+            <returns>True if user is admin, false otherwise</returns>
+        </member>
+        <member name="M:RfidAppApi.Services.IAccessControlService.GetAccessibleBranchIdsAsync(System.Int32)">
+            <summary>
+            Get all branch IDs that the user can access
+            </summary>
+            <param name="userId">User ID</param>
+            <returns>List of accessible branch IDs</returns>
+        </member>
+        <member name="M:RfidAppApi.Services.IAccessControlService.GetAccessibleCounterIdsAsync(System.Int32)">
+            <summary>
+            Get all counter IDs that the user can access
+            </summary>
+            <param name="userId">User ID</param>
+            <returns>List of accessible counter IDs</returns>
+        </member>
+        <member name="T:RfidAppApi.Services.UserAccessInfo">
+            <summary>
+            Information about user's branch and counter access
             </summary>
         </member>
         <member name="M:RfidAppApi.Services.IClientDatabaseService.GenerateClientCodeAsync">
@@ -2586,6 +2832,31 @@
         <member name="M:RfidAppApi.Services.InvoiceService.GetInvoiceCountByStatusAsync(System.String)">
             <summary>
             Get invoice count by status
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Services.InvoiceService.CreateInvoiceWithMultiplePaymentsAsync(RfidAppApi.DTOs.CreateInvoiceWithMultiplePaymentsDto,System.String)">
+            <summary>
+            Create invoice with multiple payment methods
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Services.InvoiceService.CreateInvoiceByItemCodeAsync(RfidAppApi.DTOs.CreateInvoiceByItemCodeDto,System.String)">
+            <summary>
+            Create invoice by item code
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Services.InvoiceService.GetInvoiceWithPaymentsAsync(System.Int32,System.String)">
+            <summary>
+            Get invoice with payment details
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Services.InvoiceService.GetAllInvoicesWithPaymentsAsync(System.String)">
+            <summary>
+            Get all invoices with payment details
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Services.InvoiceService.CalculateGstAmounts(System.Decimal,System.Decimal,System.Decimal,System.Boolean)">
+            <summary>
+            Calculate GST amounts based on selling price and discount
             </summary>
         </member>
         <member name="T:RfidAppApi.Services.InvoiceCountDto">
