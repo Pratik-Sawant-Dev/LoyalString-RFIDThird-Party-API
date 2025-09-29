@@ -24,6 +24,13 @@ namespace RfidAppApi.DTOs
         public bool IsActive { get; set; }
         public DateTime CreatedOn { get; set; }
         public DateTime? LastLoginDate { get; set; }
+        
+        // Branch and Counter information
+        public int? BranchId { get; set; }
+        public string? BranchName { get; set; }
+        public int? CounterId { get; set; }
+        public string? CounterName { get; set; }
+        
         public List<UserPermissionDto> Permissions { get; set; } = new List<UserPermissionDto>();
     }
 
@@ -62,6 +69,10 @@ namespace RfidAppApi.DTOs
 
         public bool IsAdmin { get; set; } = false;
 
+        // Branch and Counter assignment for sub-users
+        public int? BranchId { get; set; }
+        public int? CounterId { get; set; }
+
         public List<UserPermissionCreateDto> Permissions { get; set; } = new List<UserPermissionCreateDto>();
     }
 
@@ -77,6 +88,11 @@ namespace RfidAppApi.DTOs
         public string? ShowroomType { get; set; }
         public bool? IsActive { get; set; }
         public bool? IsAdmin { get; set; }
+        
+        // Branch and Counter assignment for sub-users
+        public int? BranchId { get; set; }
+        public int? CounterId { get; set; }
+        
         public List<UserPermissionCreateDto>? Permissions { get; set; }
     }
 
@@ -241,4 +257,5 @@ namespace RfidAppApi.DTOs
         public bool IsActive { get; set; }
         public DateTime CreatedOn { get; set; }
     }
+
 }

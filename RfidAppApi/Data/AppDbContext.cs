@@ -68,6 +68,13 @@ namespace RfidAppApi.Data
                 .HasForeignKey(u => u.AdminUserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            // Configure indexes for Branch and Counter
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.BranchId);
+
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.CounterId);
+
             // Configure UserActivity relationships
             modelBuilder.Entity<UserActivity>()
                 .HasOne(ua => ua.User)
