@@ -433,30 +433,192 @@ namespace RfidAppApi.Services
 
         public async Task<bool> UpdateUserPermissionsAsync(int userId, List<UserPermissionCreateDto> permissions, int adminUserId)
         {
-            // Remove existing permissions
-            var existingPermissions = await _context.UserPermissions
-                .Where(up => up.UserId == userId)
-                .ToListAsync();
+            // Use a transaction to ensure all operations succeed or fail together
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                // Remove existing permissions
+                var existingPermissions = await _context.UserPermissions
+                    .Where(up => up.UserId == userId)
+                    .ToListAsync();
 
-            _context.UserPermissions.RemoveRange(existingPermissions);
+                _context.UserPermissions.RemoveRange(existingPermissions);
 
-            // Add new permissions
-            await CreateUserPermissionsAsync(userId, permissions, adminUserId);
+                // Add new permissions
+                await CreateUserPermissionsAsync(userId, permissions, adminUserId);
+
+                // Save all changes
+                await _context.SaveChangesAsync();
+
+                // Log activity
+                var user = await _context.Users.FindAsync(userId);
+                if (user != null)
+                {
+                    await LogActivityAsync(adminUserId, user.ClientCode, "User", "UpdatePermissions", 
+                        $"Updated permissions for user: {user.Email}", "tblUserPermission", userId);
+                }
+
+                // Commit the transaction
+                await transaction.CommitAsync();
+            }
+            catch
+            {
+                // Rollback the transaction on any error
+                await transaction.RollbackAsync();
+                throw;
+            }
 
             return true;
         }
 
         public async Task<bool> BulkUpdatePermissionsAsync(BulkPermissionUpdateDto bulkUpdate, int adminUserId)
         {
-            foreach (var userId in bulkUpdate.UserIds)
+            // Use a transaction to ensure all operations succeed or fail together
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
             {
-                if (await CanUserAccessUserAsync(adminUserId, userId))
+                foreach (var userId in bulkUpdate.UserIds)
                 {
-                    await UpdateUserPermissionsAsync(userId, bulkUpdate.Permissions, adminUserId);
+                    if (await CanUserAccessUserAsync(adminUserId, userId))
+                    {
+                        // Remove existing permissions
+                        var existingPermissions = await _context.UserPermissions
+                            .Where(up => up.UserId == userId)
+                            .ToListAsync();
+
+                        _context.UserPermissions.RemoveRange(existingPermissions);
+
+                        // Add new permissions
+                        await CreateUserPermissionsAsync(userId, bulkUpdate.Permissions, adminUserId);
+                    }
+                }
+
+                // Save all changes
+                await _context.SaveChangesAsync();
+
+                // Log activity
+                await LogActivityAsync(adminUserId, "BulkUpdate", "User", "BulkUpdatePermissions", 
+                    $"Bulk updated permissions for {bulkUpdate.UserIds.Count} users", "tblUserPermission", null);
+
+                // Commit the transaction
+                await transaction.CommitAsync();
+            }
+            catch
+            {
+                // Rollback the transaction on any error
+                await transaction.RollbackAsync();
+                throw;
+            }
+
+            return true;
+        }
+
+        public async Task<bool> RemoveUserPermissionsAsync(int userId, int adminUserId)
+        {
+            if (!await CanUserAccessUserAsync(adminUserId, userId))
+                return false;
+
+            var permissions = await _context.UserPermissions
+                .Where(up => up.UserId == userId)
+                .ToListAsync();
+
+            if (permissions.Any())
+            {
+                _context.UserPermissions.RemoveRange(permissions);
+                await _context.SaveChangesAsync();
+
+                // Log activity
+                var user = await _context.Users.FindAsync(userId);
+                if (user != null)
+                {
+                    await LogActivityAsync(adminUserId, user.ClientCode, "User", "RemovePermissions", 
+                        $"Removed all permissions for user: {user.Email}", "tblUserPermission", userId);
                 }
             }
 
             return true;
+        }
+
+        public async Task<bool> RemoveUserPermissionAsync(int userId, string module, int adminUserId)
+        {
+            if (!await CanUserAccessUserAsync(adminUserId, userId))
+                return false;
+
+            var permission = await _context.UserPermissions
+                .FirstOrDefaultAsync(up => up.UserId == userId && up.Module == module);
+
+            if (permission != null)
+            {
+                _context.UserPermissions.Remove(permission);
+                await _context.SaveChangesAsync();
+
+                // Log activity
+                var user = await _context.Users.FindAsync(userId);
+                if (user != null)
+                {
+                    await LogActivityAsync(adminUserId, user.ClientCode, "User", "RemovePermission", 
+                        $"Removed {module} permission for user: {user.Email}", "tblUserPermission", userId);
+                }
+            }
+
+            return true;
+        }
+
+        public async Task<bool> BulkRemovePermissionsAsync(BulkPermissionRemoveDto bulkRemove, int adminUserId)
+        {
+            foreach (var userId in bulkRemove.UserIds)
+            {
+                if (await CanUserAccessUserAsync(adminUserId, userId))
+                {
+                    if (bulkRemove.RemoveAll)
+                    {
+                        await RemoveUserPermissionsAsync(userId, adminUserId);
+                    }
+                    else
+                    {
+                        foreach (var module in bulkRemove.Modules)
+                        {
+                            await RemoveUserPermissionAsync(userId, module, adminUserId);
+                        }
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        public async Task<UserPermissionSummaryDto> GetUserPermissionSummaryAsync(int userId)
+        {
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null) throw new InvalidOperationException("User not found.");
+
+            var permissions = await _context.UserPermissions
+                .Where(up => up.UserId == userId)
+                .ToListAsync();
+
+            var moduleSummaries = permissions.Select(p => new ModulePermissionSummary
+            {
+                Module = p.Module,
+                CanView = p.CanView,
+                CanCreate = p.CanCreate,
+                CanEdit = p.CanUpdate,
+                CanDelete = p.CanDelete,
+                CanExport = p.CanExport,
+                CanImport = p.CanImport,
+                PermissionCount = new[] { p.CanView, p.CanCreate, p.CanUpdate, p.CanDelete, p.CanExport, p.CanImport }.Count(x => x)
+            }).ToList();
+
+            var activePermissions = permissions.Sum(p => new[] { p.CanView, p.CanCreate, p.CanUpdate, p.CanDelete, p.CanExport, p.CanImport }.Count(x => x));
+
+            return new UserPermissionSummaryDto
+            {
+                UserId = user.UserId,
+                UserName = user.FullName,
+                UserEmail = user.Email,
+                TotalPermissions = permissions.Count * 6, // 6 permission types per module
+                ActivePermissions = activePermissions,
+                ModuleSummaries = moduleSummaries
+            };
         }
 
         public async Task LogActivityAsync(int userId, string clientCode, string activityType, string action, 
@@ -1017,7 +1179,7 @@ namespace RfidAppApi.Services
             }).ToList();
 
             _context.UserPermissions.AddRange(userPermissions);
-            // Note: SaveChangesAsync is now handled by the calling method's transaction
+            // Note: SaveChangesAsync is handled by the calling method's transaction
         }
 
         private async Task<(int products, int rfids, int invoices)> GetClientDatabaseCounts(string clientCode)

@@ -329,79 +329,11 @@ namespace RfidAppApi.Controllers
         #region Permission Management
 
         /// <summary>
-        /// Assign permissions to user
-        /// </summary>
-        /// <param name="assignPermissionsDto">Permission assignment details</param>
-        /// <returns>Success status</returns>
-        [HttpPost("assign-permissions")]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(401)]
-        public async Task<ActionResult> AssignPermissions([FromBody] AssignPermissionsDto assignPermissionsDto)
-        {
-            try
-            {
-                var adminUserId = GetCurrentUserId();
-                if (!await IsAdminAsync(adminUserId))
-                {
-                    return Forbid("Only admins can assign permissions.");
-                }
-
-                var result = await _adminService.UpdateUserPermissionsAsync(assignPermissionsDto.UserId, assignPermissionsDto.Permissions, adminUserId);
-                
-                if (!result)
-                {
-                    return BadRequest(new { message = "Failed to assign permissions." });
-                }
-
-                return Ok(new { message = "Permissions assigned successfully." });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { message = "An error occurred while assigning permissions.", error = ex.Message });
-            }
-        }
-
-        /// <summary>
-        /// Update user permissions (Admin only)
-        /// </summary>
-        /// <param name="updatePermissionsDto">Permission update details</param>
-        /// <returns>Success status</returns>
-        [HttpPut("update-permissions")]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(401)]
-        public async Task<ActionResult> UpdatePermissions([FromBody] UpdatePermissionsDto updatePermissionsDto)
-        {
-            try
-            {
-                var adminUserId = GetCurrentUserId();
-                if (!await IsAdminAsync(adminUserId))
-                {
-                    return Forbid("Only admins can update permissions.");
-                }
-
-                var result = await _adminService.UpdateUserPermissionsAsync(updatePermissionsDto.UserId, updatePermissionsDto.Permissions, adminUserId);
-                
-                if (!result)
-                {
-                    return BadRequest(new { message = "Failed to update permissions." });
-                }
-
-                return Ok(new { message = "Permissions updated successfully." });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { message = "An error occurred while updating permissions.", error = ex.Message });
-            }
-        }
-
-        /// <summary>
-        /// Get user permissions
+        /// Get user permissions by user ID
         /// </summary>
         /// <param name="userId">User ID</param>
         /// <returns>User permissions</returns>
-        [HttpGet("user-permissions/{userId}")]
+        [HttpGet("users/{userId}/permissions")]
         [ProducesResponseType(typeof(IEnumerable<UserPermissionDto>), 200)]
         [ProducesResponseType(401)]
         [ProducesResponseType(404)]
@@ -425,10 +357,10 @@ namespace RfidAppApi.Controllers
         }
 
         /// <summary>
-        /// Get all user permissions
+        /// Get all user permissions in organization
         /// </summary>
         /// <returns>All user permissions</returns>
-        [HttpGet("all-user-permissions")]
+        [HttpGet("permissions")]
         [ProducesResponseType(typeof(IEnumerable<UserPermissionDto>), 200)]
         [ProducesResponseType(401)]
         public async Task<ActionResult<IEnumerable<UserPermissionDto>>> GetAllUserPermissions()
@@ -452,15 +384,57 @@ namespace RfidAppApi.Controllers
         }
 
         /// <summary>
-        /// Update user permissions (Admin only)
+        /// Create/Assign permissions to user
         /// </summary>
         /// <param name="userId">User ID</param>
-        /// <param name="permissions">New permissions</param>
+        /// <param name="permissions">Permission details</param>
+        /// <returns>Success status</returns>
+        [HttpPost("users/{userId}/permissions")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(404)]
+        public async Task<ActionResult> CreateUserPermissions(int userId, [FromBody] List<UserPermissionCreateDto> permissions)
+        {
+            try
+            {
+                var adminUserId = GetCurrentUserId();
+                if (!await IsAdminAsync(adminUserId))
+                {
+                    return Forbid("Only admins can assign permissions.");
+                }
+
+                if (!await _adminService.CanUserAccessUserAsync(adminUserId, userId))
+                {
+                    return Forbid("Access denied to this user.");
+                }
+
+                var result = await _adminService.UpdateUserPermissionsAsync(userId, permissions, adminUserId);
+                
+                if (!result)
+                {
+                    return BadRequest(new { message = "Failed to assign permissions." });
+                }
+
+                return Ok(new { message = "Permissions assigned successfully." });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred while assigning permissions.", error = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Update user permissions
+        /// </summary>
+        /// <param name="userId">User ID</param>
+        /// <param name="permissions">Updated permission details</param>
         /// <returns>Success status</returns>
         [HttpPut("users/{userId}/permissions")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(401)]
+        [ProducesResponseType(404)]
         public async Task<ActionResult> UpdateUserPermissions(int userId, [FromBody] List<UserPermissionCreateDto> permissions)
         {
             try
@@ -469,6 +443,11 @@ namespace RfidAppApi.Controllers
                 if (!await IsAdminAsync(adminUserId))
                 {
                     return Forbid("Only admins can update permissions.");
+                }
+
+                if (!await _adminService.CanUserAccessUserAsync(adminUserId, userId))
+                {
+                    return Forbid("Access denied to this user.");
                 }
 
                 var result = await _adminService.UpdateUserPermissionsAsync(userId, permissions, adminUserId);
@@ -487,7 +466,86 @@ namespace RfidAppApi.Controllers
         }
 
         /// <summary>
-        /// Bulk update permissions for multiple users (Admin only)
+        /// Remove all permissions from user
+        /// </summary>
+        /// <param name="userId">User ID</param>
+        /// <returns>Success status</returns>
+        [HttpDelete("users/{userId}/permissions")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(404)]
+        public async Task<ActionResult> RemoveUserPermissions(int userId)
+        {
+            try
+            {
+                var adminUserId = GetCurrentUserId();
+                if (!await IsAdminAsync(adminUserId))
+                {
+                    return Forbid("Only admins can remove permissions.");
+                }
+
+                if (!await _adminService.CanUserAccessUserAsync(adminUserId, userId))
+                {
+                    return Forbid("Access denied to this user.");
+                }
+
+                var result = await _adminService.RemoveUserPermissionsAsync(userId, adminUserId);
+                
+                if (!result)
+                {
+                    return BadRequest(new { message = "Failed to remove permissions." });
+                }
+
+                return Ok(new { message = "All permissions removed successfully." });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred while removing permissions.", error = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Remove specific permission from user
+        /// </summary>
+        /// <param name="userId">User ID</param>
+        /// <param name="module">Module name</param>
+        /// <returns>Success status</returns>
+        [HttpDelete("users/{userId}/permissions/{module}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(404)]
+        public async Task<ActionResult> RemoveUserPermission(int userId, string module)
+        {
+            try
+            {
+                var adminUserId = GetCurrentUserId();
+                if (!await IsAdminAsync(adminUserId))
+                {
+                    return Forbid("Only admins can remove permissions.");
+                }
+
+                if (!await _adminService.CanUserAccessUserAsync(adminUserId, userId))
+                {
+                    return Forbid("Access denied to this user.");
+                }
+
+                var result = await _adminService.RemoveUserPermissionAsync(userId, module, adminUserId);
+                
+                if (!result)
+                {
+                    return BadRequest(new { message = "Failed to remove permission." });
+                }
+
+                return Ok(new { message = $"Permission for module '{module}' removed successfully." });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred while removing permission.", error = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Bulk update permissions for multiple users
         /// </summary>
         /// <param name="bulkUpdate">Bulk permission update details</param>
         /// <returns>Success status</returns>
@@ -517,6 +575,106 @@ namespace RfidAppApi.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, new { message = "An error occurred while updating permissions.", error = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Bulk remove permissions for multiple users
+        /// </summary>
+        /// <param name="bulkRemove">Bulk permission removal details</param>
+        /// <returns>Success status</returns>
+        [HttpPost("permissions/bulk-remove")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
+        public async Task<ActionResult> BulkRemovePermissions([FromBody] BulkPermissionRemoveDto bulkRemove)
+        {
+            try
+            {
+                var adminUserId = GetCurrentUserId();
+                if (!await IsAdminAsync(adminUserId))
+                {
+                    return Forbid("Only admins can remove permissions.");
+                }
+
+                var result = await _adminService.BulkRemovePermissionsAsync(bulkRemove, adminUserId);
+                
+                if (!result)
+                {
+                    return BadRequest(new { message = "Failed to remove permissions." });
+                }
+
+                return Ok(new { message = "Permissions removed successfully for all users." });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred while removing permissions.", error = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Get available permission modules
+        /// </summary>
+        /// <returns>List of available modules</returns>
+        [HttpGet("permissions/modules")]
+        [ProducesResponseType(typeof(IEnumerable<string>), 200)]
+        [ProducesResponseType(401)]
+        public async Task<ActionResult<IEnumerable<string>>> GetAvailableModules()
+        {
+            try
+            {
+                var adminUserId = GetCurrentUserId();
+                if (!await IsAdminAsync(adminUserId))
+                {
+                    return Forbid("Only admins can view available modules.");
+                }
+
+                var modules = new[]
+                {
+                    "Product",
+                    "RFID", 
+                    "Invoice",
+                    "Reports",
+                    "StockTransfer",
+                    "StockVerification",
+                    "ProductImage",
+                    "User",
+                    "Admin"
+                };
+
+                return Ok(modules);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred while retrieving modules.", error = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Get permission summary for user
+        /// </summary>
+        /// <param name="userId">User ID</param>
+        /// <returns>Permission summary</returns>
+        [HttpGet("users/{userId}/permissions/summary")]
+        [ProducesResponseType(typeof(UserPermissionSummaryDto), 200)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(404)]
+        public async Task<ActionResult<UserPermissionSummaryDto>> GetUserPermissionSummary(int userId)
+        {
+            try
+            {
+                var adminUserId = GetCurrentUserId();
+                if (!await _adminService.CanUserAccessUserAsync(adminUserId, userId))
+                {
+                    return Forbid("Access denied.");
+                }
+
+                var summary = await _adminService.GetUserPermissionSummaryAsync(userId);
+                return Ok(summary);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred while retrieving permission summary.", error = ex.Message });
             }
         }
 
@@ -1130,21 +1288,4 @@ namespace RfidAppApi.Controllers
         public string? Remarks { get; set; }
     }
 
-    /// <summary>
-    /// DTO for assigning permissions
-    /// </summary>
-    public class AssignPermissionsDto
-    {
-        public int UserId { get; set; }
-        public List<UserPermissionCreateDto> Permissions { get; set; } = new();
-    }
-
-    /// <summary>
-    /// DTO for updating permissions
-    /// </summary>
-    public class UpdatePermissionsDto
-    {
-        public int UserId { get; set; }
-        public List<UserPermissionCreateDto> Permissions { get; set; } = new();
-    }
 }

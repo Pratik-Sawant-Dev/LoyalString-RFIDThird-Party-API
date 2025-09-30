@@ -15,6 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
 <<<<<<< HEAD
+<<<<<<< HEAD
 [assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+fde092b951dacf2d347d74e37be8944a0beb736a")]
 =======
 <<<<<<< HEAD
@@ -23,6 +24,9 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0c65d9fb8c5662d2c491bf58314ea683fedc8f33")]
 >>>>>>> 991088ae163a6144b14b257623203eb8b682d5af
 >>>>>>> 710c4369a316ef8eadfac9be83985112c5606fef
+=======
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e12e0e689bc24673b3a8cc32795c1cb167610e9a")]
+>>>>>>> 21cd0821106f968bba08f14ad46c8c75d9a4fd09
 [assembly: System.Reflection.AssemblyProductAttribute("RfidAppApi")]
 [assembly: System.Reflection.AssemblyTitleAttribute("RfidAppApi")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

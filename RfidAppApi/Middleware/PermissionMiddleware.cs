@@ -67,6 +67,17 @@ namespace RfidAppApi.Middleware
                     return;
                 }
             }
+            else if (path.StartsWith("/api/admin/"))
+            {
+                // For admin endpoints, check if user has admin permissions
+                var hasAdminPermission = await adminService.HasPermissionAsync(userId, "Admin", "View");
+                if (!hasAdminPermission)
+                {
+                    context.Response.StatusCode = 403;
+                    await context.Response.WriteAsync("Access denied. Admin permissions required.");
+                    return;
+                }
+            }
 
             await _next(context);
         }
@@ -83,7 +94,8 @@ namespace RfidAppApi.Middleware
                 "/health",
                 "/swagger",
                 "/api/error",
-                "/api/admin" // Admin endpoints have their own authorization logic
+                "/api/admin/permissions/modules", // Get available modules
+                "/api/admin/permissions" // Get all permissions (admin only)
             };
 
             return skipPaths.Any(skip => path.StartsWith(skip));

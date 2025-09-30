@@ -194,6 +194,44 @@ namespace RfidAppApi.DTOs
     }
 
     /// <summary>
+    /// DTO for bulk user permission removal
+    /// </summary>
+    public class BulkPermissionRemoveDto
+    {
+        public List<int> UserIds { get; set; } = new List<int>();
+        public List<string> Modules { get; set; } = new List<string>();
+        public bool RemoveAll { get; set; } = false;
+    }
+
+    /// <summary>
+    /// DTO for user permission summary
+    /// </summary>
+    public class UserPermissionSummaryDto
+    {
+        public int UserId { get; set; }
+        public string UserName { get; set; } = string.Empty;
+        public string UserEmail { get; set; } = string.Empty;
+        public int TotalPermissions { get; set; }
+        public int ActivePermissions { get; set; }
+        public List<ModulePermissionSummary> ModuleSummaries { get; set; } = new List<ModulePermissionSummary>();
+    }
+
+    /// <summary>
+    /// DTO for module permission summary
+    /// </summary>
+    public class ModulePermissionSummary
+    {
+        public string Module { get; set; } = string.Empty;
+        public bool CanView { get; set; }
+        public bool CanCreate { get; set; }
+        public bool CanEdit { get; set; }
+        public bool CanDelete { get; set; }
+        public bool CanExport { get; set; }
+        public bool CanImport { get; set; }
+        public int PermissionCount { get; set; }
+    }
+
+    /// <summary>
     /// DTO for activity summary
     /// </summary>
     public class ActivitySummaryDto

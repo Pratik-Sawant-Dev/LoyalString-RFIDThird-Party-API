@@ -542,106 +542,12 @@
         }
       }
     },
-    "/api/Admin/assign-permissions": {
-      "post": {
-        "tags": [
-          "Admin"
-        ],
-        "summary": "Assign permissions to user",
-        "operationId": "Admin_AssignPermissions",
-        "requestBody": {
-          "x-name": "assignPermissionsDto",
-          "description": "Permission assignment details",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/AssignPermissionsDto"
-              }
-            }
-          },
-          "required": true,
-          "x-position": 1
-        },
-        "responses": {
-          "200": {
-            "description": "Success status"
-          },
-          "400": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/Admin/update-permissions": {
-      "put": {
-        "tags": [
-          "Admin"
-        ],
-        "summary": "Update user permissions (Admin only)",
-        "operationId": "Admin_UpdatePermissions",
-        "requestBody": {
-          "x-name": "updatePermissionsDto",
-          "description": "Permission update details",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdatePermissionsDto"
-              }
-            }
-          },
-          "required": true,
-          "x-position": 1
-        },
-        "responses": {
-          "200": {
-            "description": "Success status"
-          },
-          "400": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/Admin/user-permissions/{userId}": {
+    "/api/Admin/users/{userId}/permissions": {
       "get": {
         "tags": [
           "Admin"
         ],
-        "summary": "Get user permissions",
+        "summary": "Get user permissions by user ID",
         "operationId": "Admin_GetUserPermissions",
         "parameters": [
           {
@@ -691,49 +597,13 @@
             }
           }
         }
-      }
-    },
-    "/api/Admin/all-user-permissions": {
-      "get": {
+      },
+      "post": {
         "tags": [
           "Admin"
         ],
-        "summary": "Get all user permissions",
-        "operationId": "Admin_GetAllUserPermissions",
-        "responses": {
-          "200": {
-            "description": "All user permissions",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/UserPermissionDto"
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/Admin/users/{userId}/permissions": {
-      "put": {
-        "tags": [
-          "Admin"
-        ],
-        "summary": "Update user permissions (Admin only)",
-        "operationId": "Admin_UpdateUserPermissions",
+        "summary": "Create/Assign permissions to user",
+        "operationId": "Admin_CreateUserPermissions",
         "parameters": [
           {
             "name": "userId",
@@ -749,7 +619,7 @@
         ],
         "requestBody": {
           "x-name": "permissions",
-          "description": "New permissions",
+          "description": "Permission details",
           "content": {
             "application/json": {
               "schema": {
@@ -786,6 +656,223 @@
                 }
               }
             }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Update user permissions",
+        "operationId": "Admin_UpdateUserPermissions",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "description": "User ID",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "permissions",
+          "description": "Updated permission details",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/UserPermissionCreateDto"
+                }
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "200": {
+            "description": "Success status"
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Remove all permissions from user",
+        "operationId": "Admin_RemoveUserPermissions",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "description": "User ID",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success status"
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Admin/permissions": {
+      "get": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Get all user permissions in organization",
+        "operationId": "Admin_GetAllUserPermissions",
+        "responses": {
+          "200": {
+            "description": "All user permissions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UserPermissionDto"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Admin/users/{userId}/permissions/{module}": {
+      "delete": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Remove specific permission from user",
+        "operationId": "Admin_RemoveUserPermission",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "description": "User ID",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "module",
+            "in": "path",
+            "required": true,
+            "description": "Module name",
+            "schema": {
+              "type": "string"
+            },
+            "x-position": 2
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success status"
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
           }
         }
       }
@@ -795,7 +882,7 @@
         "tags": [
           "Admin"
         ],
-        "summary": "Bulk update permissions for multiple users (Admin only)",
+        "summary": "Bulk update permissions for multiple users",
         "operationId": "Admin_BulkUpdatePermissions",
         "requestBody": {
           "x-name": "bulkUpdate",
@@ -825,6 +912,141 @@
             }
           },
           "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Admin/permissions/bulk-remove": {
+      "post": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Bulk remove permissions for multiple users",
+        "operationId": "Admin_BulkRemovePermissions",
+        "requestBody": {
+          "x-name": "bulkRemove",
+          "description": "Bulk permission removal details",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BulkPermissionRemoveDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "Success status"
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Admin/permissions/modules": {
+      "get": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Get available permission modules",
+        "operationId": "Admin_GetAvailableModules",
+        "responses": {
+          "200": {
+            "description": "List of available modules",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Admin/users/{userId}/permissions/summary": {
+      "get": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Get permission summary for user",
+        "operationId": "Admin_GetUserPermissionSummary",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "description": "User ID",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Permission summary",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserPermissionSummaryDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
             "description": "",
             "content": {
               "application/json": {
@@ -10134,40 +10356,6 @@
           }
         }
       },
-      "AssignPermissionsDto": {
-        "type": "object",
-        "description": "DTO for assigning permissions",
-        "additionalProperties": false,
-        "properties": {
-          "userId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "permissions": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/UserPermissionCreateDto"
-            }
-          }
-        }
-      },
-      "UpdatePermissionsDto": {
-        "type": "object",
-        "description": "DTO for updating permissions",
-        "additionalProperties": false,
-        "properties": {
-          "userId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "permissions": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/UserPermissionCreateDto"
-            }
-          }
-        }
-      },
       "BulkPermissionUpdateDto": {
         "type": "object",
         "description": "DTO for bulk user permission update",
@@ -10185,6 +10373,92 @@
             "items": {
               "$ref": "#/components/schemas/UserPermissionCreateDto"
             }
+          }
+        }
+      },
+      "BulkPermissionRemoveDto": {
+        "type": "object",
+        "description": "DTO for bulk user permission removal",
+        "additionalProperties": false,
+        "properties": {
+          "userIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          "modules": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "removeAll": {
+            "type": "boolean"
+          }
+        }
+      },
+      "UserPermissionSummaryDto": {
+        "type": "object",
+        "description": "DTO for user permission summary",
+        "additionalProperties": false,
+        "properties": {
+          "userId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "userName": {
+            "type": "string"
+          },
+          "userEmail": {
+            "type": "string"
+          },
+          "totalPermissions": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "activePermissions": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "moduleSummaries": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ModulePermissionSummary"
+            }
+          }
+        }
+      },
+      "ModulePermissionSummary": {
+        "type": "object",
+        "description": "DTO for module permission summary",
+        "additionalProperties": false,
+        "properties": {
+          "module": {
+            "type": "string"
+          },
+          "canView": {
+            "type": "boolean"
+          },
+          "canCreate": {
+            "type": "boolean"
+          },
+          "canEdit": {
+            "type": "boolean"
+          },
+          "canDelete": {
+            "type": "boolean"
+          },
+          "canExport": {
+            "type": "boolean"
+          },
+          "canImport": {
+            "type": "boolean"
+          },
+          "permissionCount": {
+            "type": "integer",
+            "format": "int32"
           }
         }
       },

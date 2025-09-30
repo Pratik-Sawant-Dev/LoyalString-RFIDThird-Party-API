@@ -17,6 +17,14 @@ namespace RfidAppApi.Services
         Task<bool> UpdateUserPermissionsAsync(int userId, List<UserPermissionCreateDto> permissions, int adminUserId);
         Task<bool> BulkUpdatePermissionsAsync(BulkPermissionUpdateDto bulkUpdate, int adminUserId);
         Task<IEnumerable<UserPermissionDto>> GetAllUserPermissionsAsync(string clientCode);
+        
+        // Permission Removal
+        Task<bool> RemoveUserPermissionsAsync(int userId, int adminUserId);
+        Task<bool> RemoveUserPermissionAsync(int userId, string module, int adminUserId);
+        Task<bool> BulkRemovePermissionsAsync(BulkPermissionRemoveDto bulkRemove, int adminUserId);
+        
+        // Permission Analytics
+        Task<UserPermissionSummaryDto> GetUserPermissionSummaryAsync(int userId);
 
         // Activity Tracking
         Task LogActivityAsync(int userId, string clientCode, string activityType, string action, 
