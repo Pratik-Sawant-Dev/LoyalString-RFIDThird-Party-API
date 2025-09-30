@@ -73,47 +73,76 @@
             <param name="resetPasswordDto">New password</param>
             <returns>Success status</returns>
         </member>
-        <member name="M:RfidAppApi.Controllers.AdminController.AssignPermissions(RfidAppApi.Controllers.AssignPermissionsDto)">
-            <summary>
-            Assign permissions to user
-            </summary>
-            <param name="assignPermissionsDto">Permission assignment details</param>
-            <returns>Success status</returns>
-        </member>
-        <member name="M:RfidAppApi.Controllers.AdminController.UpdatePermissions(RfidAppApi.Controllers.UpdatePermissionsDto)">
-            <summary>
-            Update user permissions (Admin only)
-            </summary>
-            <param name="updatePermissionsDto">Permission update details</param>
-            <returns>Success status</returns>
-        </member>
         <member name="M:RfidAppApi.Controllers.AdminController.GetUserPermissions(System.Int32)">
             <summary>
-            Get user permissions
+            Get user permissions by user ID
             </summary>
             <param name="userId">User ID</param>
             <returns>User permissions</returns>
         </member>
         <member name="M:RfidAppApi.Controllers.AdminController.GetAllUserPermissions">
             <summary>
-            Get all user permissions
+            Get all user permissions in organization
             </summary>
             <returns>All user permissions</returns>
         </member>
-        <member name="M:RfidAppApi.Controllers.AdminController.UpdateUserPermissions(System.Int32,System.Collections.Generic.List{RfidAppApi.DTOs.UserPermissionCreateDto})">
+        <member name="M:RfidAppApi.Controllers.AdminController.CreateUserPermissions(System.Int32,System.Collections.Generic.List{RfidAppApi.DTOs.UserPermissionCreateDto})">
             <summary>
-            Update user permissions (Admin only)
+            Create/Assign permissions to user
             </summary>
             <param name="userId">User ID</param>
-            <param name="permissions">New permissions</param>
+            <param name="permissions">Permission details</param>
+            <returns>Success status</returns>
+        </member>
+        <member name="M:RfidAppApi.Controllers.AdminController.UpdateUserPermissions(System.Int32,System.Collections.Generic.List{RfidAppApi.DTOs.UserPermissionCreateDto})">
+            <summary>
+            Update user permissions
+            </summary>
+            <param name="userId">User ID</param>
+            <param name="permissions">Updated permission details</param>
+            <returns>Success status</returns>
+        </member>
+        <member name="M:RfidAppApi.Controllers.AdminController.RemoveUserPermissions(System.Int32)">
+            <summary>
+            Remove all permissions from user
+            </summary>
+            <param name="userId">User ID</param>
+            <returns>Success status</returns>
+        </member>
+        <member name="M:RfidAppApi.Controllers.AdminController.RemoveUserPermission(System.Int32,System.String)">
+            <summary>
+            Remove specific permission from user
+            </summary>
+            <param name="userId">User ID</param>
+            <param name="module">Module name</param>
             <returns>Success status</returns>
         </member>
         <member name="M:RfidAppApi.Controllers.AdminController.BulkUpdatePermissions(RfidAppApi.DTOs.BulkPermissionUpdateDto)">
             <summary>
-            Bulk update permissions for multiple users (Admin only)
+            Bulk update permissions for multiple users
             </summary>
             <param name="bulkUpdate">Bulk permission update details</param>
             <returns>Success status</returns>
+        </member>
+        <member name="M:RfidAppApi.Controllers.AdminController.BulkRemovePermissions(RfidAppApi.DTOs.BulkPermissionRemoveDto)">
+            <summary>
+            Bulk remove permissions for multiple users
+            </summary>
+            <param name="bulkRemove">Bulk permission removal details</param>
+            <returns>Success status</returns>
+        </member>
+        <member name="M:RfidAppApi.Controllers.AdminController.GetAvailableModules">
+            <summary>
+            Get available permission modules
+            </summary>
+            <returns>List of available modules</returns>
+        </member>
+        <member name="M:RfidAppApi.Controllers.AdminController.GetUserPermissionSummary(System.Int32)">
+            <summary>
+            Get permission summary for user
+            </summary>
+            <param name="userId">User ID</param>
+            <returns>Permission summary</returns>
         </member>
         <member name="M:RfidAppApi.Controllers.AdminController.GetUserActivities(System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.Nullable{System.Int32},System.String,System.String,System.Int32,System.Int32)">
             <summary>
@@ -268,16 +297,6 @@
         <member name="T:RfidAppApi.Controllers.DeactivateUserDto">
             <summary>
             DTO for deactivating user
-            </summary>
-        </member>
-        <member name="T:RfidAppApi.Controllers.AssignPermissionsDto">
-            <summary>
-            DTO for assigning permissions
-            </summary>
-        </member>
-        <member name="T:RfidAppApi.Controllers.UpdatePermissionsDto">
-            <summary>
-            DTO for updating permissions
             </summary>
         </member>
         <member name="T:RfidAppApi.Controllers.DatabaseMigrationController">
@@ -1559,6 +1578,21 @@
         <member name="T:RfidAppApi.DTOs.BulkPermissionUpdateDto">
             <summary>
             DTO for bulk user permission update
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.BulkPermissionRemoveDto">
+            <summary>
+            DTO for bulk user permission removal
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.UserPermissionSummaryDto">
+            <summary>
+            DTO for user permission summary
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.ModulePermissionSummary">
+            <summary>
+            DTO for module permission summary
             </summary>
         </member>
         <member name="T:RfidAppApi.DTOs.ActivitySummaryDto">

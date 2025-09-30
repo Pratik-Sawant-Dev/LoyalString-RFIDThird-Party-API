@@ -2654,92 +2654,221 @@
 					"response": []
 				},
 				{
-					"name": "Assign Permissions to User",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{authToken}}"
+					"name": "🔐 Permission Management",
+					"item": [
+						{
+							"name": "Get User Permissions",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/Admin/users/{{subUserId}}/permissions",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "Admin", "users", "{{subUserId}}", "permissions"]
+								}
 							},
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"userId\": {{subUserId}},\n  \"permissions\": [\n    {\n      \"module\": \"Product\",\n      \"canView\": true,\n      \"canCreate\": true,\n      \"canEdit\": true,\n      \"canDelete\": false,\n      \"canExport\": true,\n      \"canImport\": false\n    },\n    {\n      \"module\": \"RFID\",\n      \"canView\": true,\n      \"canCreate\": true,\n      \"canEdit\": false,\n      \"canDelete\": false,\n      \"canExport\": false,\n      \"canImport\": false\n    },\n    {\n      \"module\": \"Invoice\",\n      \"canView\": true,\n      \"canCreate\": true,\n      \"canEdit\": false,\n      \"canDelete\": false,\n      \"canExport\": true,\n      \"canImport\": false\n    }\n  ]\n}"
+							"response": []
 						},
-						"url": {
-							"raw": "{{baseUrl}}/api/Admin/assign-permissions",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "Admin", "assign-permissions"]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Update User Permissions",
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{authToken}}"
+						{
+							"name": "Get All User Permissions",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/Admin/permissions",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "Admin", "permissions"]
+								}
 							},
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"userId\": {{subUserId}},\n  \"permissions\": [\n    {\n      \"module\": \"Product\",\n      \"canView\": true,\n      \"canCreate\": true,\n      \"canEdit\": true,\n      \"canDelete\": true,\n      \"canExport\": true,\n      \"canImport\": true\n    },\n    {\n      \"module\": \"RFID\",\n      \"canView\": true,\n      \"canCreate\": true,\n      \"canEdit\": true,\n      \"canDelete\": false,\n      \"canExport\": true,\n      \"canImport\": true\n    },\n    {\n      \"module\": \"Invoice\",\n      \"canView\": true,\n      \"canCreate\": true,\n      \"canEdit\": true,\n      \"canDelete\": false,\n      \"canExport\": true,\n      \"canImport\": false\n    }\n  ]\n}"
+							"response": []
 						},
-						"url": {
-							"raw": "{{baseUrl}}/api/Admin/update-permissions",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "Admin", "update-permissions"]
+						{
+							"name": "Create/Assign Permissions",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "[\n  {\n    \"module\": \"Product\",\n    \"canView\": true,\n    \"canCreate\": true,\n    \"canEdit\": true,\n    \"canDelete\": false,\n    \"canExport\": true,\n    \"canImport\": false\n  },\n  {\n    \"module\": \"RFID\",\n    \"canView\": true,\n    \"canCreate\": true,\n    \"canEdit\": false,\n    \"canDelete\": false,\n    \"canExport\": false,\n    \"canImport\": false\n  },\n  {\n    \"module\": \"Invoice\",\n    \"canView\": true,\n    \"canCreate\": true,\n    \"canEdit\": false,\n    \"canDelete\": false,\n    \"canExport\": true,\n    \"canImport\": false\n  }\n]"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/Admin/users/{{subUserId}}/permissions",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "Admin", "users", "{{subUserId}}", "permissions"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update User Permissions",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "[\n  {\n    \"module\": \"Product\",\n    \"canView\": true,\n    \"canCreate\": true,\n    \"canEdit\": true,\n    \"canDelete\": true,\n    \"canExport\": true,\n    \"canImport\": true\n  },\n  {\n    \"module\": \"RFID\",\n    \"canView\": true,\n    \"canCreate\": true,\n    \"canEdit\": true,\n    \"canDelete\": false,\n    \"canExport\": true,\n    \"canImport\": true\n  },\n  {\n    \"module\": \"Invoice\",\n    \"canView\": true,\n    \"canCreate\": true,\n    \"canEdit\": true,\n    \"canDelete\": false,\n    \"canExport\": true,\n    \"canImport\": false\n  }\n]"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/Admin/users/{{subUserId}}/permissions",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "Admin", "users", "{{subUserId}}", "permissions"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Remove All User Permissions",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/Admin/users/{{subUserId}}/permissions",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "Admin", "users", "{{subUserId}}", "permissions"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Remove Specific Permission",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/Admin/users/{{subUserId}}/permissions/Product",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "Admin", "users", "{{subUserId}}", "permissions", "Product"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Bulk Update Permissions",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"userIds\": [{{subUserId}}, {{adminUserId}}],\n  \"permissions\": [\n    {\n      \"module\": \"Product\",\n      \"canView\": true,\n      \"canCreate\": true,\n      \"canEdit\": true,\n      \"canDelete\": false,\n      \"canExport\": true,\n      \"canImport\": false\n    },\n    {\n      \"module\": \"RFID\",\n      \"canView\": true,\n      \"canCreate\": false,\n      \"canEdit\": false,\n      \"canDelete\": false,\n      \"canExport\": false,\n      \"canImport\": false\n    }\n  ]\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/Admin/permissions/bulk-update",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "Admin", "permissions", "bulk-update"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Bulk Remove Permissions",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"userIds\": [{{subUserId}}, {{adminUserId}}],\n  \"modules\": [\"Product\", \"RFID\"],\n  \"removeAll\": false\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/Admin/permissions/bulk-remove",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "Admin", "permissions", "bulk-remove"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Available Modules",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/Admin/permissions/modules",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "Admin", "permissions", "modules"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get User Permission Summary",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/Admin/users/{{subUserId}}/permissions/summary",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "Admin", "users", "{{subUserId}}", "permissions", "summary"]
+								}
+							},
+							"response": []
 						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get User Permissions",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{authToken}}"
-							}
-						],
-						"url": {
-							"raw": "{{baseUrl}}/api/Admin/user-permissions/{{subUserId}}",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "Admin", "user-permissions", "{{subUserId}}"]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get All User Permissions",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{authToken}}"
-							}
-						],
-						"url": {
-							"raw": "{{baseUrl}}/api/Admin/all-user-permissions",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "Admin", "all-user-permissions"]
-						}
-					},
-					"response": []
+					]
 				},
 				{
 					"name": "Get User Activities",
