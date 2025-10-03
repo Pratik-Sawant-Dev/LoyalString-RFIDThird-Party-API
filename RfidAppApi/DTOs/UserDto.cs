@@ -238,5 +238,38 @@ namespace RfidAppApi.DTOs
         /// When the token expires
         /// </summary>
         public DateTime ExpiresAt { get; set; }
+
+        /// <summary>
+        /// User permissions for all modules
+        /// </summary>
+        public List<UserPermissionDto> Permissions { get; set; } = new List<UserPermissionDto>();
+
+        /// <summary>
+        /// Permission summary for quick overview
+        /// </summary>
+        public UserPermissionSummaryDto PermissionSummary { get; set; } = null!;
+
+        /// <summary>
+        /// Branch and counter access information
+        /// </summary>
+        public UserAccessInfoDto AccessInfo { get; set; } = null!;
     }
+
+    /// <summary>
+    /// Data transfer object for user access information
+    /// </summary>
+    public class UserAccessInfoDto
+    {
+        public int UserId { get; set; }
+        public string UserName { get; set; } = string.Empty;
+        public bool IsAdmin { get; set; }
+        public int? BranchId { get; set; }
+        public string? BranchName { get; set; }
+        public int? CounterId { get; set; }
+        public string? CounterName { get; set; }
+        public string ClientCode { get; set; } = string.Empty;
+        public List<int> AccessibleBranchIds { get; set; } = new List<int>();
+        public List<int> AccessibleCounterIds { get; set; } = new List<int>();
+    }
+
 } 

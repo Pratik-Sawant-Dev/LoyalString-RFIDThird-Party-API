@@ -13,5 +13,6 @@ namespace RfidAppApi.Services
         Task<IEnumerable<UserDto>> GetAllUsersAsync();
         Task<bool> ValidateUserCredentialsAsync(string email, string password);
         Task<string> GenerateJwtTokenAsync(UserDto user);
+        Task<LoginResponseDto> GenerateLoginResponseAsync(UserDto user);
     }
 } 

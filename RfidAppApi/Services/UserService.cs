@@ -16,15 +16,18 @@ namespace RfidAppApi.Services
         private readonly AppDbContext _context;
         private readonly IClientDatabaseService _clientDatabaseService;
         private readonly IConfiguration _configuration;
+        private readonly IUserPermissionService _userPermissionService;
 
         public UserService(
             AppDbContext context, 
             IClientDatabaseService clientDatabaseService,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            IUserPermissionService userPermissionService)
         {
             _context = context;
             _clientDatabaseService = clientDatabaseService;
             _configuration = configuration;
+            _userPermissionService = userPermissionService;
         }
 
         public async Task<UserDto> RegisterUserAsync(CreateUserDto createUserDto)
@@ -295,6 +298,22 @@ namespace RfidAppApi.Services
 
             _context.UserActivities.Add(activity);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<LoginResponseDto> GenerateLoginResponseAsync(UserDto user)
+        {
+            var token = await GenerateJwtTokenAsync(user);
+            var permissionDetails = await _userPermissionService.GetUserPermissionDetailsAsync(user.UserId);
+
+            return new LoginResponseDto
+            {
+                Token = token,
+                User = user,
+                ExpiresAt = DateTime.UtcNow.AddHours(24),
+                Permissions = permissionDetails.Permissions.ToList(),
+                PermissionSummary = permissionDetails.PermissionSummary,
+                AccessInfo = permissionDetails.AccessInfo
+            };
         }
 
         public Task<string> GenerateJwtTokenAsync(UserDto user)

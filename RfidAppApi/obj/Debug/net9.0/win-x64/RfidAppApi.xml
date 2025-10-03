@@ -1535,6 +1535,91 @@
             <response code="404">User not found</response>
             <response code="500">Internal server error</response>
         </member>
+        <member name="T:RfidAppApi.Controllers.UserPermissionController">
+            <summary>
+            Controller for user permission management and checking
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.UserPermissionController.GetMyPermissions">
+            <summary>
+            Get current user's permissions
+            </summary>
+            <returns>List of user permissions</returns>
+            <response code="200">Permissions retrieved successfully</response>
+            <response code="401">Unauthorized</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:RfidAppApi.Controllers.UserPermissionController.GetMyPermissionSummary">
+            <summary>
+            Get current user's permission summary
+            </summary>
+            <returns>User permission summary</returns>
+            <response code="200">Permission summary retrieved successfully</response>
+            <response code="401">Unauthorized</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:RfidAppApi.Controllers.UserPermissionController.GetMyAccessInfo">
+            <summary>
+            Get current user's access information
+            </summary>
+            <returns>User access information</returns>
+            <response code="200">Access information retrieved successfully</response>
+            <response code="401">Unauthorized</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:RfidAppApi.Controllers.UserPermissionController.CheckPermission(System.String,System.String)">
+            <summary>
+            Check if current user has specific permission
+            </summary>
+            <param name="module">Module name</param>
+            <param name="action">Action (view, create, edit, delete, export, import)</param>
+            <returns>Permission check result</returns>
+            <response code="200">Permission check completed</response>
+            <response code="400">Invalid parameters</response>
+            <response code="401">Unauthorized</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:RfidAppApi.Controllers.UserPermissionController.GetAvailableModules">
+            <summary>
+            Get all available permission modules
+            </summary>
+            <returns>List of available modules</returns>
+            <response code="200">Modules retrieved successfully</response>
+            <response code="401">Unauthorized</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:RfidAppApi.Controllers.UserPermissionController.GetMyAccessibleBranches">
+            <summary>
+            Get current user's accessible branch IDs
+            </summary>
+            <returns>List of accessible branch IDs</returns>
+            <response code="200">Branch IDs retrieved successfully</response>
+            <response code="401">Unauthorized</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:RfidAppApi.Controllers.UserPermissionController.GetMyAccessibleCounters">
+            <summary>
+            Get current user's accessible counter IDs
+            </summary>
+            <returns>List of accessible counter IDs</returns>
+            <response code="200">Counter IDs retrieved successfully</response>
+            <response code="401">Unauthorized</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:RfidAppApi.Controllers.UserPermissionController.GetMyPermissionDetails">
+            <summary>
+            Get comprehensive permission details for current user
+            </summary>
+            <returns>Complete user permission details</returns>
+            <response code="200">Permission details retrieved successfully</response>
+            <response code="401">Unauthorized</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="T:RfidAppApi.Controllers.PermissionCheckResult">
+            <summary>
+            Data transfer object for permission check result
+            </summary>
+        </member>
         <member name="T:RfidAppApi.DTOs.AdminUserDto">
             <summary>
             DTO for admin user management
@@ -2460,6 +2545,26 @@
             When the token expires
             </summary>
         </member>
+        <member name="P:RfidAppApi.DTOs.LoginResponseDto.Permissions">
+            <summary>
+            User permissions for all modules
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.LoginResponseDto.PermissionSummary">
+            <summary>
+            Permission summary for quick overview
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.LoginResponseDto.AccessInfo">
+            <summary>
+            Branch and counter access information
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.UserAccessInfoDto">
+            <summary>
+            Data transfer object for user access information
+            </summary>
+        </member>
         <member name="T:RfidAppApi.DTOs.UserFriendlyCreateProductDto">
             <summary>
             User-friendly DTO for creating products with text-based master data
@@ -3091,6 +3196,73 @@
             Get stock verification details by status (matched, unmatched, missing)
             </summary>
         </member>
+        <member name="T:RfidAppApi.Services.IUserPermissionService">
+            <summary>
+            Service interface for user permission management
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Services.IUserPermissionService.GetUserPermissionsAsync(System.Int32)">
+            <summary>
+            Get user permissions by user ID
+            </summary>
+            <param name="userId">User ID</param>
+            <returns>List of user permissions</returns>
+        </member>
+        <member name="M:RfidAppApi.Services.IUserPermissionService.GetUserPermissionSummaryAsync(System.Int32)">
+            <summary>
+            Get user permission summary
+            </summary>
+            <param name="userId">User ID</param>
+            <returns>User permission summary</returns>
+        </member>
+        <member name="M:RfidAppApi.Services.IUserPermissionService.GetUserAccessInfoAsync(System.Int32)">
+            <summary>
+            Get user access information including branch and counter access
+            </summary>
+            <param name="userId">User ID</param>
+            <returns>User access information</returns>
+        </member>
+        <member name="M:RfidAppApi.Services.IUserPermissionService.HasPermissionAsync(System.Int32,System.String,System.String)">
+            <summary>
+            Check if user has specific permission for a module
+            </summary>
+            <param name="userId">User ID</param>
+            <param name="module">Module name</param>
+            <param name="action">Action (view, create, edit, delete, export, import)</param>
+            <returns>True if user has permission</returns>
+        </member>
+        <member name="M:RfidAppApi.Services.IUserPermissionService.GetAvailableModulesAsync">
+            <summary>
+            Get all available permission modules
+            </summary>
+            <returns>List of available modules</returns>
+        </member>
+        <member name="M:RfidAppApi.Services.IUserPermissionService.GetAccessibleBranchIdsAsync(System.Int32)">
+            <summary>
+            Get user's accessible branch IDs
+            </summary>
+            <param name="userId">User ID</param>
+            <returns>List of accessible branch IDs</returns>
+        </member>
+        <member name="M:RfidAppApi.Services.IUserPermissionService.GetAccessibleCounterIdsAsync(System.Int32)">
+            <summary>
+            Get user's accessible counter IDs
+            </summary>
+            <param name="userId">User ID</param>
+            <returns>List of accessible counter IDs</returns>
+        </member>
+        <member name="M:RfidAppApi.Services.IUserPermissionService.GetUserPermissionDetailsAsync(System.Int32)">
+            <summary>
+            Get comprehensive user permission details for login
+            </summary>
+            <param name="userId">User ID</param>
+            <returns>Complete user permission details</returns>
+        </member>
+        <member name="T:RfidAppApi.Services.UserPermissionDetailsDto">
+            <summary>
+            Data transfer object for comprehensive user permission details
+            </summary>
+        </member>
         <member name="T:RfidAppApi.Services.ReportingService">
             <summary>
             Comprehensive reporting service for stock tracking, sales reporting, and daily balances
@@ -3181,6 +3353,11 @@
         <member name="T:RfidAppApi.Services.ValidationResult">
             <summary>
             Result of bulk validation
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.Services.UserPermissionService">
+            <summary>
+            Service for managing user permissions and access control
             </summary>
         </member>
     </members>

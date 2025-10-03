@@ -91,14 +91,7 @@ namespace RfidAppApi.Controllers
                     return Unauthorized(new { message = "User not found." });
                 }
 
-                var token = await _userService.GenerateJwtTokenAsync(user);
-                var response = new LoginResponseDto
-                {
-                    Token = token,
-                    User = user,
-                    ExpiresAt = DateTime.UtcNow.AddHours(24)
-                };
-
+                var response = await _userService.GenerateLoginResponseAsync(user);
                 return Ok(response);
             }
             catch (Exception ex)

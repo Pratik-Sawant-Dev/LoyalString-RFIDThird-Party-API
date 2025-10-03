@@ -9969,6 +9969,322 @@
           }
         }
       }
+    },
+    "/api/UserPermission/my-permissions": {
+      "get": {
+        "tags": [
+          "UserPermission"
+        ],
+        "summary": "Get current user's permissions",
+        "operationId": "UserPermission_GetMyPermissions",
+        "responses": {
+          "200": {
+            "description": "Permissions retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UserPermissionDto"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/api/UserPermission/my-permission-summary": {
+      "get": {
+        "tags": [
+          "UserPermission"
+        ],
+        "summary": "Get current user's permission summary",
+        "operationId": "UserPermission_GetMyPermissionSummary",
+        "responses": {
+          "200": {
+            "description": "Permission summary retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserPermissionSummaryDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/api/UserPermission/my-access-info": {
+      "get": {
+        "tags": [
+          "UserPermission"
+        ],
+        "summary": "Get current user's access information",
+        "operationId": "UserPermission_GetMyAccessInfo",
+        "responses": {
+          "200": {
+            "description": "Access information retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserAccessInfoDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/api/UserPermission/check-permission": {
+      "get": {
+        "tags": [
+          "UserPermission"
+        ],
+        "summary": "Check if current user has specific permission",
+        "operationId": "UserPermission_CheckPermission",
+        "parameters": [
+          {
+            "name": "module",
+            "in": "query",
+            "description": "Module name",
+            "schema": {
+              "type": "string"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "action",
+            "in": "query",
+            "description": "Action (view, create, edit, delete, export, import)",
+            "schema": {
+              "type": "string"
+            },
+            "x-position": 2
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Permission check completed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionCheckResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/api/UserPermission/available-modules": {
+      "get": {
+        "tags": [
+          "UserPermission"
+        ],
+        "summary": "Get all available permission modules",
+        "operationId": "UserPermission_GetAvailableModules",
+        "responses": {
+          "200": {
+            "description": "Modules retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/api/UserPermission/my-accessible-branches": {
+      "get": {
+        "tags": [
+          "UserPermission"
+        ],
+        "summary": "Get current user's accessible branch IDs",
+        "operationId": "UserPermission_GetMyAccessibleBranches",
+        "responses": {
+          "200": {
+            "description": "Branch IDs retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer",
+                    "format": "int32"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/api/UserPermission/my-accessible-counters": {
+      "get": {
+        "tags": [
+          "UserPermission"
+        ],
+        "summary": "Get current user's accessible counter IDs",
+        "operationId": "UserPermission_GetMyAccessibleCounters",
+        "responses": {
+          "200": {
+            "description": "Counter IDs retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer",
+                    "format": "int32"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/api/UserPermission/my-permission-details": {
+      "get": {
+        "tags": [
+          "UserPermission"
+        ],
+        "summary": "Get comprehensive permission details for current user",
+        "operationId": "UserPermission_GetMyPermissionDetails",
+        "responses": {
+          "200": {
+            "description": "Permission details retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserPermissionDetailsDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -14384,6 +14700,81 @@
             "type": "string",
             "description": "When the token expires",
             "format": "date-time"
+          },
+          "permissions": {
+            "type": "array",
+            "description": "User permissions for all modules",
+            "items": {
+              "$ref": "#/components/schemas/UserPermissionDto"
+            }
+          },
+          "permissionSummary": {
+            "description": "Permission summary for quick overview",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/UserPermissionSummaryDto"
+              }
+            ]
+          },
+          "accessInfo": {
+            "description": "Branch and counter access information",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/UserAccessInfoDto"
+              }
+            ]
+          }
+        }
+      },
+      "UserAccessInfoDto": {
+        "type": "object",
+        "description": "Data transfer object for user access information",
+        "additionalProperties": false,
+        "properties": {
+          "userId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "userName": {
+            "type": "string"
+          },
+          "isAdmin": {
+            "type": "boolean"
+          },
+          "branchId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "branchName": {
+            "type": "string",
+            "nullable": true
+          },
+          "counterId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "counterName": {
+            "type": "string",
+            "nullable": true
+          },
+          "clientCode": {
+            "type": "string"
+          },
+          "accessibleBranchIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          "accessibleCounterIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            }
           }
         }
       },
@@ -14446,6 +14837,55 @@
             "type": "boolean",
             "description": "Whether the user is active",
             "nullable": true
+          }
+        }
+      },
+      "PermissionCheckResult": {
+        "type": "object",
+        "description": "Data transfer object for permission check result",
+        "additionalProperties": false,
+        "properties": {
+          "userId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "module": {
+            "type": "string"
+          },
+          "action": {
+            "type": "string"
+          },
+          "hasPermission": {
+            "type": "boolean"
+          },
+          "checkedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "UserPermissionDetailsDto": {
+        "type": "object",
+        "description": "Data transfer object for comprehensive user permission details",
+        "additionalProperties": false,
+        "properties": {
+          "permissions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserPermissionDto"
+            }
+          },
+          "permissionSummary": {
+            "$ref": "#/components/schemas/UserPermissionSummaryDto"
+          },
+          "accessInfo": {
+            "$ref": "#/components/schemas/UserAccessInfoDto"
+          },
+          "availableModules": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         }
       }

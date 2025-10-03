@@ -71,6 +71,7 @@ builder.Services.AddScoped<ClientDbContextFactory>();
 builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<IActivityLoggingService, ActivityLoggingService>();
 builder.Services.AddScoped<IAccessControlService, AccessControlService>();
+builder.Services.AddScoped<IUserPermissionService, UserPermissionService>();
 
 // Register Master Data Services
 builder.Services.AddScoped<IMasterDataService, MasterDataService>();
