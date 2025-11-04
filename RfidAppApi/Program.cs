@@ -76,6 +76,12 @@ builder.Services.AddScoped<IUserPermissionService, UserPermissionService>();
 // Register Master Data Services
 builder.Services.AddScoped<IMasterDataService, MasterDataService>();
 
+// Register Email Service
+builder.Services.AddScoped<IEmailService, EmailService>();
+
+// Register User Profile Service
+builder.Services.AddScoped<IUserProfileService, UserProfileService>();
+
 // Register HttpContextAccessor
 builder.Services.AddHttpContextAccessor();
 

@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace RfidAppApi.DTOs
 {
     /// <summary>
@@ -271,5 +273,205 @@ namespace RfidAppApi.DTOs
         public List<int> AccessibleBranchIds { get; set; } = new List<int>();
         public List<int> AccessibleCounterIds { get; set; } = new List<int>();
     }
+
+    /// <summary>
+    /// Data transfer object for forgot password request
+    /// </summary>
+    public class ForgotPasswordDto
+    {
+        /// <summary>
+        /// Email address of the user (required)
+        /// </summary>
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; } = string.Empty;
+    }
+
+    /// <summary>
+    /// Data transfer object for reset password request
+    /// </summary>
+    public class ResetPasswordDto
+    {
+        /// <summary>
+        /// Password reset token received from forgot password email (required)
+        /// </summary>
+        [Required]
+        public string Token { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Email address of the user (required)
+        /// </summary>
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; } = string.Empty;
+
+        /// <summary>
+        /// New password (required, minimum 6 characters)
+        /// </summary>
+        [Required]
+        [MinLength(6)]
+        public string NewPassword { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Confirm new password (required, must match NewPassword)
+        /// </summary>
+        [Required]
+        public string ConfirmPassword { get; set; } = string.Empty;
+    }
+
+    /// <summary>
+    /// Data transfer object for forgot password response
+    /// </summary>
+    public class ForgotPasswordResponseDto
+    {
+        /// <summary>
+        /// Whether the request was successful
+        /// </summary>
+        public bool Success { get; set; }
+
+        /// <summary>
+        /// Response message
+        /// </summary>
+        public string Message { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Password reset token (for testing purposes - remove in production)
+        /// </summary>
+        public string? ResetToken { get; set; }
+
+        /// <summary>
+        /// Token expiry time
+        /// </summary>
+        public DateTime? TokenExpiry { get; set; }
+    }
+
+    /// <summary>
+    /// Data transfer object for reset password response
+    /// </summary>
+    public class ResetPasswordResponseDto
+    {
+        /// <summary>
+        /// Whether the password reset was successful
+        /// </summary>
+        public bool Success { get; set; }
+
+        /// <summary>
+        /// Response message
+        /// </summary>
+        public string Message { get; set; } = string.Empty;
+    }
+
+    #region User Profile DTOs
+
+    /// <summary>
+    /// Data transfer object for updating user profile
+    /// </summary>
+    public class UpdateUserProfileDto
+    {
+        /// <summary>
+        /// Address line 1
+        /// </summary>
+        [StringLength(255)]
+        public string? AddressLine1 { get; set; }
+
+        /// <summary>
+        /// Address line 2
+        /// </summary>
+        [StringLength(255)]
+        public string? AddressLine2 { get; set; }
+
+        /// <summary>
+        /// City
+        /// </summary>
+        [StringLength(100)]
+        public string? City { get; set; }
+
+        /// <summary>
+        /// State
+        /// </summary>
+        [StringLength(100)]
+        public string? State { get; set; }
+
+        /// <summary>
+        /// Country
+        /// </summary>
+        [StringLength(100)]
+        public string? Country { get; set; }
+
+        /// <summary>
+        /// Postal/Zip code
+        /// </summary>
+        [StringLength(20)]
+        public string? PostalCode { get; set; }
+
+        /// <summary>
+        /// Landmark
+        /// </summary>
+        [StringLength(100)]
+        public string? Landmark { get; set; }
+
+        /// <summary>
+        /// Bio/Description
+        /// </summary>
+        [StringLength(500)]
+        public string? Bio { get; set; }
+
+        /// <summary>
+        /// Designation/Job title
+        /// </summary>
+        [StringLength(100)]
+        public string? Designation { get; set; }
+
+        /// <summary>
+        /// Alternate phone number
+        /// </summary>
+        [StringLength(50)]
+        public string? AlternatePhone { get; set; }
+    }
+
+    /// <summary>
+    /// Data transfer object for user profile response
+    /// </summary>
+    public class UserProfileResponseDto
+    {
+        public int UserProfileId { get; set; }
+        public int UserId { get; set; }
+        public string? ProfileImagePath { get; set; }
+        public string? ProfileImageFileName { get; set; }
+        public string? ProfileImageUrl { get; set; }
+        public string? ProfileImageContentType { get; set; }
+        public long? ProfileImageFileSize { get; set; }
+        public string? AddressLine1 { get; set; }
+        public string? AddressLine2 { get; set; }
+        public string? City { get; set; }
+        public string? State { get; set; }
+        public string? Country { get; set; }
+        public string? PostalCode { get; set; }
+        public string? Landmark { get; set; }
+        public string? Bio { get; set; }
+        public string? Designation { get; set; }
+        public string? AlternatePhone { get; set; }
+        public bool IsProfileComplete { get; set; }
+        public DateTime? ProfileCompletedOn { get; set; }
+        public DateTime CreatedOn { get; set; }
+        public DateTime? UpdatedOn { get; set; }
+        
+        // User basic info
+        public string? FullName { get; set; }
+        public string? Email { get; set; }
+        public string? MobileNumber { get; set; }
+    }
+
+    /// <summary>
+    /// Data transfer object for complete user profile (including user data)
+    /// </summary>
+    public class CompleteUserProfileDto
+    {
+        public UserProfileResponseDto? Profile { get; set; }
+        public UserDto? User { get; set; }
+        public double ProfileCompletionPercentage { get; set; }
+    }
+
+    #endregion
 
 } 

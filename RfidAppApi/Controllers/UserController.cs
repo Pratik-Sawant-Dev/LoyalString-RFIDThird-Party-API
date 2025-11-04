@@ -312,6 +312,72 @@ namespace RfidAppApi.Controllers
             }
         }
 
+        /// <summary>
+        /// Request password reset - generates a reset token and sends it via email
+        /// </summary>
+        /// <param name="forgotPasswordDto">Email address for password reset</param>
+        /// <returns>Password reset response with token (for testing)</returns>
+        /// <response code="200">Password reset request processed</response>
+        /// <response code="400">Invalid input</response>
+        /// <response code="500">Internal server error</response>
+        [HttpPost("forgot-password")]
+        [ProducesResponseType(typeof(ForgotPasswordResponseDto), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<ActionResult<ForgotPasswordResponseDto>> ForgotPassword([FromBody] ForgotPasswordDto forgotPasswordDto)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
+                var result = await _userService.ForgotPasswordAsync(forgotPasswordDto);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred while processing the password reset request.", error = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Reset password using token from forgot password email
+        /// </summary>
+        /// <param name="resetPasswordDto">Password reset details including token, email, and new password</param>
+        /// <returns>Password reset response</returns>
+        /// <response code="200">Password reset successful</response>
+        /// <response code="400">Invalid input or token expired</response>
+        /// <response code="500">Internal server error</response>
+        [HttpPost("reset-password")]
+        [ProducesResponseType(typeof(ResetPasswordResponseDto), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<ActionResult<ResetPasswordResponseDto>> ResetPassword([FromBody] ResetPasswordDto resetPasswordDto)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
+                var result = await _userService.ResetPasswordAsync(resetPasswordDto);
+                
+                if (!result.Success)
+                {
+                    return BadRequest(result);
+                }
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred while resetting the password.", error = ex.Message });
+            }
+        }
+
         #region Helper Methods
 
         private int GetCurrentUserId()

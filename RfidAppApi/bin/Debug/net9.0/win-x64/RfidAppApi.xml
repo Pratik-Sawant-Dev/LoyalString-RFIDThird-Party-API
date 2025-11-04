@@ -65,7 +65,7 @@
             <param name="deactivateUserDto">Deactivation details</param>
             <returns>Success status</returns>
         </member>
-        <member name="M:RfidAppApi.Controllers.AdminController.ResetUserPassword(System.Int32,RfidAppApi.Controllers.ResetPasswordDto)">
+        <member name="M:RfidAppApi.Controllers.AdminController.ResetUserPassword(System.Int32,RfidAppApi.Controllers.AdminResetPasswordDto)">
             <summary>
             Reset user password (Admin only)
             </summary>
@@ -284,9 +284,9 @@
             <param name="counterId">Counter ID (optional)</param>
             <returns>List of users</returns>
         </member>
-        <member name="T:RfidAppApi.Controllers.ResetPasswordDto">
+        <member name="T:RfidAppApi.Controllers.AdminResetPasswordDto">
             <summary>
-            DTO for password reset
+            DTO for admin resetting user password (different from user self-reset password flow)
             </summary>
         </member>
         <member name="T:RfidAppApi.Controllers.ActivateUserDto">
@@ -826,6 +826,31 @@
             Get stock movement by ID
             </summary>
         </member>
+        <member name="M:RfidAppApi.Controllers.ReportingController.GetStockMovementsByDateRange(System.DateTime,System.DateTime)">
+            <summary>
+            Get stock movements by date range
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ReportingController.GetStockMovementsByProduct(System.Int32)">
+            <summary>
+            Get stock movements by product
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ReportingController.GetStockMovementsByBranch(System.Int32)">
+            <summary>
+            Get stock movements by branch
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ReportingController.GetStockMovementsByCounter(System.Int32)">
+            <summary>
+            Get stock movements by counter
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ReportingController.GetStockMovementsByCategory(System.Int32)">
+            <summary>
+            Get stock movements by category
+            </summary>
+        </member>
         <member name="M:RfidAppApi.Controllers.ReportingController.GetDailyStockBalance(System.Int32,System.DateTime)">
             <summary>
             Get daily stock balance for a specific product and date
@@ -844,6 +869,16 @@
         <member name="M:RfidAppApi.Controllers.ReportingController.CalculateDailyStockBalances(System.DateTime)">
             <summary>
             Calculate daily stock balances for all products on a specific date
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ReportingController.GetDailyStockBalanceByProduct(System.Int32,System.DateTime)">
+            <summary>
+            Get daily stock balance by product and date
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ReportingController.GetDailyStockBalancesByDateRange(System.DateTime,System.DateTime)">
+            <summary>
+            Get daily stock balances by date range
             </summary>
         </member>
         <member name="M:RfidAppApi.Controllers.ReportingController.GetSalesReport(RfidAppApi.DTOs.ReportFilterDto)">
@@ -1074,6 +1109,46 @@
         <member name="M:RfidAppApi.Controllers.ReportingController.GetRfidUsagePercentage">
             <summary>
             Get RFID usage percentage
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ReportingController.ExportStockMovementsToCsv(RfidAppApi.DTOs.ReportFilterDto)">
+            <summary>
+            Export stock movements to CSV
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ReportingController.ExportStockMovementsToExcel(RfidAppApi.DTOs.ReportFilterDto)">
+            <summary>
+            Export stock movements to Excel
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ReportingController.ExportDailyBalancesToCsv(RfidAppApi.DTOs.ReportFilterDto)">
+            <summary>
+            Export daily balances to CSV
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ReportingController.ExportDailyBalancesToExcel(RfidAppApi.DTOs.ReportFilterDto)">
+            <summary>
+            Export daily balances to Excel
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ReportingController.ExportSalesReportToCsv(RfidAppApi.DTOs.ReportFilterDto)">
+            <summary>
+            Export sales report to CSV
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ReportingController.ExportSalesReportToExcel(RfidAppApi.DTOs.ReportFilterDto)">
+            <summary>
+            Export sales report to Excel
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ReportingController.ExportRfidUsageToCsv">
+            <summary>
+            Export RFID usage to CSV
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ReportingController.ExportRfidUsageToExcel">
+            <summary>
+            Export RFID usage to Excel
             </summary>
         </member>
         <member name="T:RfidAppApi.Controllers.RfidController">
@@ -1535,6 +1610,26 @@
             <response code="404">User not found</response>
             <response code="500">Internal server error</response>
         </member>
+        <member name="M:RfidAppApi.Controllers.UserController.ForgotPassword(RfidAppApi.DTOs.ForgotPasswordDto)">
+            <summary>
+            Request password reset - generates a reset token and sends it via email
+            </summary>
+            <param name="forgotPasswordDto">Email address for password reset</param>
+            <returns>Password reset response with token (for testing)</returns>
+            <response code="200">Password reset request processed</response>
+            <response code="400">Invalid input</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:RfidAppApi.Controllers.UserController.ResetPassword(RfidAppApi.DTOs.ResetPasswordDto)">
+            <summary>
+            Reset password using token from forgot password email
+            </summary>
+            <param name="resetPasswordDto">Password reset details including token, email, and new password</param>
+            <returns>Password reset response</returns>
+            <response code="200">Password reset successful</response>
+            <response code="400">Invalid input or token expired</response>
+            <response code="500">Internal server error</response>
+        </member>
         <member name="T:RfidAppApi.Controllers.UserPermissionController">
             <summary>
             Controller for user permission management and checking
@@ -1619,6 +1714,63 @@
             <summary>
             Data transfer object for permission check result
             </summary>
+        </member>
+        <member name="T:RfidAppApi.Controllers.UserProfileController">
+            <summary>
+            Controller for managing user profiles including profile images and extended address information
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.UserProfileController.UploadProfileImage(Microsoft.AspNetCore.Http.IFormFile)">
+            <summary>
+            Upload profile image
+            </summary>
+            <param name="file">Profile image file</param>
+            <returns>User profile with image</returns>
+        </member>
+        <member name="M:RfidAppApi.Controllers.UserProfileController.UpdateProfile(RfidAppApi.DTOs.UpdateUserProfileDto)">
+            <summary>
+            Update user profile information (address, bio, designation, etc.)
+            </summary>
+            <param name="updateDto">Profile update data</param>
+            <returns>Updated user profile</returns>
+        </member>
+        <member name="M:RfidAppApi.Controllers.UserProfileController.GetMyProfile">
+            <summary>
+            Get current user's profile
+            </summary>
+            <returns>User profile</returns>
+        </member>
+        <member name="M:RfidAppApi.Controllers.UserProfileController.GetCompleteProfile">
+            <summary>
+            Get complete user profile including user data and completion percentage
+            </summary>
+            <returns>Complete user profile</returns>
+        </member>
+        <member name="M:RfidAppApi.Controllers.UserProfileController.DeleteProfileImage">
+            <summary>
+            Delete profile image
+            </summary>
+            <returns>Success status</returns>
+        </member>
+        <member name="M:RfidAppApi.Controllers.UserProfileController.GetProfileCompletion">
+            <summary>
+            Get profile completion percentage
+            </summary>
+            <returns>Profile completion percentage</returns>
+        </member>
+        <member name="M:RfidAppApi.Controllers.UserProfileController.GetProfileImage(System.Int32)">
+            <summary>
+            Serve profile image
+            </summary>
+            <param name="userId">User ID</param>
+            <returns>Image file</returns>
+        </member>
+        <member name="M:RfidAppApi.Controllers.UserProfileController.GetProfileByUserId(System.Int32)">
+            <summary>
+            Get profile by user ID (Admin only - for managing sub-users)
+            </summary>
+            <param name="userId">User ID</param>
+            <returns>User profile</returns>
         </member>
         <member name="T:RfidAppApi.DTOs.AdminUserDto">
             <summary>
@@ -2565,6 +2717,146 @@
             Data transfer object for user access information
             </summary>
         </member>
+        <member name="T:RfidAppApi.DTOs.ForgotPasswordDto">
+            <summary>
+            Data transfer object for forgot password request
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.ForgotPasswordDto.Email">
+            <summary>
+            Email address of the user (required)
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.ResetPasswordDto">
+            <summary>
+            Data transfer object for reset password request
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.ResetPasswordDto.Token">
+            <summary>
+            Password reset token received from forgot password email (required)
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.ResetPasswordDto.Email">
+            <summary>
+            Email address of the user (required)
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.ResetPasswordDto.NewPassword">
+            <summary>
+            New password (required, minimum 6 characters)
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.ResetPasswordDto.ConfirmPassword">
+            <summary>
+            Confirm new password (required, must match NewPassword)
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.ForgotPasswordResponseDto">
+            <summary>
+            Data transfer object for forgot password response
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.ForgotPasswordResponseDto.Success">
+            <summary>
+            Whether the request was successful
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.ForgotPasswordResponseDto.Message">
+            <summary>
+            Response message
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.ForgotPasswordResponseDto.ResetToken">
+            <summary>
+            Password reset token (for testing purposes - remove in production)
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.ForgotPasswordResponseDto.TokenExpiry">
+            <summary>
+            Token expiry time
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.ResetPasswordResponseDto">
+            <summary>
+            Data transfer object for reset password response
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.ResetPasswordResponseDto.Success">
+            <summary>
+            Whether the password reset was successful
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.ResetPasswordResponseDto.Message">
+            <summary>
+            Response message
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.UpdateUserProfileDto">
+            <summary>
+            Data transfer object for updating user profile
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.UpdateUserProfileDto.AddressLine1">
+            <summary>
+            Address line 1
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.UpdateUserProfileDto.AddressLine2">
+            <summary>
+            Address line 2
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.UpdateUserProfileDto.City">
+            <summary>
+            City
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.UpdateUserProfileDto.State">
+            <summary>
+            State
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.UpdateUserProfileDto.Country">
+            <summary>
+            Country
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.UpdateUserProfileDto.PostalCode">
+            <summary>
+            Postal/Zip code
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.UpdateUserProfileDto.Landmark">
+            <summary>
+            Landmark
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.UpdateUserProfileDto.Bio">
+            <summary>
+            Bio/Description
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.UpdateUserProfileDto.Designation">
+            <summary>
+            Designation/Job title
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.UpdateUserProfileDto.AlternatePhone">
+            <summary>
+            Alternate phone number
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.UserProfileResponseDto">
+            <summary>
+            Data transfer object for user profile response
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.CompleteUserProfileDto">
+            <summary>
+            Data transfer object for complete user profile (including user data)
+            </summary>
+        </member>
         <member name="T:RfidAppApi.DTOs.UserFriendlyCreateProductDto">
             <summary>
             User-friendly DTO for creating products with text-based master data
@@ -2764,6 +3056,11 @@
             Model for individual items in a stock verification session
             </summary>
         </member>
+        <member name="T:RfidAppApi.Models.UserProfile">
+            <summary>
+            User profile model for storing profile images and extended address information
+            </summary>
+        </member>
         <member name="T:RfidAppApi.Services.AccessControlService">
             <summary>
             Service for managing user access control based on branch and counter assignments
@@ -2843,6 +3140,11 @@
         <member name="M:RfidAppApi.Services.DatabaseMigrationService.GetPendingMigrationsAsync(System.String)">
             <summary>
             Get pending migrations for a client
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.Services.EmailService">
+            <summary>
+            Email service implementation using SMTP
             </summary>
         </member>
         <member name="T:RfidAppApi.Services.IAccessControlService">
@@ -2951,6 +3253,31 @@
         <member name="M:RfidAppApi.Services.IDatabaseMigrationService.AddReportingTablesToAllClientsAsync">
             <summary>
             Add reporting tables to all existing client databases
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.Services.IEmailService">
+            <summary>
+            Email service interface for sending emails
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Services.IEmailService.SendWelcomeEmailAsync(System.String,System.String,System.String,System.String,System.String)">
+            <summary>
+            Send welcome email to newly registered user
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Services.IEmailService.SendUserRegistrationNotificationAsync(System.String,System.String,System.String,System.String,System.String,System.String)">
+            <summary>
+            Send notification email to admin when a new user is registered
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Services.IEmailService.SendPasswordResetEmailAsync(System.String,System.String,System.String,System.String)">
+            <summary>
+            Send password reset email
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Services.IEmailService.SendEmailAsync(System.String,System.String,System.String,System.Boolean)">
+            <summary>
+            Send generic email
             </summary>
         </member>
         <member name="M:RfidAppApi.Services.InvoiceService.GetInvoicesByCustomerAsync(System.String,System.String)">
@@ -3263,6 +3590,41 @@
             Data transfer object for comprehensive user permission details
             </summary>
         </member>
+        <member name="T:RfidAppApi.Services.IUserProfileService">
+            <summary>
+            Interface for user profile service
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Services.IUserProfileService.UploadProfileImageAsync(System.Int32,Microsoft.AspNetCore.Http.IFormFile)">
+            <summary>
+            Upload profile image for a user
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Services.IUserProfileService.UpdateProfileAsync(System.Int32,RfidAppApi.DTOs.UpdateUserProfileDto)">
+            <summary>
+            Update user profile information
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Services.IUserProfileService.GetProfileAsync(System.Int32)">
+            <summary>
+            Get user profile by user ID
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Services.IUserProfileService.GetCompleteProfileAsync(System.Int32)">
+            <summary>
+            Get complete user profile with user data
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Services.IUserProfileService.DeleteProfileImageAsync(System.Int32)">
+            <summary>
+            Delete profile image
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Services.IUserProfileService.CalculateProfileCompletionAsync(System.Int32)">
+            <summary>
+            Calculate profile completion percentage
+            </summary>
+        </member>
         <member name="T:RfidAppApi.Services.ReportingService">
             <summary>
             Comprehensive reporting service for stock tracking, sales reporting, and daily balances
@@ -3358,6 +3720,11 @@
         <member name="T:RfidAppApi.Services.UserPermissionService">
             <summary>
             Service for managing user permissions and access control
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.Services.UserProfileService">
+            <summary>
+            Service for managing user profiles including profile images and extended address information
             </summary>
         </member>
     </members>

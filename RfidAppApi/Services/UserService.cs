@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using RfidAppApi.Data;
 using RfidAppApi.DTOs;
@@ -17,17 +18,23 @@ namespace RfidAppApi.Services
         private readonly IClientDatabaseService _clientDatabaseService;
         private readonly IConfiguration _configuration;
         private readonly IUserPermissionService _userPermissionService;
+        private readonly IEmailService _emailService;
+        private readonly ILogger<UserService> _logger;
 
         public UserService(
             AppDbContext context, 
             IClientDatabaseService clientDatabaseService,
             IConfiguration configuration,
-            IUserPermissionService userPermissionService)
+            IUserPermissionService userPermissionService,
+            IEmailService emailService,
+            ILogger<UserService> logger)
         {
             _context = context;
             _clientDatabaseService = clientDatabaseService;
             _configuration = configuration;
             _userPermissionService = userPermissionService;
+            _emailService = emailService;
+            _logger = logger;
         }
 
         public async Task<UserDto> RegisterUserAsync(CreateUserDto createUserDto)
@@ -77,6 +84,38 @@ namespace RfidAppApi.Services
 
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
+
+            // Send welcome email asynchronously (don't block registration if email fails)
+            _ = Task.Run(async () =>
+            {
+                try
+                {
+                    _logger.LogInformation("Attempting to send welcome email to {Email}", user.Email);
+                    var baseUrl = _configuration["BaseUrl"] ?? "https://localhost:7107";
+                    var loginUrl = $"{baseUrl}/login";
+                    var emailSent = await _emailService.SendWelcomeEmailAsync(
+                        user.Email,
+                        user.UserName,
+                        user.FullName ?? user.UserName,
+                        user.OrganisationName,
+                        loginUrl
+                    );
+                    
+                    if (emailSent)
+                    {
+                        _logger.LogInformation("Welcome email sent successfully to {Email}", user.Email);
+                    }
+                    else
+                    {
+                        _logger.LogWarning("Failed to send welcome email to {Email}. Check SMTP configuration.", user.Email);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Log error but don't throw - email sending should not block registration
+                    _logger.LogError(ex, "Error sending welcome email to {Email}: {ErrorMessage}", user.Email, ex.Message);
+                }
+            });
 
             // Return user DTO
             return new UserDto
@@ -353,6 +392,128 @@ namespace RfidAppApi.Services
             {
                 var hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
                 return Convert.ToBase64String(hashedBytes);
+            }
+        }
+
+        public async Task<ForgotPasswordResponseDto> ForgotPasswordAsync(ForgotPasswordDto forgotPasswordDto)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == forgotPasswordDto.Email && u.IsActive);
+            
+            if (user == null)
+            {
+                // Return success message even if user doesn't exist (security best practice)
+                return new ForgotPasswordResponseDto
+                {
+                    Success = true,
+                    Message = "If an account with this email exists, a password reset link has been sent to your email."
+                };
+            }
+
+            // Generate password reset token
+            var token = GeneratePasswordResetToken();
+            var tokenExpiry = DateTime.UtcNow.AddHours(24); // Token valid for 24 hours
+
+            // Save token to user
+            user.PasswordResetToken = token;
+            user.PasswordResetTokenExpiry = tokenExpiry;
+            await _context.SaveChangesAsync();
+
+            // Log activity
+            await LogLoginActivityAsync(user.UserId, user.ClientCode);
+
+            // In production, send email with reset link
+            // For now, return token in response (remove in production)
+            return new ForgotPasswordResponseDto
+            {
+                Success = true,
+                Message = "Password reset token has been generated. Please check your email for reset instructions.",
+                ResetToken = token, // Remove this in production - only for testing
+                TokenExpiry = tokenExpiry
+            };
+        }
+
+        public async Task<ResetPasswordResponseDto> ResetPasswordAsync(ResetPasswordDto resetPasswordDto)
+        {
+            // Validate passwords match
+            if (resetPasswordDto.NewPassword != resetPasswordDto.ConfirmPassword)
+            {
+                return new ResetPasswordResponseDto
+                {
+                    Success = false,
+                    Message = "New password and confirm password do not match."
+                };
+            }
+
+            // Validate password length
+            if (resetPasswordDto.NewPassword.Length < 6)
+            {
+                return new ResetPasswordResponseDto
+                {
+                    Success = false,
+                    Message = "Password must be at least 6 characters long."
+                };
+            }
+
+            // Find user by email and token
+            var user = await _context.Users.FirstOrDefaultAsync(u => 
+                u.Email == resetPasswordDto.Email && 
+                u.PasswordResetToken == resetPasswordDto.Token &&
+                u.IsActive);
+
+            if (user == null)
+            {
+                return new ResetPasswordResponseDto
+                {
+                    Success = false,
+                    Message = "Invalid or expired reset token. Please request a new password reset."
+                };
+            }
+
+            // Check if token has expired
+            if (user.PasswordResetTokenExpiry == null || user.PasswordResetTokenExpiry < DateTime.UtcNow)
+            {
+                // Clear expired token
+                user.PasswordResetToken = null;
+                user.PasswordResetTokenExpiry = null;
+                await _context.SaveChangesAsync();
+
+                return new ResetPasswordResponseDto
+                {
+                    Success = false,
+                    Message = "Password reset token has expired. Please request a new password reset."
+                };
+            }
+
+            // Update password
+            user.PasswordHash = HashPassword(resetPasswordDto.NewPassword);
+            user.PasswordResetToken = null;
+            user.PasswordResetTokenExpiry = null;
+            await _context.SaveChangesAsync();
+
+            // Log activity
+            await LogLoginActivityAsync(user.UserId, user.ClientCode);
+
+            return new ResetPasswordResponseDto
+            {
+                Success = true,
+                Message = "Password has been reset successfully. You can now login with your new password."
+            };
+        }
+
+        private string GeneratePasswordResetToken()
+        {
+            // Generate a secure random token (32 bytes = 44 base64 chars, we'll use 43 for URL safety)
+            using (var rng = System.Security.Cryptography.RandomNumberGenerator.Create())
+            {
+                var bytes = new byte[32];
+                rng.GetBytes(bytes);
+                var token = Convert.ToBase64String(bytes)
+                    .Replace("+", "-")
+                    .Replace("/", "_")
+                    .Replace("=", "");
+                
+                // Ensure we have at least 32 characters (base64 encoding of 32 bytes gives ~43 chars)
+                return token.Length >= 32 ? token.Substring(0, 32) : token;
             }
         }
     }

@@ -1465,5 +1465,109 @@ namespace RfidAppApi.Services
         }
 
         #endregion
+
+        #region Export Methods
+
+        public async Task<byte[]> ExportStockMovementsToCsvAsync(ReportFilterDto filter, string clientCode)
+        {
+            var movements = await GetStockMovementsAsync(filter, clientCode);
+            
+            var csv = new System.Text.StringBuilder();
+            csv.AppendLine("ID,Client Code,Product ID,RFID Code,Movement Type,Quantity,Unit Price,Total Amount,Branch Name,Counter Name,Category Name,Reference Number,Reference Type,Remarks,Movement Date,Created On");
+            
+            foreach (var movement in movements)
+            {
+                csv.AppendLine($"{movement.Id},{movement.ClientCode},{movement.ProductId},{movement.RfidCode},{movement.MovementType},{movement.Quantity},{movement.UnitPrice},{movement.TotalAmount},{movement.BranchName},{movement.CounterName},{movement.CategoryName},{movement.ReferenceNumber},{movement.ReferenceType},{movement.Remarks},{movement.MovementDate:yyyy-MM-dd HH:mm:ss},{movement.CreatedOn:yyyy-MM-dd HH:mm:ss}");
+            }
+            
+            return System.Text.Encoding.UTF8.GetBytes(csv.ToString());
+        }
+
+        public async Task<byte[]> ExportStockMovementsToExcelAsync(ReportFilterDto filter, string clientCode)
+        {
+            var movements = await GetStockMovementsAsync(filter, clientCode);
+            
+            // For now, return CSV format - in a real implementation, you'd use EPPlus or similar
+            return await ExportStockMovementsToCsvAsync(filter, clientCode);
+        }
+
+        public async Task<byte[]> ExportDailyBalancesToCsvAsync(ReportFilterDto filter, string clientCode)
+        {
+            var balances = await GetDailyStockBalancesAsync(filter, clientCode);
+            
+            var csv = new System.Text.StringBuilder();
+            csv.AppendLine("ID,Client Code,Product ID,RFID Code,Item Code,Product Name,Branch Name,Counter Name,Category Name,Balance Date,Opening Quantity,Closing Quantity,Added Quantity,Sold Quantity,Returned Quantity,Transferred In,Transferred Out,Opening Value,Closing Value,Added Value,Sold Value,Returned Value,Created On");
+            
+            foreach (var balance in balances)
+            {
+                csv.AppendLine($"{balance.Id},{balance.ClientCode},{balance.ProductId},{balance.RfidCode},{balance.ItemCode},{balance.ProductName},{balance.BranchName},{balance.CounterName},{balance.CategoryName},{balance.BalanceDate:yyyy-MM-dd},{balance.OpeningQuantity},{balance.ClosingQuantity},{balance.AddedQuantity},{balance.SoldQuantity},{balance.ReturnedQuantity},{balance.TransferredInQuantity},{balance.TransferredOutQuantity},{balance.OpeningValue},{balance.ClosingValue},{balance.AddedValue},{balance.SoldValue},{balance.ReturnedValue},{balance.CreatedOn:yyyy-MM-dd HH:mm:ss}");
+            }
+            
+            return System.Text.Encoding.UTF8.GetBytes(csv.ToString());
+        }
+
+        public async Task<byte[]> ExportDailyBalancesToExcelAsync(ReportFilterDto filter, string clientCode)
+        {
+            // For now, return CSV format - in a real implementation, you'd use EPPlus or similar
+            return await ExportDailyBalancesToCsvAsync(filter, clientCode);
+        }
+
+        public async Task<byte[]> ExportSalesReportToCsvAsync(ReportFilterDto filter, string clientCode)
+        {
+            var salesReports = await GetSalesReportAsync(filter, clientCode);
+            
+            var csv = new System.Text.StringBuilder();
+            csv.AppendLine("Date,Branch Name,Counter Name,Category Name,Total Items Sold,Total Sales Amount,Total Discount Amount,Net Sales Amount,Total Invoices,Average Ticket Value");
+            
+            foreach (var report in salesReports)
+            {
+                csv.AppendLine($"{report.Date:yyyy-MM-dd},{report.BranchName},{report.CounterName},{report.CategoryName},{report.TotalItemsSold},{report.TotalSalesAmount},{report.TotalDiscountAmount},{report.NetSalesAmount},{report.TotalInvoices},{report.AverageTicketValue}");
+            }
+            
+            return System.Text.Encoding.UTF8.GetBytes(csv.ToString());
+        }
+
+        public async Task<byte[]> ExportSalesReportToExcelAsync(ReportFilterDto filter, string clientCode)
+        {
+            // For now, return CSV format - in a real implementation, you'd use EPPlus or similar
+            return await ExportSalesReportToCsvAsync(filter, clientCode);
+        }
+
+        public async Task<byte[]> ExportRfidUsageToCsvAsync(string clientCode)
+        {
+            var report = await GetRfidUsageReportAsync(clientCode);
+            
+            var csv = new System.Text.StringBuilder();
+            csv.AppendLine("Client Code,Total RFID Tags,Used RFID Tags,Unused RFID Tags,Usage Percentage,Unused Percentage,Report Date");
+            csv.AppendLine($"{report.ClientCode},{report.TotalRfidTags},{report.UsedRfidTags},{report.UnusedRfidTags},{report.UsagePercentage},{report.UnusedPercentage},{report.ReportDate:yyyy-MM-dd HH:mm:ss}");
+            
+            csv.AppendLine();
+            csv.AppendLine("Used RFID Details:");
+            csv.AppendLine("RFID Code,EPC Value,Product ID,Item Code,Product Name,Category Name,Branch Name,Counter Name,Assigned On,Unassigned On,Is Active,Created On");
+            
+            foreach (var detail in report.UsedRfidDetails)
+            {
+                csv.AppendLine($"{detail.RfidCode},{detail.EpcValue},{detail.ProductId},{detail.ItemCode},{detail.ProductName},{detail.CategoryName},{detail.BranchName},{detail.CounterName},{detail.AssignedOn:yyyy-MM-dd HH:mm:ss},{detail.UnassignedOn:yyyy-MM-dd HH:mm:ss},{detail.IsActive},{detail.CreatedOn:yyyy-MM-dd HH:mm:ss}");
+            }
+            
+            csv.AppendLine();
+            csv.AppendLine("Unused RFID Details:");
+            csv.AppendLine("RFID Code,EPC Value,Is Active,Created On");
+            
+            foreach (var detail in report.UnusedRfidDetails)
+            {
+                csv.AppendLine($"{detail.RfidCode},{detail.EpcValue},{detail.IsActive},{detail.CreatedOn:yyyy-MM-dd HH:mm:ss}");
+            }
+            
+            return System.Text.Encoding.UTF8.GetBytes(csv.ToString());
+        }
+
+        public async Task<byte[]> ExportRfidUsageToExcelAsync(string clientCode)
+        {
+            // For now, return CSV format - in a real implementation, you'd use EPPlus or similar
+            return await ExportRfidUsageToCsvAsync(clientCode);
+        }
+
+        #endregion
     }
 }

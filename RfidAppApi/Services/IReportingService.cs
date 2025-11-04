@@ -78,5 +78,15 @@ namespace RfidAppApi.Services
         Task<int> GetUsedRfidTagsCountAsync(string clientCode);
         Task<int> GetUnusedRfidTagsCountAsync(string clientCode);
         Task<decimal> GetRfidUsagePercentageAsync(string clientCode);
+
+        // Export Methods
+        Task<byte[]> ExportStockMovementsToCsvAsync(ReportFilterDto filter, string clientCode);
+        Task<byte[]> ExportStockMovementsToExcelAsync(ReportFilterDto filter, string clientCode);
+        Task<byte[]> ExportDailyBalancesToCsvAsync(ReportFilterDto filter, string clientCode);
+        Task<byte[]> ExportDailyBalancesToExcelAsync(ReportFilterDto filter, string clientCode);
+        Task<byte[]> ExportSalesReportToCsvAsync(ReportFilterDto filter, string clientCode);
+        Task<byte[]> ExportSalesReportToExcelAsync(ReportFilterDto filter, string clientCode);
+        Task<byte[]> ExportRfidUsageToCsvAsync(string clientCode);
+        Task<byte[]> ExportRfidUsageToExcelAsync(string clientCode);
     }
 }

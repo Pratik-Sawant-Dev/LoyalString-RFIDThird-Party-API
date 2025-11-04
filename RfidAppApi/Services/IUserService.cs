@@ -14,5 +14,7 @@ namespace RfidAppApi.Services
         Task<bool> ValidateUserCredentialsAsync(string email, string password);
         Task<string> GenerateJwtTokenAsync(UserDto user);
         Task<LoginResponseDto> GenerateLoginResponseAsync(UserDto user);
+        Task<ForgotPasswordResponseDto> ForgotPasswordAsync(ForgotPasswordDto forgotPasswordDto);
+        Task<ResetPasswordResponseDto> ResetPasswordAsync(ResetPasswordDto resetPasswordDto);
     }
 } 

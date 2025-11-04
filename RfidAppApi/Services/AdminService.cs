@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using RfidAppApi.Data;
 using RfidAppApi.DTOs;
 using RfidAppApi.Models;
@@ -13,12 +14,16 @@ namespace RfidAppApi.Services
         private readonly AppDbContext _context;
         private readonly IClientDatabaseService _clientDatabaseService;
         private readonly ClientDbContextFactory _clientDbContextFactory;
+        private readonly IEmailService _emailService;
+        private readonly IConfiguration _configuration;
 
-        public AdminService(AppDbContext context, IClientDatabaseService clientDatabaseService, ClientDbContextFactory clientDbContextFactory)
+        public AdminService(AppDbContext context, IClientDatabaseService clientDatabaseService, ClientDbContextFactory clientDbContextFactory, IEmailService emailService, IConfiguration configuration)
         {
             _context = context;
             _clientDatabaseService = clientDatabaseService;
             _clientDbContextFactory = clientDbContextFactory;
+            _emailService = emailService;
+            _configuration = configuration;
         }
 
         public async Task<AdminUserDto> CreateUserAsync(CreateUserByAdminDto createUserDto, int adminUserId)
@@ -120,6 +125,40 @@ namespace RfidAppApi.Services
                     await transaction.RollbackAsync();
                     throw;
                 }
+
+                // Send emails after successful user creation (non-blocking)
+                _ = Task.Run(async () =>
+                {
+                    try
+                    {
+                        var baseUrl = _configuration["BaseUrl"] ?? "https://localhost:7107";
+                        var loginUrl = $"{baseUrl}/login";
+
+                        // Send welcome email to the new user
+                        await _emailService.SendWelcomeEmailAsync(
+                            user.Email,
+                            user.UserName,
+                            user.FullName ?? user.UserName,
+                            user.OrganisationName,
+                            loginUrl
+                        );
+
+                        // Send notification email to admin
+                        await _emailService.SendUserRegistrationNotificationAsync(
+                            adminUser.Email,
+                            adminUser.FullName ?? adminUser.UserName,
+                            user.Email,
+                            user.FullName ?? user.UserName,
+                            user.UserName,
+                            user.OrganisationName
+                        );
+                    }
+                    catch (Exception ex)
+                    {
+                        // Log email errors but don't fail the user creation
+                        Console.WriteLine($"Error sending emails: {ex.Message}");
+                    }
+                });
 
                 return await GetUserByIdAsync(user.UserId, adminUserId) ?? throw new InvalidOperationException("Failed to retrieve created user.");
             }

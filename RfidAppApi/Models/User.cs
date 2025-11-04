@@ -73,6 +73,12 @@ namespace RfidAppApi.Models
         public DateTime CreatedOn { get; set; } = DateTime.UtcNow;
         public DateTime? LastLoginDate { get; set; }
 
+        // Password Reset
+        [StringLength(500)]
+        public string? PasswordResetToken { get; set; }
+        
+        public DateTime? PasswordResetTokenExpiry { get; set; }
+
         // Navigation properties
         public virtual User? AdminUser { get; set; }
     }

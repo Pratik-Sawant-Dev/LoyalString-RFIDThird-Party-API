@@ -114,6 +114,123 @@ namespace RfidAppApi.Controllers
             }
         }
 
+        /// <summary>
+        /// Get stock movements by date range
+        /// </summary>
+        [HttpGet("stock-movements/range")]
+        public async Task<ActionResult<List<StockMovementDto>>> GetStockMovementsByDateRange(
+            [FromQuery] DateTime startDate, [FromQuery] DateTime endDate)
+        {
+            try
+            {
+                var clientCode = User.FindFirst("ClientCode")?.Value;
+                if (string.IsNullOrEmpty(clientCode))
+                    return BadRequest("Client code not found in token");
+
+                var filter = new ReportFilterDto
+                {
+                    StartDate = startDate,
+                    EndDate = endDate
+                };
+
+                var movements = await _reportingService.GetStockMovementsAsync(filter, clientCode);
+                return Ok(movements);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Get stock movements by product
+        /// </summary>
+        [HttpGet("stock-movements/product/{productId}")]
+        public async Task<ActionResult<List<StockMovementDto>>> GetStockMovementsByProduct(int productId)
+        {
+            try
+            {
+                var clientCode = User.FindFirst("ClientCode")?.Value;
+                if (string.IsNullOrEmpty(clientCode))
+                    return BadRequest("Client code not found in token");
+
+                var filter = new ReportFilterDto();
+                var movements = await _reportingService.GetStockMovementsAsync(filter, clientCode);
+                var productMovements = movements.Where(m => m.ProductId == productId).ToList();
+                return Ok(productMovements);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Get stock movements by branch
+        /// </summary>
+        [HttpGet("stock-movements/branch/{branchId}")]
+        public async Task<ActionResult<List<StockMovementDto>>> GetStockMovementsByBranch(int branchId)
+        {
+            try
+            {
+                var clientCode = User.FindFirst("ClientCode")?.Value;
+                if (string.IsNullOrEmpty(clientCode))
+                    return BadRequest("Client code not found in token");
+
+                var filter = new ReportFilterDto { BranchId = branchId };
+                var movements = await _reportingService.GetStockMovementsAsync(filter, clientCode);
+                return Ok(movements);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Get stock movements by counter
+        /// </summary>
+        [HttpGet("stock-movements/counter/{counterId}")]
+        public async Task<ActionResult<List<StockMovementDto>>> GetStockMovementsByCounter(int counterId)
+        {
+            try
+            {
+                var clientCode = User.FindFirst("ClientCode")?.Value;
+                if (string.IsNullOrEmpty(clientCode))
+                    return BadRequest("Client code not found in token");
+
+                var filter = new ReportFilterDto { CounterId = counterId };
+                var movements = await _reportingService.GetStockMovementsAsync(filter, clientCode);
+                return Ok(movements);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Get stock movements by category
+        /// </summary>
+        [HttpGet("stock-movements/category/{categoryId}")]
+        public async Task<ActionResult<List<StockMovementDto>>> GetStockMovementsByCategory(int categoryId)
+        {
+            try
+            {
+                var clientCode = User.FindFirst("ClientCode")?.Value;
+                if (string.IsNullOrEmpty(clientCode))
+                    return BadRequest("Client code not found in token");
+
+                var filter = new ReportFilterDto { CategoryId = categoryId };
+                var movements = await _reportingService.GetStockMovementsAsync(filter, clientCode);
+                return Ok(movements);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
         #endregion
 
         #region Daily Stock Balance Endpoints
@@ -202,6 +319,59 @@ namespace RfidAppApi.Controllers
                     return BadRequest("Client code not found in token");
 
                 var balances = await _reportingService.CalculateDailyStockBalancesAsync(date, clientCode);
+                return Ok(balances);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Get daily stock balance by product and date
+        /// </summary>
+        [HttpGet("daily-balances/product/{productId}/{date:datetime}")]
+        public async Task<ActionResult<DailyStockBalanceDto>> GetDailyStockBalanceByProduct(int productId, DateTime date)
+        {
+            try
+            {
+                var clientCode = User.FindFirst("ClientCode")?.Value;
+                if (string.IsNullOrEmpty(clientCode))
+                    return BadRequest("Client code not found in token");
+
+                var balance = await _reportingService.GetDailyStockBalanceAsync(productId, date, clientCode);
+                return Ok(balance);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Get daily stock balances by date range
+        /// </summary>
+        [HttpGet("daily-balances/range")]
+        public async Task<ActionResult<List<DailyStockBalanceDto>>> GetDailyStockBalancesByDateRange(
+            [FromQuery] DateTime startDate, [FromQuery] DateTime endDate)
+        {
+            try
+            {
+                var clientCode = User.FindFirst("ClientCode")?.Value;
+                if (string.IsNullOrEmpty(clientCode))
+                    return BadRequest("Client code not found in token");
+
+                var filter = new ReportFilterDto
+                {
+                    StartDate = startDate,
+                    EndDate = endDate
+                };
+
+                var balances = await _reportingService.GetDailyStockBalancesAsync(filter, clientCode);
                 return Ok(balances);
             }
             catch (Exception ex)
@@ -1213,6 +1383,194 @@ namespace RfidAppApi.Controllers
 
                 var percentage = await _reportingService.GetRfidUsagePercentageAsync(clientCode);
                 return Ok(percentage);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        #endregion
+
+        #region Export Endpoints
+
+        /// <summary>
+        /// Export stock movements to CSV
+        /// </summary>
+        [HttpGet("export/stock-movements/csv")]
+        public async Task<ActionResult> ExportStockMovementsToCsv([FromQuery] ReportFilterDto filter)
+        {
+            try
+            {
+                var clientCode = User.FindFirst("ClientCode")?.Value;
+                if (string.IsNullOrEmpty(clientCode))
+                    return BadRequest("Client code not found in token");
+
+                var csvData = await _reportingService.ExportStockMovementsToCsvAsync(filter, clientCode);
+                var fileName = $"stock-movements-{DateTime.Now:yyyyMMdd-HHmmss}.csv";
+                
+                return File(csvData, "text/csv", fileName);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Export stock movements to Excel
+        /// </summary>
+        [HttpGet("export/stock-movements/excel")]
+        public async Task<ActionResult> ExportStockMovementsToExcel([FromQuery] ReportFilterDto filter)
+        {
+            try
+            {
+                var clientCode = User.FindFirst("ClientCode")?.Value;
+                if (string.IsNullOrEmpty(clientCode))
+                    return BadRequest("Client code not found in token");
+
+                var excelData = await _reportingService.ExportStockMovementsToExcelAsync(filter, clientCode);
+                var fileName = $"stock-movements-{DateTime.Now:yyyyMMdd-HHmmss}.xlsx";
+                
+                return File(excelData, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Export daily balances to CSV
+        /// </summary>
+        [HttpGet("export/daily-balances/csv")]
+        public async Task<ActionResult> ExportDailyBalancesToCsv([FromQuery] ReportFilterDto filter)
+        {
+            try
+            {
+                var clientCode = User.FindFirst("ClientCode")?.Value;
+                if (string.IsNullOrEmpty(clientCode))
+                    return BadRequest("Client code not found in token");
+
+                var csvData = await _reportingService.ExportDailyBalancesToCsvAsync(filter, clientCode);
+                var fileName = $"daily-balances-{DateTime.Now:yyyyMMdd-HHmmss}.csv";
+                
+                return File(csvData, "text/csv", fileName);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Export daily balances to Excel
+        /// </summary>
+        [HttpGet("export/daily-balances/excel")]
+        public async Task<ActionResult> ExportDailyBalancesToExcel([FromQuery] ReportFilterDto filter)
+        {
+            try
+            {
+                var clientCode = User.FindFirst("ClientCode")?.Value;
+                if (string.IsNullOrEmpty(clientCode))
+                    return BadRequest("Client code not found in token");
+
+                var excelData = await _reportingService.ExportDailyBalancesToExcelAsync(filter, clientCode);
+                var fileName = $"daily-balances-{DateTime.Now:yyyyMMdd-HHmmss}.xlsx";
+                
+                return File(excelData, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Export sales report to CSV
+        /// </summary>
+        [HttpGet("export/sales-report/csv")]
+        public async Task<ActionResult> ExportSalesReportToCsv([FromQuery] ReportFilterDto filter)
+        {
+            try
+            {
+                var clientCode = User.FindFirst("ClientCode")?.Value;
+                if (string.IsNullOrEmpty(clientCode))
+                    return BadRequest("Client code not found in token");
+
+                var csvData = await _reportingService.ExportSalesReportToCsvAsync(filter, clientCode);
+                var fileName = $"sales-report-{DateTime.Now:yyyyMMdd-HHmmss}.csv";
+                
+                return File(csvData, "text/csv", fileName);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Export sales report to Excel
+        /// </summary>
+        [HttpGet("export/sales-report/excel")]
+        public async Task<ActionResult> ExportSalesReportToExcel([FromQuery] ReportFilterDto filter)
+        {
+            try
+            {
+                var clientCode = User.FindFirst("ClientCode")?.Value;
+                if (string.IsNullOrEmpty(clientCode))
+                    return BadRequest("Client code not found in token");
+
+                var excelData = await _reportingService.ExportSalesReportToExcelAsync(filter, clientCode);
+                var fileName = $"sales-report-{DateTime.Now:yyyyMMdd-HHmmss}.xlsx";
+                
+                return File(excelData, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Export RFID usage to CSV
+        /// </summary>
+        [HttpGet("export/rfid-usage/csv")]
+        public async Task<ActionResult> ExportRfidUsageToCsv()
+        {
+            try
+            {
+                var clientCode = User.FindFirst("ClientCode")?.Value;
+                if (string.IsNullOrEmpty(clientCode))
+                    return BadRequest("Client code not found in token");
+
+                var csvData = await _reportingService.ExportRfidUsageToCsvAsync(clientCode);
+                var fileName = $"rfid-usage-{DateTime.Now:yyyyMMdd-HHmmss}.csv";
+                
+                return File(csvData, "text/csv", fileName);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Export RFID usage to Excel
+        /// </summary>
+        [HttpGet("export/rfid-usage/excel")]
+        public async Task<ActionResult> ExportRfidUsageToExcel()
+        {
+            try
+            {
+                var clientCode = User.FindFirst("ClientCode")?.Value;
+                if (string.IsNullOrEmpty(clientCode))
+                    return BadRequest("Client code not found in token");
+
+                var excelData = await _reportingService.ExportRfidUsageToExcelAsync(clientCode);
+                var fileName = $"rfid-usage-{DateTime.Now:yyyyMMdd-HHmmss}.xlsx";
+                
+                return File(excelData, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
             }
             catch (Exception ex)
             {

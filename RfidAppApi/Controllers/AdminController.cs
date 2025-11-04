@@ -299,7 +299,7 @@ namespace RfidAppApi.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(401)]
         [ProducesResponseType(404)]
-        public async Task<ActionResult> ResetUserPassword(int userId, [FromBody] ResetPasswordDto resetPasswordDto)
+        public async Task<ActionResult> ResetUserPassword(int userId, [FromBody] AdminResetPasswordDto resetPasswordDto)
         {
             try
             {
@@ -1261,9 +1261,9 @@ namespace RfidAppApi.Controllers
     }
 
     /// <summary>
-    /// DTO for password reset
+    /// DTO for admin resetting user password (different from user self-reset password flow)
     /// </summary>
-    public class ResetPasswordDto
+    public class AdminResetPasswordDto
     {
         public string NewPassword { get; set; } = string.Empty;
     }

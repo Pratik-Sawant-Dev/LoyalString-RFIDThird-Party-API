@@ -11,6 +11,7 @@ namespace RfidAppApi.Data
 
         // Master Database - User Management and Activity Tracking Tables
         public DbSet<User> Users { get; set; }
+        public DbSet<UserProfile> UserProfiles { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<UserRole> UserRoles { get; set; }
         public DbSet<Permission> Permissions { get; set; }
@@ -23,6 +24,7 @@ namespace RfidAppApi.Data
 
             // Configure table names to match the original design
             modelBuilder.Entity<User>().ToTable("tblUser");
+            modelBuilder.Entity<UserProfile>().ToTable("tblUserProfile");
             modelBuilder.Entity<Role>().ToTable("tblRole");
             modelBuilder.Entity<UserRole>().ToTable("tblUserRole");
             modelBuilder.Entity<Permission>().ToTable("tblPermission");
@@ -104,6 +106,18 @@ namespace RfidAppApi.Data
 
             modelBuilder.Entity<UserPermission>()
                 .HasIndex(up => new { up.UserId, up.Module })
+                .IsUnique();
+
+            // Configure UserProfile relationships
+            modelBuilder.Entity<UserProfile>()
+                .HasOne(up => up.User)
+                .WithMany()
+                .HasForeignKey(up => up.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Configure unique constraint - one profile per user
+            modelBuilder.Entity<UserProfile>()
+                .HasIndex(up => up.UserId)
                 .IsUnique();
         }
     }

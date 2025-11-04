@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\sagar\\Desktop\\ThirdPartyNewAPI_RFID\\RfidAppApi\\RfidAppApi.csproj": {}
+    "C:\\Users\\sagar\\OneDrive\\Desktop\\ThirdPartyNewAPI_RFID\\RfidAppApi\\RfidAppApi.csproj": {}
   },
   "projects": {
-    "C:\\Users\\sagar\\Desktop\\ThirdPartyNewAPI_RFID\\RfidAppApi\\RfidAppApi.csproj": {
+    "C:\\Users\\sagar\\OneDrive\\Desktop\\ThirdPartyNewAPI_RFID\\RfidAppApi\\RfidAppApi.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\sagar\\Desktop\\ThirdPartyNewAPI_RFID\\RfidAppApi\\RfidAppApi.csproj",
+        "projectUniqueName": "C:\\Users\\sagar\\OneDrive\\Desktop\\ThirdPartyNewAPI_RFID\\RfidAppApi\\RfidAppApi.csproj",
         "projectName": "RfidAppApi",
-        "projectPath": "C:\\Users\\sagar\\Desktop\\ThirdPartyNewAPI_RFID\\RfidAppApi\\RfidAppApi.csproj",
+        "projectPath": "C:\\Users\\sagar\\OneDrive\\Desktop\\ThirdPartyNewAPI_RFID\\RfidAppApi\\RfidAppApi.csproj",
         "packagesPath": "C:\\Users\\sagar\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\sagar\\Desktop\\ThirdPartyNewAPI_RFID\\RfidAppApi\\obj\\",
+        "outputPath": "C:\\Users\\sagar\\OneDrive\\Desktop\\ThirdPartyNewAPI_RFID\\RfidAppApi\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
