@@ -31,6 +31,7 @@ namespace RfidAppApi.Data
         public DbSet<StockVerification> StockVerifications { get; set; }
         public DbSet<StockVerificationDetail> StockVerificationDetails { get; set; }
         public DbSet<StockTransfer> StockTransfers { get; set; }
+        public DbSet<ProductCustomField> ProductCustomFields { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -55,6 +56,7 @@ namespace RfidAppApi.Data
             modelBuilder.Entity<StockVerification>().ToTable("tblStockVerification");
             modelBuilder.Entity<StockVerificationDetail>().ToTable("tblStockVerificationDetail");
             modelBuilder.Entity<StockTransfer>().ToTable("tblStockTransfer");
+            modelBuilder.Entity<ProductCustomField>().ToTable("tblProductCustomFields");
 
             // Configure relationships
             modelBuilder.Entity<CounterMaster>()
@@ -104,6 +106,12 @@ namespace RfidAppApi.Data
                 .WithMany()
                 .HasForeignKey(p => p.BoxId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<ProductCustomField>()
+                .HasOne(pcf => pcf.ProductDetails)
+                .WithMany(p => p.CustomFields)
+                .HasForeignKey(pcf => pcf.ProductDetailsId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<ProductRfidAssignment>()
                 .HasOne(pr => pr.Product)
@@ -254,6 +262,7 @@ namespace RfidAppApi.Data
             // Global Query Filter for Client Code
             modelBuilder.Entity<Rfid>().HasQueryFilter(e => e.ClientCode == _clientCode);
             modelBuilder.Entity<ProductDetails>().HasQueryFilter(e => e.ClientCode == _clientCode);
+            modelBuilder.Entity<ProductCustomField>().HasQueryFilter(e => e.ProductDetails.ClientCode == _clientCode);
             modelBuilder.Entity<ProductRfidAssignment>().HasQueryFilter(e => e.Product.ClientCode == _clientCode);
             modelBuilder.Entity<Invoice>().HasQueryFilter(e => e.ClientCode == _clientCode);
             modelBuilder.Entity<InvoicePayment>().HasQueryFilter(e => e.Invoice.ClientCode == _clientCode);
@@ -621,6 +630,25 @@ namespace RfidAppApi.Data
 
             modelBuilder.Entity<StockVerificationDetail>()
                 .HasIndex(svd => new { svd.ItemCode, svd.VerificationStatus });
+
+            // Product Custom Fields - High Performance Indexes
+            modelBuilder.Entity<ProductCustomField>()
+                .HasIndex(pcf => pcf.ProductDetailsId);
+
+            modelBuilder.Entity<ProductCustomField>()
+                .HasIndex(pcf => pcf.FieldName);
+
+            modelBuilder.Entity<ProductCustomField>()
+                .HasIndex(pcf => pcf.FieldValue);
+
+            modelBuilder.Entity<ProductCustomField>()
+                .HasIndex(pcf => new { pcf.ProductDetailsId, pcf.FieldName });
+
+            modelBuilder.Entity<ProductCustomField>()
+                .HasIndex(pcf => new { pcf.FieldName, pcf.FieldValue });
+
+            modelBuilder.Entity<ProductCustomField>()
+                .HasIndex(pcf => new { pcf.ProductDetailsId, pcf.FieldName, pcf.FieldValue });
         }
     }
 } 

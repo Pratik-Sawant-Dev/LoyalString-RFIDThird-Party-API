@@ -86,5 +86,6 @@ namespace RfidAppApi.Models
         public virtual BranchMaster Branch { get; set; } = null!;
         public virtual CounterMaster Counter { get; set; } = null!;
         public virtual BoxMaster? Box { get; set; } // New navigation property for BoxMaster
+        public virtual ICollection<ProductCustomField> CustomFields { get; set; } = new List<ProductCustomField>();
     }
 } 

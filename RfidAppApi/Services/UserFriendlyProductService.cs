@@ -122,6 +122,23 @@ namespace RfidAppApi.Services
                 await context.SaveChangesAsync();
             }
 
+            // Save custom fields if provided
+            if (createDto.CustomFields != null && createDto.CustomFields.Any())
+            {
+                var customFields = createDto.CustomFields.Select((kvp, index) => new ProductCustomField
+                {
+                    ProductDetailsId = product.Id,
+                    FieldName = kvp.Key,
+                    FieldValue = kvp.Value?.ToString(),
+                    FieldType = DetermineFieldType(kvp.Value),
+                    DisplayOrder = index,
+                    CreatedOn = DateTime.UtcNow
+                }).ToList();
+                
+                context.ProductCustomFields.AddRange(customFields);
+                await context.SaveChangesAsync();
+            }
+
             // Return the created product with user-friendly response
             return await MapToUserFriendlyResponseAsync(context, product);
         }
@@ -260,6 +277,32 @@ namespace RfidAppApi.Services
             if (updateDto.Mrp.HasValue) product.Mrp = updateDto.Mrp;
             if (updateDto.ImageUrl != null) product.ImageUrl = updateDto.ImageUrl;
             if (updateDto.Status != null) product.Status = updateDto.Status;
+
+            // Update custom fields if provided
+            if (updateDto.CustomFields != null)
+            {
+                // Delete existing custom fields
+                var existingCustomFields = await context.ProductCustomFields
+                    .Where(cf => cf.ProductDetailsId == productId)
+                    .ToListAsync();
+                context.ProductCustomFields.RemoveRange(existingCustomFields);
+
+                // Add new custom fields
+                if (updateDto.CustomFields.Any())
+                {
+                    var customFields = updateDto.CustomFields.Select((kvp, index) => new ProductCustomField
+                    {
+                        ProductDetailsId = productId,
+                        FieldName = kvp.Key,
+                        FieldValue = kvp.Value?.ToString(),
+                        FieldType = DetermineFieldType(kvp.Value),
+                        DisplayOrder = index,
+                        CreatedOn = DateTime.UtcNow
+                    }).ToList();
+                    
+                    context.ProductCustomFields.AddRange(customFields);
+                }
+            }
 
             await context.SaveChangesAsync();
 
@@ -704,6 +747,7 @@ namespace RfidAppApi.Services
 
             var productsToAdd = new List<ProductDetails>();
             var rfidAssignmentsToAdd = new List<ProductRfidAssignment>();
+            var customFieldsToAdd = new List<(int productIndex, Dictionary<string, object> customFields)>();
 
             // Process each product in the batch
             foreach (var productDto in batchProducts)
@@ -763,6 +807,12 @@ namespace RfidAppApi.Services
 
                     productsToAdd.Add(product);
 
+                    // Store custom fields for later (after we get product ID)
+                    if (productDto.CustomFields != null && productDto.CustomFields.Any())
+                    {
+                        customFieldsToAdd.Add((productsToAdd.Count - 1, productDto.CustomFields));
+                    }
+
                     // Handle RFID if provided
                     var rfidCode = productDto.GetRfidCode();
                     if (!string.IsNullOrWhiteSpace(rfidCode))
@@ -810,6 +860,27 @@ namespace RfidAppApi.Services
                     await context.SaveChangesAsync();
                     
                     // Only after successful save, mark products as created and add to response
+                    // Save custom fields for products that have them
+                    foreach (var (productIndex, customFields) in customFieldsToAdd)
+                    {
+                        if (productIndex < productsToAdd.Count)
+                        {
+                            var product = productsToAdd[productIndex];
+                            var fieldsToSave = customFields.Select((kvp, index) => new ProductCustomField
+                            {
+                                ProductDetailsId = product.Id,
+                                FieldName = kvp.Key,
+                                FieldValue = kvp.Value?.ToString(),
+                                FieldType = DetermineFieldType(kvp.Value),
+                                DisplayOrder = index,
+                                CreatedOn = DateTime.UtcNow
+                            }).ToList();
+                            
+                            context.ProductCustomFields.AddRange(fieldsToSave);
+                        }
+                    }
+                    await context.SaveChangesAsync();
+
                     foreach (var product in productsToAdd)
                     {
                         response.SuccessfullyCreated++;
@@ -1433,6 +1504,18 @@ namespace RfidAppApi.Services
                 imageUrl = await _imageService.GetImageUrlAsync(primaryImage.FilePath);
             }
 
+            // Get custom fields
+            var customFields = await context.ProductCustomFields
+                .Where(cf => cf.ProductDetailsId == product.Id)
+                .OrderBy(cf => cf.DisplayOrder)
+                .Select(cf => new CustomFieldDto
+                {
+                    FieldName = cf.FieldName,
+                    FieldValue = cf.FieldValue,
+                    FieldType = cf.FieldType
+                })
+                .ToListAsync();
+
             return new UserFriendlyProductResponseDto
             {
                 Id = product.Id,
@@ -1466,8 +1549,22 @@ namespace RfidAppApi.Services
                 CounterId = product.CounterId,
                 ProductId = product.ProductId,
                 DesignId = product.DesignId,
-                PurityId = product.PurityId
+                PurityId = product.PurityId,
+                CustomFields = customFields
             };
+        }
+
+        /// <summary>
+        /// Helper method to determine field type from value
+        /// </summary>
+        private string DetermineFieldType(object? value)
+        {
+            if (value == null) return "Text";
+            if (value is bool) return "Boolean";
+            if (value is int || value is long) return "Number";
+            if (value is decimal || value is float || value is double) return "Decimal";
+            if (DateTime.TryParse(value?.ToString(), out _)) return "Date";
+            return "Text";
         }
 
         #endregion

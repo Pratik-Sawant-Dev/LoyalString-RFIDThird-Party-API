@@ -751,6 +751,36 @@
             Serve product image by file path
             </summary>
         </member>
+        <member name="T:RfidAppApi.Controllers.ProductExcelController">
+            <summary>
+            Controller for Product Excel operations (Bulk Upload and Template Download)
+            Optimized for processing 100,000+ products efficiently
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ProductExcelController.DownloadTemplate">
+            <summary>
+            Download Excel template for bulk product upload
+            </summary>
+            <returns>Excel template file</returns>
+            <response code="200">Excel template downloaded successfully</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ProductExcelController.UploadProductsFromExcel(RfidAppApi.DTOs.ProductExcelUploadDto)">
+            <summary>
+            Upload products from Excel file
+            Supports bulk upload of up to 100,000 products efficiently
+            </summary>
+            <param name="uploadDto">Excel upload request with file and options</param>
+            <returns>Upload processing results</returns>
+            <response code="200">Excel upload processed successfully</response>
+            <response code="400">Invalid request or validation errors</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ProductExcelController.GetClientCodeFromToken">
+            <summary>
+            Get client code from JWT token
+            </summary>
+        </member>
         <member name="M:RfidAppApi.Controllers.ProductImageController.UploadImage(Microsoft.AspNetCore.Http.IFormFile,RfidAppApi.DTOs.ProductImageUploadDto)">
             <summary>
             Upload a single image for a product
@@ -1860,6 +1890,41 @@
         <member name="T:RfidAppApi.DTOs.UserHierarchyItem">
             <summary>
             DTO for user hierarchy item
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.ProductExcelUploadDto">
+            <summary>
+            DTO for Product Excel upload request
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.ProductExcelUploadDto.ExcelFile">
+            <summary>
+            Excel file containing product data
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.ProductExcelUploadDto.UpdateExisting">
+            <summary>
+            Whether to update existing products (by ItemCode)
+            </summary>
+        </member>
+        <member name="P:RfidAppApi.DTOs.ProductExcelUploadDto.SkipErrors">
+            <summary>
+            Whether to skip rows with errors and continue processing
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.ProductExcelRowDto">
+            <summary>
+            DTO for individual product data from Excel row
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.ProductExcelUploadResponseDto">
+            <summary>
+            DTO for Product Excel upload response
+            </summary>
+        </member>
+        <member name="T:RfidAppApi.DTOs.ExcelErrorDto">
+            <summary>
+            DTO for Excel error details
             </summary>
         </member>
         <member name="T:RfidAppApi.DTOs.ProductImageUploadDto">
@@ -3330,6 +3395,26 @@
             DTO for invoice count by status
             </summary>
         </member>
+        <member name="T:RfidAppApi.Services.IProductExcelService">
+            <summary>
+            Service interface for Product Excel operations
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Services.IProductExcelService.GenerateExcelTemplateAsync">
+            <summary>
+            Generate Excel template for product upload
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Services.IProductExcelService.UploadProductsFromExcelAsync(RfidAppApi.DTOs.ProductExcelUploadDto,System.String)">
+            <summary>
+            Upload products from Excel file
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Services.IProductExcelService.ReadExcelFileAsync(Microsoft.AspNetCore.Http.IFormFile)">
+            <summary>
+            Read and parse Excel file to extract product data
+            </summary>
+        </member>
         <member name="T:RfidAppApi.Services.IReportingService">
             <summary>
             Interface for comprehensive reporting service
@@ -3625,6 +3710,38 @@
             Calculate profile completion percentage
             </summary>
         </member>
+        <member name="T:RfidAppApi.Services.ProductExcelService">
+            <summary>
+            Service for Product Excel operations including upload, processing, and template generation
+            Optimized for bulk processing (100k+ products)
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Services.ProductExcelService.GenerateExcelTemplateAsync">
+            <summary>
+            Generate Excel template for product upload
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Services.ProductExcelService.UploadProductsFromExcelAsync(RfidAppApi.DTOs.ProductExcelUploadDto,System.String)">
+            <summary>
+            Upload products from Excel file
+            Optimized for bulk processing
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Services.ProductExcelService.ReadExcelFileAsync(Microsoft.AspNetCore.Http.IFormFile)">
+            <summary>
+            Read and parse Excel file to extract product data
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Services.ProductExcelService.MapExcelRowToProductDto(RfidAppApi.DTOs.ProductExcelRowDto)">
+            <summary>
+            Map Excel row DTO to UserFriendlyCreateProductDto
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Services.ProductExcelService.ConvertToFloat(System.Object)">
+            <summary>
+            Helper methods for type conversion
+            </summary>
+        </member>
         <member name="T:RfidAppApi.Services.ReportingService">
             <summary>
             Comprehensive reporting service for stock tracking, sales reporting, and daily balances
@@ -3705,6 +3822,11 @@
         <member name="M:RfidAppApi.Services.UserFriendlyProductService.CreateAllMissingMasterDataAsync(RfidAppApi.Data.ClientDbContext,System.Collections.Generic.List{RfidAppApi.DTOs.UserFriendlyCreateProductDto},RfidAppApi.Services.MasterDataCache,System.String)">
             <summary>
             Creates all missing master data upfront to prevent batch conflicts
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Services.UserFriendlyProductService.DetermineFieldType(System.Object)">
+            <summary>
+            Helper method to determine field type from value
             </summary>
         </member>
         <member name="T:RfidAppApi.Services.MasterDataCache">

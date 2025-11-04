@@ -40,6 +40,9 @@ namespace RfidAppApi.DTOs
         public decimal? Mrp { get; set; }
         public string? ImageUrl { get; set; }
         public string? Status { get; set; } = "Active";
+        
+        // Custom Fields - Dictionary for flexible field names and values
+        public Dictionary<string, object>? CustomFields { get; set; }
     }
 
     /// <summary>
@@ -75,6 +78,9 @@ namespace RfidAppApi.DTOs
         public decimal? Mrp { get; set; }
         public string? ImageUrl { get; set; }
         public string? Status { get; set; }
+        
+        // Custom Fields
+        public Dictionary<string, object>? CustomFields { get; set; }
     }
 
     /// <summary>
@@ -124,6 +130,9 @@ namespace RfidAppApi.DTOs
         public int ProductId { get; set; }
         public int DesignId { get; set; }
         public int PurityId { get; set; }
+        
+        // Custom Fields
+        public List<CustomFieldDto>? CustomFields { get; set; }
     }
 
     /// <summary>

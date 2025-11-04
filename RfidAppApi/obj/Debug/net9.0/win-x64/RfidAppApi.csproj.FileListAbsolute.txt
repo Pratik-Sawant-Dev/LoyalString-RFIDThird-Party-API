@@ -361,7 +361,6 @@ C:\Users\sagar\Desktop\ThirdPartyNewAPI_RFID\RfidAppApi\obj\Debug\net9.0\win-x64
 C:\Users\sagar\Desktop\ThirdPartyNewAPI_RFID\RfidAppApi\obj\Debug\net9.0\win-x64\RfidAppApi.genruntimeconfig.cache
 C:\Users\sagar\Desktop\ThirdPartyNewAPI_RFID\RfidAppApi\obj\Debug\net9.0\win-x64\ref\RfidAppApi.dll
 C:\Users\sagar\Desktop\ThirdPartyNewAPI_RFID\RfidAppApi\obj\Debug\net9.0\win-x64\staticwebassets.upToDateCheck.txt
-C:\Users\sagar\OneDrive\Desktop\ThirdPartyNewAPI_RFID\RfidAppApi\bin\Debug\net9.0\win-x64\appsettings.Development.json
 C:\Users\sagar\OneDrive\Desktop\ThirdPartyNewAPI_RFID\RfidAppApi\bin\Debug\net9.0\win-x64\appsettings.json
 C:\Users\sagar\OneDrive\Desktop\ThirdPartyNewAPI_RFID\RfidAppApi\bin\Debug\net9.0\win-x64\RfidAppApi.staticwebassets.endpoints.json
 C:\Users\sagar\OneDrive\Desktop\ThirdPartyNewAPI_RFID\RfidAppApi\bin\Debug\net9.0\win-x64\RfidAppApi.staticwebassets.runtime.json

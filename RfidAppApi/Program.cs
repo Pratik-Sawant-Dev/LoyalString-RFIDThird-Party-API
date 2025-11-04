@@ -53,6 +53,7 @@ builder.Services.AddHealthChecks()
 // Register Services
 builder.Services.AddScoped<IRfidService, RfidService>();
 builder.Services.AddScoped<IRfidExcelService, RfidExcelService>();
+builder.Services.AddScoped<IProductExcelService, ProductExcelService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IClientDatabaseService, ClientDatabaseService>();
 builder.Services.AddScoped<IDatabaseMigrationService, DatabaseMigrationService>();

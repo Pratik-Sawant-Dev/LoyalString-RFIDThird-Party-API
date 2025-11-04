@@ -36,6 +36,16 @@ namespace RfidAppApi.DTOs
         public string? BranchName { get; set; }
         public string? CounterName { get; set; }
         public string? BoxDetails { get; set; }
+        
+        // Custom Fields
+        public List<CustomFieldDto>? CustomFields { get; set; }
+    }
+
+    public class CustomFieldDto
+    {
+        public string FieldName { get; set; } = string.Empty;
+        public string? FieldValue { get; set; }
+        public string FieldType { get; set; } = "Text";
     }
 
     public class CreateProductDetailsDto
@@ -86,5 +96,8 @@ namespace RfidAppApi.DTOs
         public decimal? Mrp { get; set; }
         public string? ImageUrl { get; set; }
         public string? Status { get; set; }
+        
+        // Custom Fields
+        public Dictionary<string, object>? CustomFields { get; set; }
     }
 } 
