@@ -4,6 +4,7 @@ using RfidAppApi.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 using System.Diagnostics;
+using System.Linq;
 
 namespace RfidAppApi.Services
 {
@@ -476,6 +477,110 @@ namespace RfidAppApi.Services
             if (value is double d) return (decimal)d;
             if (decimal.TryParse(value.ToString(), out decimal dec)) return dec;
             return null;
+        }
+
+        /// <summary>
+        /// Export all products to Excel file with all fields including custom fields
+        /// </summary>
+        public async Task<byte[]> ExportAllProductsToExcelAsync(string clientCode)
+        {
+            _logger.LogInformation("Starting product export to Excel for client: {ClientCode}", clientCode);
+
+            // Get all products
+            var products = await _productService.GetAllProductsAsync(clientCode);
+
+            using var package = new ExcelPackage();
+            var worksheet = package.Workbook.Worksheets.Add("Products");
+
+            // Headers with all fields
+            var headers = new[]
+            {
+                "Id",
+                "ItemCode",
+                "CategoryName",
+                "BranchName",
+                "CounterName",
+                "ProductName",
+                "DesignName",
+                "PurityName",
+                "RfidCode",
+                "BoxDetails",
+                "GrossWeight",
+                "StoneWeight",
+                "DiamondHeight",
+                "NetWeight",
+                "Size",
+                "StoneAmount",
+                "DiamondAmount",
+                "HallmarkAmount",
+                "MakingPerGram",
+                "MakingPercentage",
+                "MakingFixedAmount",
+                "MRP",
+                "ImageUrl",
+                "Status",
+                "CreatedOn",
+                "CustomFields (JSON)"
+            };
+
+            // Write headers
+            for (int i = 0; i < headers.Length; i++)
+            {
+                worksheet.Cells[1, i + 1].Value = headers[i];
+                worksheet.Cells[1, i + 1].Style.Font.Bold = true;
+                worksheet.Cells[1, i + 1].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                worksheet.Cells[1, i + 1].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.LightBlue);
+            }
+
+            // Write product data
+            int row = 2;
+            foreach (var product in products)
+            {
+                worksheet.Cells[row, 1].Value = product.Id;
+                worksheet.Cells[row, 2].Value = product.ItemCode;
+                worksheet.Cells[row, 3].Value = product.CategoryName;
+                worksheet.Cells[row, 4].Value = product.BranchName;
+                worksheet.Cells[row, 5].Value = product.CounterName;
+                worksheet.Cells[row, 6].Value = product.ProductName;
+                worksheet.Cells[row, 7].Value = product.DesignName;
+                worksheet.Cells[row, 8].Value = product.PurityName;
+                worksheet.Cells[row, 9].Value = product.RfidCode;
+                worksheet.Cells[row, 10].Value = product.BoxDetails;
+                worksheet.Cells[row, 11].Value = product.GrossWeight;
+                worksheet.Cells[row, 12].Value = product.StoneWeight;
+                worksheet.Cells[row, 13].Value = product.DiamondHeight;
+                worksheet.Cells[row, 14].Value = product.NetWeight;
+                worksheet.Cells[row, 15].Value = product.Size;
+                worksheet.Cells[row, 16].Value = product.StoneAmount;
+                worksheet.Cells[row, 17].Value = product.DiamondAmount;
+                worksheet.Cells[row, 18].Value = product.HallmarkAmount;
+                worksheet.Cells[row, 19].Value = product.MakingPerGram;
+                worksheet.Cells[row, 20].Value = product.MakingPercentage;
+                worksheet.Cells[row, 21].Value = product.MakingFixedAmount;
+                worksheet.Cells[row, 22].Value = product.Mrp;
+                worksheet.Cells[row, 23].Value = product.ImageUrl;
+                worksheet.Cells[row, 24].Value = product.Status;
+                worksheet.Cells[row, 25].Value = product.CreatedOn.ToString("yyyy-MM-dd HH:mm:ss");
+                
+                // Serialize custom fields to JSON
+                if (product.CustomFields != null && product.CustomFields.Any())
+                {
+                    var customFieldsDict = product.CustomFields.ToDictionary(
+                        cf => cf.FieldName,
+                        cf => cf.FieldValue
+                    );
+                    worksheet.Cells[row, 26].Value = System.Text.Json.JsonSerializer.Serialize(customFieldsDict);
+                }
+
+                row++;
+            }
+
+            // Auto-fit columns
+            worksheet.Cells[worksheet.Dimension.Address].AutoFitColumns();
+
+            _logger.LogInformation("Exported {Count} products to Excel for client: {ClientCode}", products.Count, clientCode);
+
+            return await Task.FromResult(package.GetAsByteArray());
         }
     }
 }

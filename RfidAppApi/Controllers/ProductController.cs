@@ -176,13 +176,45 @@ namespace RfidAppApi.Controllers
 
         /// <summary>
         /// Create a new product with images
+        /// Accepts form data with productData as JSON string and image files
         /// </summary>
         [HttpPost("create-with-images")]
-        public async Task<IActionResult> CreateProductWithImages([FromForm] UserFriendlyCreateProductWithImagesDto createDto, [FromForm] List<IFormFile>? images)
+        public async Task<IActionResult> CreateProductWithImages([FromForm] string? productData, [FromForm] List<IFormFile>? images)
         {
             try
             {
                 var clientCode = GetClientCodeFromToken();
+                
+                // Parse product data from JSON string
+                UserFriendlyCreateProductWithImagesDto? createDto = null;
+                if (!string.IsNullOrWhiteSpace(productData))
+                {
+                    try
+                    {
+                        createDto = System.Text.Json.JsonSerializer.Deserialize<UserFriendlyCreateProductWithImagesDto>(productData, new System.Text.Json.JsonSerializerOptions
+                        {
+                            PropertyNameCaseInsensitive = true
+                        });
+                    }
+                    catch (Exception ex)
+                    {
+                        return BadRequest(new
+                        {
+                            success = false,
+                            message = "Invalid product data format. Please provide valid JSON.",
+                            error = ex.Message
+                        });
+                    }
+                }
+
+                if (createDto == null)
+                {
+                    return BadRequest(new
+                    {
+                        success = false,
+                        message = "Product data is required. Please provide 'productData' as a JSON string in the form data."
+                    });
+                }
                 
                 // Check if user can access the specified branch and counter
                 var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
@@ -431,6 +463,37 @@ namespace RfidAppApi.Controllers
                 {
                     success = false,
                     message = "An error occurred while deleting the product",
+                    error = ex.Message
+                });
+            }
+        }
+
+        /// <summary>
+        /// Delete all products for the current client
+        /// WARNING: This will permanently delete all products, images, custom fields, and RFID assignments
+        /// </summary>
+        [HttpDelete("delete-all")]
+        public async Task<IActionResult> DeleteAllProducts()
+        {
+            try
+            {
+                var clientCode = GetClientCodeFromToken();
+                
+                var deletedCount = await _productService.DeleteAllProductsAsync(clientCode);
+                
+                return Ok(new
+                {
+                    success = true,
+                    message = $"Successfully deleted {deletedCount} product(s) and all associated data",
+                    deletedCount = deletedCount
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = "An error occurred while deleting all products",
                     error = ex.Message
                 });
             }

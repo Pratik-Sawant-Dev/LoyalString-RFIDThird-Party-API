@@ -705,9 +705,10 @@
             Create multiple products in bulk with user-friendly inputs
             </summary>
         </member>
-        <member name="M:RfidAppApi.Controllers.ProductController.CreateProductWithImages(RfidAppApi.DTOs.UserFriendlyCreateProductWithImagesDto,System.Collections.Generic.List{Microsoft.AspNetCore.Http.IFormFile})">
+        <member name="M:RfidAppApi.Controllers.ProductController.CreateProductWithImages(System.String,System.Collections.Generic.List{Microsoft.AspNetCore.Http.IFormFile})">
             <summary>
             Create a new product with images
+            Accepts form data with productData as JSON string and image files
             </summary>
         </member>
         <member name="M:RfidAppApi.Controllers.ProductController.GetProduct(System.Int32)">
@@ -734,6 +735,12 @@
         <member name="M:RfidAppApi.Controllers.ProductController.DeleteProduct(System.Int32)">
             <summary>
             Delete a product by ID
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ProductController.DeleteAllProducts">
+            <summary>
+            Delete all products for the current client
+            WARNING: This will permanently delete all products, images, custom fields, and RFID assignments
             </summary>
         </member>
         <member name="M:RfidAppApi.Controllers.ProductController.SearchProducts(System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.Nullable{System.Decimal},System.Nullable{System.Decimal})">
@@ -774,6 +781,14 @@
             <returns>Upload processing results</returns>
             <response code="200">Excel upload processed successfully</response>
             <response code="400">Invalid request or validation errors</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ProductExcelController.ExportAllProducts">
+            <summary>
+            Export all products to Excel file with all fields
+            </summary>
+            <returns>Excel file containing all products</returns>
+            <response code="200">Excel file downloaded successfully</response>
             <response code="500">Internal server error</response>
         </member>
         <member name="M:RfidAppApi.Controllers.ProductExcelController.GetClientCodeFromToken">
@@ -834,352 +849,510 @@
         <member name="T:RfidAppApi.Controllers.ReportingController">
             <summary>
             Controller for comprehensive reporting functionality
+            Provides APIs for stock movements, sales reports, stock summaries, daily balances, and RFID usage
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ReportingController.GetClientCodeFromToken">
+            <summary>
+            Get client code from JWT token
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ReportingController.ErrorResponse(System.Int32,System.String,System.Exception)">
+            <summary>
+            Standard error response
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Controllers.ReportingController.SuccessResponse(System.Object,System.String)">
+            <summary>
+            Standard success response
             </summary>
         </member>
         <member name="M:RfidAppApi.Controllers.ReportingController.CreateStockMovement(RfidAppApi.DTOs.CreateStockMovementDto)">
             <summary>
             Create a new stock movement
             </summary>
+            <param name="movementDto">Stock movement data</param>
+            <returns>Created stock movement</returns>
         </member>
         <member name="M:RfidAppApi.Controllers.ReportingController.CreateBulkStockMovements(RfidAppApi.DTOs.BulkStockMovementDto)">
             <summary>
             Create multiple stock movements in bulk
             </summary>
+            <param name="bulkDto">Bulk stock movement data</param>
+            <returns>List of created stock movements</returns>
         </member>
         <member name="M:RfidAppApi.Controllers.ReportingController.GetStockMovements(RfidAppApi.DTOs.ReportFilterDto)">
             <summary>
             Get stock movements with filters
             </summary>
+            <param name="filter">Report filter criteria</param>
+            <returns>List of stock movements</returns>
         </member>
         <member name="M:RfidAppApi.Controllers.ReportingController.GetStockMovementById(System.Int32)">
             <summary>
             Get stock movement by ID
             </summary>
+            <param name="movementId">Stock movement ID</param>
+            <returns>Stock movement details</returns>
         </member>
         <member name="M:RfidAppApi.Controllers.ReportingController.GetStockMovementsByDateRange(System.DateTime,System.DateTime)">
             <summary>
             Get stock movements by date range
             </summary>
+            <param name="startDate">Start date</param>
+            <param name="endDate">End date</param>
+            <returns>List of stock movements</returns>
         </member>
         <member name="M:RfidAppApi.Controllers.ReportingController.GetStockMovementsByProduct(System.Int32)">
             <summary>
-            Get stock movements by product
+            Get stock movements by product ID
             </summary>
+            <param name="productId">Product ID</param>
+            <returns>List of stock movements</returns>
         </member>
         <member name="M:RfidAppApi.Controllers.ReportingController.GetStockMovementsByBranch(System.Int32)">
             <summary>
-            Get stock movements by branch
+            Get stock movements by branch ID
             </summary>
+            <param name="branchId">Branch ID</param>
+            <returns>List of stock movements</returns>
         </member>
         <member name="M:RfidAppApi.Controllers.ReportingController.GetStockMovementsByCounter(System.Int32)">
             <summary>
-            Get stock movements by counter
+            Get stock movements by counter ID
             </summary>
+            <param name="counterId">Counter ID</param>
+            <returns>List of stock movements</returns>
         </member>
         <member name="M:RfidAppApi.Controllers.ReportingController.GetStockMovementsByCategory(System.Int32)">
             <summary>
-            Get stock movements by category
+            Get stock movements by category ID
             </summary>
+            <param name="categoryId">Category ID</param>
+            <returns>List of stock movements</returns>
         </member>
         <member name="M:RfidAppApi.Controllers.ReportingController.GetDailyStockBalance(System.Int32,System.DateTime)">
             <summary>
             Get daily stock balance for a specific product and date
             </summary>
+            <param name="productId">Product ID</param>
+            <param name="date">Balance date</param>
+            <returns>Daily stock balance</returns>
         </member>
         <member name="M:RfidAppApi.Controllers.ReportingController.GetDailyStockBalances(RfidAppApi.DTOs.ReportFilterDto)">
             <summary>
             Get daily stock balances with filters
             </summary>
+            <param name="filter">Report filter criteria</param>
+            <returns>List of daily stock balances</returns>
         </member>
         <member name="M:RfidAppApi.Controllers.ReportingController.CalculateDailyStockBalance(System.Int32,System.DateTime)">
             <summary>
             Calculate daily stock balance for a specific product and date
             </summary>
+            <param name="productId">Product ID</param>
+            <param name="date">Balance date</param>
+            <returns>Calculated daily stock balance</returns>
         </member>
         <member name="M:RfidAppApi.Controllers.ReportingController.CalculateDailyStockBalances(System.DateTime)">
             <summary>
             Calculate daily stock balances for all products on a specific date
             </summary>
-        </member>
-        <member name="M:RfidAppApi.Controllers.ReportingController.GetDailyStockBalanceByProduct(System.Int32,System.DateTime)">
-            <summary>
-            Get daily stock balance by product and date
-            </summary>
+            <param name="date">Balance date</param>
+            <returns>List of calculated daily stock balances</returns>
         </member>
         <member name="M:RfidAppApi.Controllers.ReportingController.GetDailyStockBalancesByDateRange(System.DateTime,System.DateTime)">
             <summary>
             Get daily stock balances by date range
             </summary>
+            <param name="startDate">Start date</param>
+            <param name="endDate">End date</param>
+            <returns>List of daily stock balances</returns>
         </member>
         <member name="M:RfidAppApi.Controllers.ReportingController.GetSalesReport(RfidAppApi.DTOs.ReportFilterDto)">
             <summary>
             Get sales report with filters
             </summary>
+            <param name="filter">Report filter criteria</param>
+            <returns>List of sales reports</returns>
         </member>
         <member name="M:RfidAppApi.Controllers.ReportingController.GetSalesReportByDate(System.DateTime)">
             <summary>
             Get sales report for a specific date
             </summary>
+            <param name="date">Report date</param>
+            <returns>Sales report</returns>
         </member>
         <member name="M:RfidAppApi.Controllers.ReportingController.GetSalesReportByDateRange(System.DateTime,System.DateTime)">
             <summary>
             Get sales report for a date range
             </summary>
+            <param name="startDate">Start date</param>
+            <param name="endDate">End date</param>
+            <returns>List of sales reports</returns>
         </member>
         <member name="M:RfidAppApi.Controllers.ReportingController.GetSalesReportByBranch(System.Int32,System.DateTime)">
             <summary>
             Get sales report for a specific branch on a date
             </summary>
+            <param name="branchId">Branch ID</param>
+            <param name="date">Report date</param>
+            <returns>Sales report</returns>
         </member>
         <member name="M:RfidAppApi.Controllers.ReportingController.GetSalesReportByCounter(System.Int32,System.DateTime)">
             <summary>
             Get sales report for a specific counter on a date
             </summary>
+            <param name="counterId">Counter ID</param>
+            <param name="date">Report date</param>
+            <returns>Sales report</returns>
         </member>
         <member name="M:RfidAppApi.Controllers.ReportingController.GetSalesReportByCategory(System.Int32,System.DateTime)">
             <summary>
             Get sales report for a specific category on a date
             </summary>
+            <param name="categoryId">Category ID</param>
+            <param name="date">Report date</param>
+            <returns>Sales report</returns>
         </member>
         <member name="M:RfidAppApi.Controllers.ReportingController.GetStockSummaryReport(RfidAppApi.DTOs.ReportFilterDto)">
             <summary>
             Get stock summary report with filters
             </summary>
+            <param name="filter">Report filter criteria</param>
+            <returns>List of stock summary reports</returns>
         </member>
         <member name="M:RfidAppApi.Controllers.ReportingController.GetStockSummaryByDate(System.DateTime)">
             <summary>
             Get stock summary for a specific date
             </summary>
+            <param name="date">Report date</param>
+            <returns>Stock summary report</returns>
         </member>
         <member name="M:RfidAppApi.Controllers.ReportingController.GetStockSummaryByBranch(System.Int32,System.DateTime)">
             <summary>
             Get stock summary for a specific branch on a date
             </summary>
+            <param name="branchId">Branch ID</param>
+            <param name="date">Report date</param>
+            <returns>Stock summary report</returns>
         </member>
         <member name="M:RfidAppApi.Controllers.ReportingController.GetStockSummaryByCounter(System.Int32,System.DateTime)">
             <summary>
             Get stock summary for a specific counter on a date
             </summary>
+            <param name="counterId">Counter ID</param>
+            <param name="date">Report date</param>
+            <returns>Stock summary report</returns>
         </member>
         <member name="M:RfidAppApi.Controllers.ReportingController.GetStockSummaryByCategory(System.Int32,System.DateTime)">
             <summary>
             Get stock summary for a specific category on a date
             </summary>
+            <param name="categoryId">Category ID</param>
+            <param name="date">Report date</param>
+            <returns>Stock summary report</returns>
         </member>
         <member name="M:RfidAppApi.Controllers.ReportingController.GetDailyActivityReport(RfidAppApi.DTOs.ReportFilterDto)">
             <summary>
             Get daily activity report with filters
             </summary>
+            <param name="filter">Report filter criteria</param>
+            <returns>List of daily activity reports</returns>
         </member>
         <member name="M:RfidAppApi.Controllers.ReportingController.GetDailyActivityByDate(System.DateTime)">
             <summary>
             Get daily activity for a specific date
             </summary>
+            <param name="date">Report date</param>
+            <returns>Daily activity report</returns>
         </member>
         <member name="M:RfidAppApi.Controllers.ReportingController.GetDailyActivityByBranch(System.Int32,System.DateTime)">
             <summary>
             Get daily activity for a specific branch on a date
             </summary>
+            <param name="branchId">Branch ID</param>
+            <param name="date">Report date</param>
+            <returns>Daily activity report</returns>
         </member>
         <member name="M:RfidAppApi.Controllers.ReportingController.GetDailyActivityByCounter(System.Int32,System.DateTime)">
             <summary>
             Get daily activity for a specific counter on a date
             </summary>
+            <param name="counterId">Counter ID</param>
+            <param name="date">Report date</param>
+            <returns>Daily activity report</returns>
         </member>
         <member name="M:RfidAppApi.Controllers.ReportingController.GetDailyActivityByCategory(System.Int32,System.DateTime)">
             <summary>
             Get daily activity for a specific category on a date
             </summary>
+            <param name="categoryId">Category ID</param>
+            <param name="date">Report date</param>
+            <returns>Daily activity report</returns>
         </member>
         <member name="M:RfidAppApi.Controllers.ReportingController.GetReportSummary(System.DateTime)">
             <summary>
             Get report summary for a specific date
             </summary>
+            <param name="date">Report date</param>
+            <returns>Report summary</returns>
         </member>
         <member name="M:RfidAppApi.Controllers.ReportingController.GetReportSummaryByDateRange(System.DateTime,System.DateTime)">
             <summary>
             Get report summary for a date range
             </summary>
+            <param name="startDate">Start date</param>
+            <param name="endDate">End date</param>
+            <returns>Report summary</returns>
         </member>
         <member name="M:RfidAppApi.Controllers.ReportingController.GetReportSummaryByBranch(System.Int32,System.DateTime)">
             <summary>
             Get report summary for a specific branch on a date
             </summary>
+            <param name="branchId">Branch ID</param>
+            <param name="date">Report date</param>
+            <returns>Report summary</returns>
         </member>
         <member name="M:RfidAppApi.Controllers.ReportingController.GetReportSummaryByCounter(System.Int32,System.DateTime)">
             <summary>
             Get report summary for a specific counter on a date
             </summary>
+            <param name="counterId">Counter ID</param>
+            <param name="date">Report date</param>
+            <returns>Report summary</returns>
         </member>
         <member name="M:RfidAppApi.Controllers.ReportingController.GetCurrentStock(System.Int32)">
             <summary>
             Get current stock for a specific product
             </summary>
+            <param name="productId">Product ID</param>
+            <returns>Current stock quantity</returns>
         </member>
         <member name="M:RfidAppApi.Controllers.ReportingController.GetCurrentStockByBranch(System.Int32,System.Int32)">
             <summary>
             Get current stock for a specific product by branch
             </summary>
+            <param name="productId">Product ID</param>
+            <param name="branchId">Branch ID</param>
+            <returns>Current stock quantity</returns>
         </member>
         <member name="M:RfidAppApi.Controllers.ReportingController.GetCurrentStockByCounter(System.Int32,System.Int32)">
             <summary>
             Get current stock for a specific product by counter
             </summary>
+            <param name="productId">Product ID</param>
+            <param name="counterId">Counter ID</param>
+            <returns>Current stock quantity</returns>
         </member>
         <member name="M:RfidAppApi.Controllers.ReportingController.GetCurrentStockByCategory(System.Int32)">
             <summary>
             Get current stock for a specific category
             </summary>
+            <param name="categoryId">Category ID</param>
+            <returns>Current stock quantity</returns>
         </member>
         <member name="M:RfidAppApi.Controllers.ReportingController.GetCurrentStockValue(System.Int32)">
             <summary>
             Get current stock value for a specific product
             </summary>
+            <param name="productId">Product ID</param>
+            <returns>Current stock value</returns>
         </member>
         <member name="M:RfidAppApi.Controllers.ReportingController.GetCurrentStockValueByBranch(System.Int32,System.Int32)">
             <summary>
             Get current stock value for a specific product by branch
             </summary>
+            <param name="productId">Product ID</param>
+            <param name="branchId">Branch ID</param>
+            <returns>Current stock value</returns>
         </member>
         <member name="M:RfidAppApi.Controllers.ReportingController.GetCurrentStockValueByCounter(System.Int32,System.Int32)">
             <summary>
             Get current stock value for a specific product by counter
             </summary>
+            <param name="productId">Product ID</param>
+            <param name="counterId">Counter ID</param>
+            <returns>Current stock value</returns>
         </member>
         <member name="M:RfidAppApi.Controllers.ReportingController.GetCurrentStockValueByCategory(System.Int32)">
             <summary>
             Get current stock value for a specific category
             </summary>
+            <param name="categoryId">Category ID</param>
+            <returns>Current stock value</returns>
         </member>
         <member name="M:RfidAppApi.Controllers.ReportingController.ProcessDailyStockBalances(System.DateTime)">
             <summary>
             Process daily stock balances for a specific date
             </summary>
+            <param name="date">Date to process</param>
+            <returns>Processing result</returns>
         </member>
         <member name="M:RfidAppApi.Controllers.ReportingController.ProcessAllDailyStockBalances(System.DateTime,System.DateTime)">
             <summary>
             Process daily stock balances for a date range
             </summary>
+            <param name="startDate">Start date</param>
+            <param name="endDate">End date</param>
+            <returns>Processing result</returns>
         </member>
         <member name="M:RfidAppApi.Controllers.ReportingController.RecalculateStockBalances(System.DateTime,System.DateTime)">
             <summary>
             Recalculate stock balances for a date range
             </summary>
+            <param name="startDate">Start date</param>
+            <param name="endDate">End date</param>
+            <returns>Recalculation result</returns>
         </member>
         <member name="M:RfidAppApi.Controllers.ReportingController.GetRfidUsageReport">
             <summary>
             Get comprehensive RFID usage report
             </summary>
+            <returns>RFID usage report</returns>
         </member>
         <member name="M:RfidAppApi.Controllers.ReportingController.GetRfidUsageReportByDate(System.DateTime)">
             <summary>
             Get RFID usage report for a specific date
             </summary>
+            <param name="date">Report date</param>
+            <returns>RFID usage report</returns>
         </member>
         <member name="M:RfidAppApi.Controllers.ReportingController.GetUsedRfidTags">
             <summary>
             Get all used RFID tags
             </summary>
+            <returns>List of used RFID tags</returns>
         </member>
         <member name="M:RfidAppApi.Controllers.ReportingController.GetUnusedRfidTags">
             <summary>
             Get all unused RFID tags
             </summary>
+            <returns>List of unused RFID tags</returns>
         </member>
         <member name="M:RfidAppApi.Controllers.ReportingController.GetRfidTagsByStatus(System.Boolean)">
             <summary>
             Get RFID tags by usage status
             </summary>
+            <param name="isUsed">Usage status (true for used, false for unused)</param>
+            <returns>List of RFID tags</returns>
         </member>
         <member name="M:RfidAppApi.Controllers.ReportingController.GetRfidUsageByCategory">
             <summary>
             Get RFID usage summary by category
             </summary>
+            <returns>List of RFID usage by category</returns>
         </member>
         <member name="M:RfidAppApi.Controllers.ReportingController.GetRfidUsageByBranch">
             <summary>
             Get RFID usage summary by branch
             </summary>
+            <returns>List of RFID usage by branch</returns>
         </member>
         <member name="M:RfidAppApi.Controllers.ReportingController.GetRfidUsageByCounter">
             <summary>
             Get RFID usage summary by counter
             </summary>
+            <returns>List of RFID usage by counter</returns>
         </member>
         <member name="M:RfidAppApi.Controllers.ReportingController.GetRfidUsageByCategoryId(System.Int32)">
             <summary>
             Get RFID usage summary for a specific category
             </summary>
+            <param name="categoryId">Category ID</param>
+            <returns>RFID usage by category</returns>
         </member>
         <member name="M:RfidAppApi.Controllers.ReportingController.GetRfidUsageByBranchId(System.Int32)">
             <summary>
             Get RFID usage summary for a specific branch
             </summary>
+            <param name="branchId">Branch ID</param>
+            <returns>RFID usage by branch</returns>
         </member>
         <member name="M:RfidAppApi.Controllers.ReportingController.GetRfidUsageByCounterId(System.Int32)">
             <summary>
             Get RFID usage summary for a specific counter
             </summary>
+            <param name="counterId">Counter ID</param>
+            <returns>RFID usage by counter</returns>
         </member>
         <member name="M:RfidAppApi.Controllers.ReportingController.GetTotalRfidTagsCount">
             <summary>
             Get total count of RFID tags
             </summary>
+            <returns>Total RFID tags count</returns>
         </member>
         <member name="M:RfidAppApi.Controllers.ReportingController.GetUsedRfidTagsCount">
             <summary>
             Get count of used RFID tags
             </summary>
+            <returns>Used RFID tags count</returns>
         </member>
         <member name="M:RfidAppApi.Controllers.ReportingController.GetUnusedRfidTagsCount">
             <summary>
             Get count of unused RFID tags
             </summary>
+            <returns>Unused RFID tags count</returns>
         </member>
         <member name="M:RfidAppApi.Controllers.ReportingController.GetRfidUsagePercentage">
             <summary>
             Get RFID usage percentage
             </summary>
+            <returns>RFID usage percentage</returns>
         </member>
         <member name="M:RfidAppApi.Controllers.ReportingController.ExportStockMovementsToCsv(RfidAppApi.DTOs.ReportFilterDto)">
             <summary>
             Export stock movements to CSV
             </summary>
+            <param name="filter">Report filter criteria</param>
+            <returns>CSV file</returns>
         </member>
         <member name="M:RfidAppApi.Controllers.ReportingController.ExportStockMovementsToExcel(RfidAppApi.DTOs.ReportFilterDto)">
             <summary>
             Export stock movements to Excel
             </summary>
+            <param name="filter">Report filter criteria</param>
+            <returns>Excel file</returns>
         </member>
         <member name="M:RfidAppApi.Controllers.ReportingController.ExportDailyBalancesToCsv(RfidAppApi.DTOs.ReportFilterDto)">
             <summary>
             Export daily balances to CSV
             </summary>
+            <param name="filter">Report filter criteria</param>
+            <returns>CSV file</returns>
         </member>
         <member name="M:RfidAppApi.Controllers.ReportingController.ExportDailyBalancesToExcel(RfidAppApi.DTOs.ReportFilterDto)">
             <summary>
             Export daily balances to Excel
             </summary>
+            <param name="filter">Report filter criteria</param>
+            <returns>Excel file</returns>
         </member>
         <member name="M:RfidAppApi.Controllers.ReportingController.ExportSalesReportToCsv(RfidAppApi.DTOs.ReportFilterDto)">
             <summary>
             Export sales report to CSV
             </summary>
+            <param name="filter">Report filter criteria</param>
+            <returns>CSV file</returns>
         </member>
         <member name="M:RfidAppApi.Controllers.ReportingController.ExportSalesReportToExcel(RfidAppApi.DTOs.ReportFilterDto)">
             <summary>
             Export sales report to Excel
             </summary>
+            <param name="filter">Report filter criteria</param>
+            <returns>Excel file</returns>
         </member>
         <member name="M:RfidAppApi.Controllers.ReportingController.ExportRfidUsageToCsv">
             <summary>
             Export RFID usage to CSV
             </summary>
+            <returns>CSV file</returns>
         </member>
         <member name="M:RfidAppApi.Controllers.ReportingController.ExportRfidUsageToExcel">
             <summary>
             Export RFID usage to Excel
             </summary>
+            <returns>Excel file</returns>
         </member>
         <member name="T:RfidAppApi.Controllers.RfidController">
             <summary>
@@ -3415,6 +3588,11 @@
             Read and parse Excel file to extract product data
             </summary>
         </member>
+        <member name="M:RfidAppApi.Services.IProductExcelService.ExportAllProductsToExcelAsync(System.String)">
+            <summary>
+            Export all products to Excel file with all fields
+            </summary>
+        </member>
         <member name="T:RfidAppApi.Services.IReportingService">
             <summary>
             Interface for comprehensive reporting service
@@ -3740,6 +3918,11 @@
         <member name="M:RfidAppApi.Services.ProductExcelService.ConvertToFloat(System.Object)">
             <summary>
             Helper methods for type conversion
+            </summary>
+        </member>
+        <member name="M:RfidAppApi.Services.ProductExcelService.ExportAllProductsToExcelAsync(System.String)">
+            <summary>
+            Export all products to Excel file with all fields including custom fields
             </summary>
         </member>
         <member name="T:RfidAppApi.Services.ReportingService">

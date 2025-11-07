@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using RfidAppApi.Data;
 using RfidAppApi.DTOs;
 using RfidAppApi.Models;
+using System.IO;
 using System.Security.Claims;
 
 namespace RfidAppApi.Services
@@ -17,6 +18,7 @@ namespace RfidAppApi.Services
         Task<List<UserFriendlyProductResponseDto>> GetAllProductsAsync(string clientCode);
         Task<BulkProductResponseDto> CreateBulkProductsAsync(BulkCreateProductsDto bulkDto, string clientCode);
         Task<bool> DeleteProductAsync(int productId, string clientCode);
+        Task<int> DeleteAllProductsAsync(string clientCode);
     }
 
     public class UserFriendlyProductService : IUserFriendlyProductService
@@ -169,26 +171,55 @@ namespace RfidAppApi.Services
                 MakingFixedAmount = createDto.MakingFixedAmount,
                 Mrp = createDto.Mrp,
                 ImageUrl = createDto.ImageUrl,
-                Status = createDto.Status
+                Status = createDto.Status,
+                CustomFields = createDto.CustomFields
             };
 
             var product = await CreateProductAsync(productDto, clientCode);
 
             // Then handle image uploads if provided
-            if (images != null && images.Any() && createDto.Images != null)
+            if (images != null && images.Any())
             {
                 var uploadDtos = new List<ProductImageUploadDto>();
-                for (int i = 0; i < Math.Min(images.Count, createDto.Images.Count); i++)
+                
+                // If Images metadata is provided, use it; otherwise use defaults
+                if (createDto.Images != null && createDto.Images.Any())
                 {
-                    uploadDtos.Add(new ProductImageUploadDto
+                    for (int i = 0; i < Math.Min(images.Count, createDto.Images.Count); i++)
                     {
-                        ProductId = product.Id,
-                        ImageType = createDto.Images[i].ImageType,
-                        DisplayOrder = createDto.Images[i].DisplayOrder
-                    });
+                        uploadDtos.Add(new ProductImageUploadDto
+                        {
+                            ProductId = product.Id,
+                            ImageType = createDto.Images[i].ImageType ?? (i == 0 ? "Primary" : "Secondary"),
+                            DisplayOrder = createDto.Images[i].DisplayOrder != 0 ? createDto.Images[i].DisplayOrder : i
+                        });
+                    }
+                }
+                else
+                {
+                    // Default: first image is Primary, rest are Secondary
+                    for (int i = 0; i < images.Count; i++)
+                    {
+                        uploadDtos.Add(new ProductImageUploadDto
+                        {
+                            ProductId = product.Id,
+                            ImageType = i == 0 ? "Primary" : "Secondary",
+                            DisplayOrder = i
+                        });
+                    }
                 }
 
                 await _imageService.UploadMultipleImagesAsync(images, uploadDtos, clientCode);
+            }
+
+            // Return updated product with images
+            using var context = await _clientService.GetClientDbContextAsync(clientCode);
+            var updatedProduct = await context.ProductDetails
+                .FirstOrDefaultAsync(p => p.Id == product.Id);
+            
+            if (updatedProduct != null)
+            {
+                return await MapToUserFriendlyResponseAsync(context, updatedProduct);
             }
 
             return product;
@@ -559,10 +590,127 @@ namespace RfidAppApi.Services
             if (product == null)
                 return false;
 
+            // Delete associated product images
+            var productImages = await context.ProductImages
+                .Where(pi => pi.ProductId == productId && pi.ClientCode == clientCode)
+                .ToListAsync();
+
+            foreach (var image in productImages)
+            {
+                // Delete physical file
+                try
+                {
+                    if (File.Exists(image.FilePath))
+                    {
+                        File.Delete(image.FilePath);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Log error but continue with deletion
+                    Console.WriteLine($"Error deleting image file {image.FilePath}: {ex.Message}");
+                }
+            }
+
+            if (productImages.Any())
+            {
+                context.ProductImages.RemoveRange(productImages);
+            }
+
+            // Delete associated custom fields
+            var customFields = await context.ProductCustomFields
+                .Where(cf => cf.ProductDetailsId == productId)
+                .ToListAsync();
+
+            if (customFields.Any())
+            {
+                context.ProductCustomFields.RemoveRange(customFields);
+            }
+
+            // Delete associated RFID assignments
+            var rfidAssignments = await context.ProductRfidAssignments
+                .Where(ra => ra.ProductId == productId)
+                .ToListAsync();
+
+            if (rfidAssignments.Any())
+            {
+                context.ProductRfidAssignments.RemoveRange(rfidAssignments);
+            }
+
+            // Delete the product
             context.ProductDetails.Remove(product);
             await context.SaveChangesAsync();
 
             return true;
+        }
+
+        public async Task<int> DeleteAllProductsAsync(string clientCode)
+        {
+            using var context = await _clientService.GetClientDbContextAsync(clientCode);
+
+            // Get all products
+            var products = await context.ProductDetails
+                .Where(p => p.ClientCode == clientCode)
+                .ToListAsync();
+
+            if (!products.Any())
+                return 0;
+
+            var productIds = products.Select(p => p.Id).ToList();
+            int deletedCount = products.Count;
+
+            // Delete all associated product images
+            var allProductImages = await context.ProductImages
+                .Where(pi => productIds.Contains(pi.ProductId) && pi.ClientCode == clientCode)
+                .ToListAsync();
+
+            foreach (var image in allProductImages)
+            {
+                // Delete physical file
+                try
+                {
+                    if (File.Exists(image.FilePath))
+                    {
+                        File.Delete(image.FilePath);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Log error but continue with deletion
+                    Console.WriteLine($"Error deleting image file {image.FilePath}: {ex.Message}");
+                }
+            }
+
+            if (allProductImages.Any())
+            {
+                context.ProductImages.RemoveRange(allProductImages);
+            }
+
+            // Delete all associated custom fields
+            var allCustomFields = await context.ProductCustomFields
+                .Where(cf => productIds.Contains(cf.ProductDetailsId))
+                .ToListAsync();
+
+            if (allCustomFields.Any())
+            {
+                context.ProductCustomFields.RemoveRange(allCustomFields);
+            }
+
+            // Delete all associated RFID assignments
+            var allRfidAssignments = await context.ProductRfidAssignments
+                .Where(ra => productIds.Contains(ra.ProductId))
+                .ToListAsync();
+
+            if (allRfidAssignments.Any())
+            {
+                context.ProductRfidAssignments.RemoveRange(allRfidAssignments);
+            }
+
+            // Delete all products
+            context.ProductDetails.RemoveRange(products);
+            await context.SaveChangesAsync();
+
+            return deletedCount;
         }
 
         #region Private Helper Methods

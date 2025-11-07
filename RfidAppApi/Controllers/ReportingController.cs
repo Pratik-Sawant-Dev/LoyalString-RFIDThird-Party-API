@@ -8,6 +8,7 @@ namespace RfidAppApi.Controllers
 {
     /// <summary>
     /// Controller for comprehensive reporting functionality
+    /// Provides APIs for stock movements, sales reports, stock summaries, daily balances, and RFID usage
     /// </summary>
     [ApiController]
     [Route("api/[controller]")]
@@ -15,117 +16,190 @@ namespace RfidAppApi.Controllers
     public class ReportingController : ControllerBase
     {
         private readonly IReportingService _reportingService;
+        private readonly ILogger<ReportingController> _logger;
 
-        public ReportingController(IReportingService reportingService)
+        public ReportingController(
+            IReportingService reportingService,
+            ILogger<ReportingController> logger)
         {
             _reportingService = reportingService;
+            _logger = logger;
         }
 
-        #region Stock Movement Endpoints
+        #region Helper Methods
+
+        /// <summary>
+        /// Get client code from JWT token
+        /// </summary>
+        private string? GetClientCodeFromToken()
+        {
+            return User.FindFirst("ClientCode")?.Value;
+        }
+
+        /// <summary>
+        /// Standard error response
+        /// </summary>
+        private ObjectResult ErrorResponse(int statusCode, string message, Exception? ex = null)
+        {
+            _logger.LogError(ex, "Error in ReportingController: {Message}", message);
+            return StatusCode(statusCode, new
+            {
+                success = false,
+                message = message,
+                error = ex?.Message
+            });
+        }
+
+        /// <summary>
+        /// Standard success response
+        /// </summary>
+        private OkObjectResult SuccessResponse(object data, string? message = null)
+        {
+            return Ok(new
+            {
+                success = true,
+                message = message,
+                data = data
+            });
+        }
+
+        #endregion
+
+        #region Stock Movement APIs
 
         /// <summary>
         /// Create a new stock movement
         /// </summary>
+        /// <param name="movementDto">Stock movement data</param>
+        /// <returns>Created stock movement</returns>
         [HttpPost("stock-movements")]
-        public async Task<ActionResult<StockMovementDto>> CreateStockMovement([FromBody] CreateStockMovementDto movementDto)
+        [ProducesResponseType(typeof(StockMovementDto), 201)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> CreateStockMovement([FromBody] CreateStockMovementDto movementDto)
         {
             try
             {
-                var clientCode = User.FindFirst("ClientCode")?.Value;
+                var clientCode = GetClientCodeFromToken();
                 if (string.IsNullOrEmpty(clientCode))
-                    return BadRequest("Client code not found in token");
+                    return BadRequest(new { success = false, message = "Client code not found in token" });
 
                 var result = await _reportingService.CreateStockMovementAsync(movementDto, clientCode);
-                return CreatedAtAction(nameof(GetStockMovementById), new { movementId = result.Id }, result);
+                return CreatedAtAction(
+                    nameof(GetStockMovementById),
+                    new { movementId = result.Id },
+                    new { success = true, message = "Stock movement created successfully", data = result });
             }
             catch (ArgumentException ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new { success = false, message = ex.Message });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return ErrorResponse(500, "Failed to create stock movement", ex);
             }
         }
 
         /// <summary>
         /// Create multiple stock movements in bulk
         /// </summary>
+        /// <param name="bulkDto">Bulk stock movement data</param>
+        /// <returns>List of created stock movements</returns>
         [HttpPost("stock-movements/bulk")]
-        public async Task<ActionResult<List<StockMovementDto>>> CreateBulkStockMovements([FromBody] BulkStockMovementDto bulkDto)
+        [ProducesResponseType(typeof(List<StockMovementDto>), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> CreateBulkStockMovements([FromBody] BulkStockMovementDto bulkDto)
         {
             try
             {
-                var clientCode = User.FindFirst("ClientCode")?.Value;
+                var clientCode = GetClientCodeFromToken();
                 if (string.IsNullOrEmpty(clientCode))
-                    return BadRequest("Client code not found in token");
+                    return BadRequest(new { success = false, message = "Client code not found in token" });
 
                 var results = await _reportingService.CreateBulkStockMovementsAsync(bulkDto, clientCode);
-                return Ok(results);
+                return SuccessResponse(results, $"Successfully created {results.Count} stock movement(s)");
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return ErrorResponse(500, "Failed to create bulk stock movements", ex);
             }
         }
 
         /// <summary>
         /// Get stock movements with filters
         /// </summary>
+        /// <param name="filter">Report filter criteria</param>
+        /// <returns>List of stock movements</returns>
         [HttpGet("stock-movements")]
-        public async Task<ActionResult<List<StockMovementDto>>> GetStockMovements([FromQuery] ReportFilterDto filter)
+        [ProducesResponseType(typeof(List<StockMovementDto>), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetStockMovements([FromQuery] ReportFilterDto filter)
         {
             try
             {
-                var clientCode = User.FindFirst("ClientCode")?.Value;
+                var clientCode = GetClientCodeFromToken();
                 if (string.IsNullOrEmpty(clientCode))
-                    return BadRequest("Client code not found in token");
+                    return BadRequest(new { success = false, message = "Client code not found in token" });
 
                 var movements = await _reportingService.GetStockMovementsAsync(filter, clientCode);
-                return Ok(movements);
+                return SuccessResponse(movements, $"Found {movements.Count} stock movement(s)");
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return ErrorResponse(500, "Failed to retrieve stock movements", ex);
             }
         }
 
         /// <summary>
         /// Get stock movement by ID
         /// </summary>
+        /// <param name="movementId">Stock movement ID</param>
+        /// <returns>Stock movement details</returns>
         [HttpGet("stock-movements/{movementId}")]
-        public async Task<ActionResult<StockMovementDto>> GetStockMovementById(int movementId)
+        [ProducesResponseType(typeof(StockMovementDto), 200)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetStockMovementById(int movementId)
         {
             try
             {
-                var clientCode = User.FindFirst("ClientCode")?.Value;
+                var clientCode = GetClientCodeFromToken();
                 if (string.IsNullOrEmpty(clientCode))
-                    return BadRequest("Client code not found in token");
+                    return BadRequest(new { success = false, message = "Client code not found in token" });
 
                 var movement = await _reportingService.GetStockMovementByIdAsync(movementId, clientCode);
                 if (movement == null)
-                    return NotFound($"Stock movement with ID {movementId} not found");
+                    return NotFound(new { success = false, message = $"Stock movement with ID {movementId} not found" });
 
-                return Ok(movement);
+                return SuccessResponse(movement);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return ErrorResponse(500, "Failed to retrieve stock movement", ex);
             }
         }
 
         /// <summary>
         /// Get stock movements by date range
         /// </summary>
+        /// <param name="startDate">Start date</param>
+        /// <param name="endDate">End date</param>
+        /// <returns>List of stock movements</returns>
         [HttpGet("stock-movements/range")]
-        public async Task<ActionResult<List<StockMovementDto>>> GetStockMovementsByDateRange(
-            [FromQuery] DateTime startDate, [FromQuery] DateTime endDate)
+        [ProducesResponseType(typeof(List<StockMovementDto>), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetStockMovementsByDateRange(
+            [FromQuery] DateTime startDate,
+            [FromQuery] DateTime endDate)
         {
             try
             {
-                var clientCode = User.FindFirst("ClientCode")?.Value;
+                var clientCode = GetClientCodeFromToken();
                 if (string.IsNullOrEmpty(clientCode))
-                    return BadRequest("Client code not found in token");
+                    return BadRequest(new { success = false, message = "Client code not found in token" });
 
                 var filter = new ReportFilterDto
                 {
@@ -134,236 +208,260 @@ namespace RfidAppApi.Controllers
                 };
 
                 var movements = await _reportingService.GetStockMovementsAsync(filter, clientCode);
-                return Ok(movements);
+                return SuccessResponse(movements, $"Found {movements.Count} stock movement(s)");
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return ErrorResponse(500, "Failed to retrieve stock movements", ex);
             }
         }
 
         /// <summary>
-        /// Get stock movements by product
+        /// Get stock movements by product ID
         /// </summary>
+        /// <param name="productId">Product ID</param>
+        /// <returns>List of stock movements</returns>
         [HttpGet("stock-movements/product/{productId}")]
-        public async Task<ActionResult<List<StockMovementDto>>> GetStockMovementsByProduct(int productId)
+        [ProducesResponseType(typeof(List<StockMovementDto>), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetStockMovementsByProduct(int productId)
         {
             try
             {
-                var clientCode = User.FindFirst("ClientCode")?.Value;
+                var clientCode = GetClientCodeFromToken();
                 if (string.IsNullOrEmpty(clientCode))
-                    return BadRequest("Client code not found in token");
+                    return BadRequest(new { success = false, message = "Client code not found in token" });
 
-                var filter = new ReportFilterDto();
+                var filter = new ReportFilterDto { };
                 var movements = await _reportingService.GetStockMovementsAsync(filter, clientCode);
                 var productMovements = movements.Where(m => m.ProductId == productId).ToList();
-                return Ok(productMovements);
+                return SuccessResponse(productMovements, $"Found {productMovements.Count} stock movement(s)");
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return ErrorResponse(500, "Failed to retrieve stock movements", ex);
             }
         }
 
         /// <summary>
-        /// Get stock movements by branch
+        /// Get stock movements by branch ID
         /// </summary>
+        /// <param name="branchId">Branch ID</param>
+        /// <returns>List of stock movements</returns>
         [HttpGet("stock-movements/branch/{branchId}")]
-        public async Task<ActionResult<List<StockMovementDto>>> GetStockMovementsByBranch(int branchId)
+        [ProducesResponseType(typeof(List<StockMovementDto>), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetStockMovementsByBranch(int branchId)
         {
             try
             {
-                var clientCode = User.FindFirst("ClientCode")?.Value;
+                var clientCode = GetClientCodeFromToken();
                 if (string.IsNullOrEmpty(clientCode))
-                    return BadRequest("Client code not found in token");
+                    return BadRequest(new { success = false, message = "Client code not found in token" });
 
                 var filter = new ReportFilterDto { BranchId = branchId };
                 var movements = await _reportingService.GetStockMovementsAsync(filter, clientCode);
-                return Ok(movements);
+                return SuccessResponse(movements, $"Found {movements.Count} stock movement(s)");
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return ErrorResponse(500, "Failed to retrieve stock movements", ex);
             }
         }
 
         /// <summary>
-        /// Get stock movements by counter
+        /// Get stock movements by counter ID
         /// </summary>
+        /// <param name="counterId">Counter ID</param>
+        /// <returns>List of stock movements</returns>
         [HttpGet("stock-movements/counter/{counterId}")]
-        public async Task<ActionResult<List<StockMovementDto>>> GetStockMovementsByCounter(int counterId)
+        [ProducesResponseType(typeof(List<StockMovementDto>), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetStockMovementsByCounter(int counterId)
         {
             try
             {
-                var clientCode = User.FindFirst("ClientCode")?.Value;
+                var clientCode = GetClientCodeFromToken();
                 if (string.IsNullOrEmpty(clientCode))
-                    return BadRequest("Client code not found in token");
+                    return BadRequest(new { success = false, message = "Client code not found in token" });
 
                 var filter = new ReportFilterDto { CounterId = counterId };
                 var movements = await _reportingService.GetStockMovementsAsync(filter, clientCode);
-                return Ok(movements);
+                return SuccessResponse(movements, $"Found {movements.Count} stock movement(s)");
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return ErrorResponse(500, "Failed to retrieve stock movements", ex);
             }
         }
 
         /// <summary>
-        /// Get stock movements by category
+        /// Get stock movements by category ID
         /// </summary>
+        /// <param name="categoryId">Category ID</param>
+        /// <returns>List of stock movements</returns>
         [HttpGet("stock-movements/category/{categoryId}")]
-        public async Task<ActionResult<List<StockMovementDto>>> GetStockMovementsByCategory(int categoryId)
+        [ProducesResponseType(typeof(List<StockMovementDto>), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetStockMovementsByCategory(int categoryId)
         {
             try
             {
-                var clientCode = User.FindFirst("ClientCode")?.Value;
+                var clientCode = GetClientCodeFromToken();
                 if (string.IsNullOrEmpty(clientCode))
-                    return BadRequest("Client code not found in token");
+                    return BadRequest(new { success = false, message = "Client code not found in token" });
 
                 var filter = new ReportFilterDto { CategoryId = categoryId };
                 var movements = await _reportingService.GetStockMovementsAsync(filter, clientCode);
-                return Ok(movements);
+                return SuccessResponse(movements, $"Found {movements.Count} stock movement(s)");
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return ErrorResponse(500, "Failed to retrieve stock movements", ex);
             }
         }
 
         #endregion
 
-        #region Daily Stock Balance Endpoints
+        #region Daily Stock Balance APIs
 
         /// <summary>
         /// Get daily stock balance for a specific product and date
         /// </summary>
+        /// <param name="productId">Product ID</param>
+        /// <param name="date">Balance date</param>
+        /// <returns>Daily stock balance</returns>
         [HttpGet("daily-balances/{productId}/{date:datetime}")]
-        public async Task<ActionResult<DailyStockBalanceDto>> GetDailyStockBalance(int productId, DateTime date)
+        [ProducesResponseType(typeof(DailyStockBalanceDto), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetDailyStockBalance(int productId, DateTime date)
         {
             try
             {
-                var clientCode = User.FindFirst("ClientCode")?.Value;
+                var clientCode = GetClientCodeFromToken();
                 if (string.IsNullOrEmpty(clientCode))
-                    return BadRequest("Client code not found in token");
+                    return BadRequest(new { success = false, message = "Client code not found in token" });
 
                 var balance = await _reportingService.GetDailyStockBalanceAsync(productId, date, clientCode);
-                return Ok(balance);
+                return SuccessResponse(balance);
             }
             catch (ArgumentException ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new { success = false, message = ex.Message });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return ErrorResponse(500, "Failed to retrieve daily stock balance", ex);
             }
         }
 
         /// <summary>
         /// Get daily stock balances with filters
         /// </summary>
+        /// <param name="filter">Report filter criteria</param>
+        /// <returns>List of daily stock balances</returns>
         [HttpGet("daily-balances")]
-        public async Task<ActionResult<List<DailyStockBalanceDto>>> GetDailyStockBalances([FromQuery] ReportFilterDto filter)
+        [ProducesResponseType(typeof(List<DailyStockBalanceDto>), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetDailyStockBalances([FromQuery] ReportFilterDto filter)
         {
             try
             {
-                var clientCode = User.FindFirst("ClientCode")?.Value;
+                var clientCode = GetClientCodeFromToken();
                 if (string.IsNullOrEmpty(clientCode))
-                    return BadRequest("Client code not found in token");
+                    return BadRequest(new { success = false, message = "Client code not found in token" });
 
                 var balances = await _reportingService.GetDailyStockBalancesAsync(filter, clientCode);
-                return Ok(balances);
+                return SuccessResponse(balances, $"Found {balances.Count} daily balance(s)");
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return ErrorResponse(500, "Failed to retrieve daily stock balances", ex);
             }
         }
 
         /// <summary>
         /// Calculate daily stock balance for a specific product and date
         /// </summary>
+        /// <param name="productId">Product ID</param>
+        /// <param name="date">Balance date</param>
+        /// <returns>Calculated daily stock balance</returns>
         [HttpPost("daily-balances/calculate/{productId}/{date:datetime}")]
-        public async Task<ActionResult<DailyStockBalanceDto>> CalculateDailyStockBalance(int productId, DateTime date)
+        [ProducesResponseType(typeof(DailyStockBalanceDto), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> CalculateDailyStockBalance(int productId, DateTime date)
         {
             try
             {
-                var clientCode = User.FindFirst("ClientCode")?.Value;
+                var clientCode = GetClientCodeFromToken();
                 if (string.IsNullOrEmpty(clientCode))
-                    return BadRequest("Client code not found in token");
+                    return BadRequest(new { success = false, message = "Client code not found in token" });
 
                 var balance = await _reportingService.CalculateDailyStockBalanceAsync(productId, date, clientCode);
-                return Ok(balance);
+                return SuccessResponse(balance, "Daily stock balance calculated successfully");
             }
             catch (ArgumentException ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new { success = false, message = ex.Message });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return ErrorResponse(500, "Failed to calculate daily stock balance", ex);
             }
         }
 
         /// <summary>
         /// Calculate daily stock balances for all products on a specific date
         /// </summary>
+        /// <param name="date">Balance date</param>
+        /// <returns>List of calculated daily stock balances</returns>
         [HttpPost("daily-balances/calculate/{date:datetime}")]
-        public async Task<ActionResult<List<DailyStockBalanceDto>>> CalculateDailyStockBalances(DateTime date)
+        [ProducesResponseType(typeof(List<DailyStockBalanceDto>), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> CalculateDailyStockBalances(DateTime date)
         {
             try
             {
-                var clientCode = User.FindFirst("ClientCode")?.Value;
+                var clientCode = GetClientCodeFromToken();
                 if (string.IsNullOrEmpty(clientCode))
-                    return BadRequest("Client code not found in token");
+                    return BadRequest(new { success = false, message = "Client code not found in token" });
 
                 var balances = await _reportingService.CalculateDailyStockBalancesAsync(date, clientCode);
-                return Ok(balances);
+                return SuccessResponse(balances, $"Calculated {balances.Count} daily balance(s)");
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
-        }
-
-        /// <summary>
-        /// Get daily stock balance by product and date
-        /// </summary>
-        [HttpGet("daily-balances/product/{productId}/{date:datetime}")]
-        public async Task<ActionResult<DailyStockBalanceDto>> GetDailyStockBalanceByProduct(int productId, DateTime date)
-        {
-            try
-            {
-                var clientCode = User.FindFirst("ClientCode")?.Value;
-                if (string.IsNullOrEmpty(clientCode))
-                    return BadRequest("Client code not found in token");
-
-                var balance = await _reportingService.GetDailyStockBalanceAsync(productId, date, clientCode);
-                return Ok(balance);
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return ErrorResponse(500, "Failed to calculate daily stock balances", ex);
             }
         }
 
         /// <summary>
         /// Get daily stock balances by date range
         /// </summary>
+        /// <param name="startDate">Start date</param>
+        /// <param name="endDate">End date</param>
+        /// <returns>List of daily stock balances</returns>
         [HttpGet("daily-balances/range")]
-        public async Task<ActionResult<List<DailyStockBalanceDto>>> GetDailyStockBalancesByDateRange(
-            [FromQuery] DateTime startDate, [FromQuery] DateTime endDate)
+        [ProducesResponseType(typeof(List<DailyStockBalanceDto>), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetDailyStockBalancesByDateRange(
+            [FromQuery] DateTime startDate,
+            [FromQuery] DateTime endDate)
         {
             try
             {
-                var clientCode = User.FindFirst("ClientCode")?.Value;
+                var clientCode = GetClientCodeFromToken();
                 if (string.IsNullOrEmpty(clientCode))
-                    return BadRequest("Client code not found in token");
+                    return BadRequest(new { success = false, message = "Client code not found in token" });
 
                 var filter = new ReportFilterDto
                 {
@@ -372,1039 +470,1287 @@ namespace RfidAppApi.Controllers
                 };
 
                 var balances = await _reportingService.GetDailyStockBalancesAsync(filter, clientCode);
-                return Ok(balances);
+                return SuccessResponse(balances, $"Found {balances.Count} daily balance(s)");
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return ErrorResponse(500, "Failed to retrieve daily stock balances", ex);
             }
         }
 
         #endregion
 
-        #region Sales Report Endpoints
+        #region Sales Report APIs
 
         /// <summary>
         /// Get sales report with filters
         /// </summary>
+        /// <param name="filter">Report filter criteria</param>
+        /// <returns>List of sales reports</returns>
         [HttpGet("sales")]
-        public async Task<ActionResult<List<SalesReportDto>>> GetSalesReport([FromQuery] ReportFilterDto filter)
+        [ProducesResponseType(typeof(List<SalesReportDto>), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetSalesReport([FromQuery] ReportFilterDto filter)
         {
             try
             {
-                var clientCode = User.FindFirst("ClientCode")?.Value;
+                var clientCode = GetClientCodeFromToken();
                 if (string.IsNullOrEmpty(clientCode))
-                    return BadRequest("Client code not found in token");
+                    return BadRequest(new { success = false, message = "Client code not found in token" });
 
                 var reports = await _reportingService.GetSalesReportAsync(filter, clientCode);
-                return Ok(reports);
+                return SuccessResponse(reports, $"Found {reports.Count} sales report(s)");
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return ErrorResponse(500, "Failed to retrieve sales report", ex);
             }
         }
 
         /// <summary>
         /// Get sales report for a specific date
         /// </summary>
+        /// <param name="date">Report date</param>
+        /// <returns>Sales report</returns>
         [HttpGet("sales/date/{date:datetime}")]
-        public async Task<ActionResult<SalesReportDto>> GetSalesReportByDate(DateTime date)
+        [ProducesResponseType(typeof(SalesReportDto), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetSalesReportByDate(DateTime date)
         {
             try
             {
-                var clientCode = User.FindFirst("ClientCode")?.Value;
+                var clientCode = GetClientCodeFromToken();
                 if (string.IsNullOrEmpty(clientCode))
-                    return BadRequest("Client code not found in token");
+                    return BadRequest(new { success = false, message = "Client code not found in token" });
 
                 var report = await _reportingService.GetSalesReportByDateAsync(date, clientCode);
-                return Ok(report);
+                return SuccessResponse(report);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return ErrorResponse(500, "Failed to retrieve sales report", ex);
             }
         }
 
         /// <summary>
         /// Get sales report for a date range
         /// </summary>
+        /// <param name="startDate">Start date</param>
+        /// <param name="endDate">End date</param>
+        /// <returns>List of sales reports</returns>
         [HttpGet("sales/range")]
-        public async Task<ActionResult<List<SalesReportDto>>> GetSalesReportByDateRange(
-            [FromQuery] DateTime startDate, [FromQuery] DateTime endDate)
+        [ProducesResponseType(typeof(List<SalesReportDto>), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetSalesReportByDateRange(
+            [FromQuery] DateTime startDate,
+            [FromQuery] DateTime endDate)
         {
             try
             {
-                var clientCode = User.FindFirst("ClientCode")?.Value;
+                var clientCode = GetClientCodeFromToken();
                 if (string.IsNullOrEmpty(clientCode))
-                    return BadRequest("Client code not found in token");
+                    return BadRequest(new { success = false, message = "Client code not found in token" });
 
                 var reports = await _reportingService.GetSalesReportByDateRangeAsync(startDate, endDate, clientCode);
-                return Ok(reports);
+                return SuccessResponse(reports, $"Found {reports.Count} sales report(s)");
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return ErrorResponse(500, "Failed to retrieve sales report", ex);
             }
         }
 
         /// <summary>
         /// Get sales report for a specific branch on a date
         /// </summary>
+        /// <param name="branchId">Branch ID</param>
+        /// <param name="date">Report date</param>
+        /// <returns>Sales report</returns>
         [HttpGet("sales/branch/{branchId}/{date:datetime}")]
-        public async Task<ActionResult<SalesReportDto>> GetSalesReportByBranch(int branchId, DateTime date)
+        [ProducesResponseType(typeof(SalesReportDto), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetSalesReportByBranch(int branchId, DateTime date)
         {
             try
             {
-                var clientCode = User.FindFirst("ClientCode")?.Value;
+                var clientCode = GetClientCodeFromToken();
                 if (string.IsNullOrEmpty(clientCode))
-                    return BadRequest("Client code not found in token");
+                    return BadRequest(new { success = false, message = "Client code not found in token" });
 
                 var report = await _reportingService.GetSalesReportByBranchAsync(date, branchId, clientCode);
-                return Ok(report);
+                return SuccessResponse(report);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return ErrorResponse(500, "Failed to retrieve sales report", ex);
             }
         }
 
         /// <summary>
         /// Get sales report for a specific counter on a date
         /// </summary>
+        /// <param name="counterId">Counter ID</param>
+        /// <param name="date">Report date</param>
+        /// <returns>Sales report</returns>
         [HttpGet("sales/counter/{counterId}/{date:datetime}")]
-        public async Task<ActionResult<SalesReportDto>> GetSalesReportByCounter(int counterId, DateTime date)
+        [ProducesResponseType(typeof(SalesReportDto), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetSalesReportByCounter(int counterId, DateTime date)
         {
             try
             {
-                var clientCode = User.FindFirst("ClientCode")?.Value;
+                var clientCode = GetClientCodeFromToken();
                 if (string.IsNullOrEmpty(clientCode))
-                    return BadRequest("Client code not found in token");
+                    return BadRequest(new { success = false, message = "Client code not found in token" });
 
                 var report = await _reportingService.GetSalesReportByCounterAsync(date, counterId, clientCode);
-                return Ok(report);
+                return SuccessResponse(report);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return ErrorResponse(500, "Failed to retrieve sales report", ex);
             }
         }
 
         /// <summary>
         /// Get sales report for a specific category on a date
         /// </summary>
+        /// <param name="categoryId">Category ID</param>
+        /// <param name="date">Report date</param>
+        /// <returns>Sales report</returns>
         [HttpGet("sales/category/{categoryId}/{date:datetime}")]
-        public async Task<ActionResult<SalesReportDto>> GetSalesReportByCategory(int categoryId, DateTime date)
+        [ProducesResponseType(typeof(SalesReportDto), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetSalesReportByCategory(int categoryId, DateTime date)
         {
             try
             {
-                var clientCode = User.FindFirst("ClientCode")?.Value;
+                var clientCode = GetClientCodeFromToken();
                 if (string.IsNullOrEmpty(clientCode))
-                    return BadRequest("Client code not found in token");
+                    return BadRequest(new { success = false, message = "Client code not found in token" });
 
                 var report = await _reportingService.GetSalesReportByCategoryAsync(date, categoryId, clientCode);
-                return Ok(report);
+                return SuccessResponse(report);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return ErrorResponse(500, "Failed to retrieve sales report", ex);
             }
         }
 
         #endregion
 
-        #region Stock Summary Report Endpoints
+        #region Stock Summary Report APIs
 
         /// <summary>
         /// Get stock summary report with filters
         /// </summary>
+        /// <param name="filter">Report filter criteria</param>
+        /// <returns>List of stock summary reports</returns>
         [HttpGet("stock-summary")]
-        public async Task<ActionResult<List<StockSummaryReportDto>>> GetStockSummaryReport([FromQuery] ReportFilterDto filter)
+        [ProducesResponseType(typeof(List<StockSummaryReportDto>), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetStockSummaryReport([FromQuery] ReportFilterDto filter)
         {
             try
             {
-                var clientCode = User.FindFirst("ClientCode")?.Value;
+                var clientCode = GetClientCodeFromToken();
                 if (string.IsNullOrEmpty(clientCode))
-                    return BadRequest("Client code not found in token");
+                    return BadRequest(new { success = false, message = "Client code not found in token" });
 
                 var reports = await _reportingService.GetStockSummaryReportAsync(filter, clientCode);
-                return Ok(reports);
+                return SuccessResponse(reports, $"Found {reports.Count} stock summary report(s)");
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return ErrorResponse(500, "Failed to retrieve stock summary report", ex);
             }
         }
 
         /// <summary>
         /// Get stock summary for a specific date
         /// </summary>
+        /// <param name="date">Report date</param>
+        /// <returns>Stock summary report</returns>
         [HttpGet("stock-summary/date/{date:datetime}")]
-        public async Task<ActionResult<StockSummaryReportDto>> GetStockSummaryByDate(DateTime date)
+        [ProducesResponseType(typeof(StockSummaryReportDto), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetStockSummaryByDate(DateTime date)
         {
             try
             {
-                var clientCode = User.FindFirst("ClientCode")?.Value;
+                var clientCode = GetClientCodeFromToken();
                 if (string.IsNullOrEmpty(clientCode))
-                    return BadRequest("Client code not found in token");
+                    return BadRequest(new { success = false, message = "Client code not found in token" });
 
                 var report = await _reportingService.GetStockSummaryByDateAsync(date, clientCode);
-                return Ok(report);
+                return SuccessResponse(report);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return ErrorResponse(500, "Failed to retrieve stock summary report", ex);
             }
         }
 
         /// <summary>
         /// Get stock summary for a specific branch on a date
         /// </summary>
+        /// <param name="branchId">Branch ID</param>
+        /// <param name="date">Report date</param>
+        /// <returns>Stock summary report</returns>
         [HttpGet("stock-summary/branch/{branchId}/{date:datetime}")]
-        public async Task<ActionResult<StockSummaryReportDto>> GetStockSummaryByBranch(int branchId, DateTime date)
+        [ProducesResponseType(typeof(StockSummaryReportDto), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetStockSummaryByBranch(int branchId, DateTime date)
         {
             try
             {
-                var clientCode = User.FindFirst("ClientCode")?.Value;
+                var clientCode = GetClientCodeFromToken();
                 if (string.IsNullOrEmpty(clientCode))
-                    return BadRequest("Client code not found in token");
+                    return BadRequest(new { success = false, message = "Client code not found in token" });
 
                 var report = await _reportingService.GetStockSummaryByBranchAsync(date, branchId, clientCode);
-                return Ok(report);
+                return SuccessResponse(report);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return ErrorResponse(500, "Failed to retrieve stock summary report", ex);
             }
         }
 
         /// <summary>
         /// Get stock summary for a specific counter on a date
         /// </summary>
+        /// <param name="counterId">Counter ID</param>
+        /// <param name="date">Report date</param>
+        /// <returns>Stock summary report</returns>
         [HttpGet("stock-summary/counter/{counterId}/{date:datetime}")]
-        public async Task<ActionResult<StockSummaryReportDto>> GetStockSummaryByCounter(int counterId, DateTime date)
+        [ProducesResponseType(typeof(StockSummaryReportDto), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetStockSummaryByCounter(int counterId, DateTime date)
         {
             try
             {
-                var clientCode = User.FindFirst("ClientCode")?.Value;
+                var clientCode = GetClientCodeFromToken();
                 if (string.IsNullOrEmpty(clientCode))
-                    return BadRequest("Client code not found in token");
+                    return BadRequest(new { success = false, message = "Client code not found in token" });
 
                 var report = await _reportingService.GetStockSummaryByCounterAsync(date, counterId, clientCode);
-                return Ok(report);
+                return SuccessResponse(report);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return ErrorResponse(500, "Failed to retrieve stock summary report", ex);
             }
         }
 
         /// <summary>
         /// Get stock summary for a specific category on a date
         /// </summary>
+        /// <param name="categoryId">Category ID</param>
+        /// <param name="date">Report date</param>
+        /// <returns>Stock summary report</returns>
         [HttpGet("stock-summary/category/{categoryId}/{date:datetime}")]
-        public async Task<ActionResult<StockSummaryReportDto>> GetStockSummaryByCategory(int categoryId, DateTime date)
+        [ProducesResponseType(typeof(StockSummaryReportDto), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetStockSummaryByCategory(int categoryId, DateTime date)
         {
             try
             {
-                var clientCode = User.FindFirst("ClientCode")?.Value;
+                var clientCode = GetClientCodeFromToken();
                 if (string.IsNullOrEmpty(clientCode))
-                    return BadRequest("Client code not found in token");
+                    return BadRequest(new { success = false, message = "Client code not found in token" });
 
                 var report = await _reportingService.GetStockSummaryByCategoryAsync(date, categoryId, clientCode);
-                return Ok(report);
+                return SuccessResponse(report);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return ErrorResponse(500, "Failed to retrieve stock summary report", ex);
             }
         }
 
         #endregion
 
-        #region Daily Activity Report Endpoints
+        #region Daily Activity Report APIs
 
         /// <summary>
         /// Get daily activity report with filters
         /// </summary>
+        /// <param name="filter">Report filter criteria</param>
+        /// <returns>List of daily activity reports</returns>
         [HttpGet("daily-activity")]
-        public async Task<ActionResult<List<DailyActivityReportDto>>> GetDailyActivityReport([FromQuery] ReportFilterDto filter)
+        [ProducesResponseType(typeof(List<DailyActivityReportDto>), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetDailyActivityReport([FromQuery] ReportFilterDto filter)
         {
             try
             {
-                var clientCode = User.FindFirst("ClientCode")?.Value;
+                var clientCode = GetClientCodeFromToken();
                 if (string.IsNullOrEmpty(clientCode))
-                    return BadRequest("Client code not found in token");
+                    return BadRequest(new { success = false, message = "Client code not found in token" });
 
                 var activities = await _reportingService.GetDailyActivityReportAsync(filter, clientCode);
-                return Ok(activities);
+                return SuccessResponse(activities, $"Found {activities.Count} daily activity report(s)");
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return ErrorResponse(500, "Failed to retrieve daily activity report", ex);
             }
         }
 
         /// <summary>
         /// Get daily activity for a specific date
         /// </summary>
+        /// <param name="date">Report date</param>
+        /// <returns>Daily activity report</returns>
         [HttpGet("daily-activity/date/{date:datetime}")]
-        public async Task<ActionResult<DailyActivityReportDto>> GetDailyActivityByDate(DateTime date)
+        [ProducesResponseType(typeof(DailyActivityReportDto), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetDailyActivityByDate(DateTime date)
         {
             try
             {
-                var clientCode = User.FindFirst("ClientCode")?.Value;
+                var clientCode = GetClientCodeFromToken();
                 if (string.IsNullOrEmpty(clientCode))
-                    return BadRequest("Client code not found in token");
+                    return BadRequest(new { success = false, message = "Client code not found in token" });
 
                 var activity = await _reportingService.GetDailyActivityByDateAsync(date, clientCode);
-                return Ok(activity);
+                return SuccessResponse(activity);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return ErrorResponse(500, "Failed to retrieve daily activity report", ex);
             }
         }
 
         /// <summary>
         /// Get daily activity for a specific branch on a date
         /// </summary>
+        /// <param name="branchId">Branch ID</param>
+        /// <param name="date">Report date</param>
+        /// <returns>Daily activity report</returns>
         [HttpGet("daily-activity/branch/{branchId}/{date:datetime}")]
-        public async Task<ActionResult<DailyActivityReportDto>> GetDailyActivityByBranch(int branchId, DateTime date)
+        [ProducesResponseType(typeof(DailyActivityReportDto), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetDailyActivityByBranch(int branchId, DateTime date)
         {
             try
             {
-                var clientCode = User.FindFirst("ClientCode")?.Value;
+                var clientCode = GetClientCodeFromToken();
                 if (string.IsNullOrEmpty(clientCode))
-                    return BadRequest("Client code not found in token");
+                    return BadRequest(new { success = false, message = "Client code not found in token" });
 
                 var activity = await _reportingService.GetDailyActivityByBranchAsync(date, branchId, clientCode);
-                return Ok(activity);
+                return SuccessResponse(activity);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return ErrorResponse(500, "Failed to retrieve daily activity report", ex);
             }
         }
 
         /// <summary>
         /// Get daily activity for a specific counter on a date
         /// </summary>
+        /// <param name="counterId">Counter ID</param>
+        /// <param name="date">Report date</param>
+        /// <returns>Daily activity report</returns>
         [HttpGet("daily-activity/counter/{counterId}/{date:datetime}")]
-        public async Task<ActionResult<DailyActivityReportDto>> GetDailyActivityByCounter(int counterId, DateTime date)
+        [ProducesResponseType(typeof(DailyActivityReportDto), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetDailyActivityByCounter(int counterId, DateTime date)
         {
             try
             {
-                var clientCode = User.FindFirst("ClientCode")?.Value;
+                var clientCode = GetClientCodeFromToken();
                 if (string.IsNullOrEmpty(clientCode))
-                    return BadRequest("Client code not found in token");
+                    return BadRequest(new { success = false, message = "Client code not found in token" });
 
                 var activity = await _reportingService.GetDailyActivityByCounterAsync(date, counterId, clientCode);
-                return Ok(activity);
+                return SuccessResponse(activity);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return ErrorResponse(500, "Failed to retrieve daily activity report", ex);
             }
         }
 
         /// <summary>
         /// Get daily activity for a specific category on a date
         /// </summary>
+        /// <param name="categoryId">Category ID</param>
+        /// <param name="date">Report date</param>
+        /// <returns>Daily activity report</returns>
         [HttpGet("daily-activity/category/{categoryId}/{date:datetime}")]
-        public async Task<ActionResult<DailyActivityReportDto>> GetDailyActivityByCategory(int categoryId, DateTime date)
+        [ProducesResponseType(typeof(DailyActivityReportDto), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetDailyActivityByCategory(int categoryId, DateTime date)
         {
             try
             {
-                var clientCode = User.FindFirst("ClientCode")?.Value;
+                var clientCode = GetClientCodeFromToken();
                 if (string.IsNullOrEmpty(clientCode))
-                    return BadRequest("Client code not found in token");
+                    return BadRequest(new { success = false, message = "Client code not found in token" });
 
                 var activity = await _reportingService.GetDailyActivityByCategoryAsync(date, categoryId, clientCode);
-                return Ok(activity);
+                return SuccessResponse(activity);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return ErrorResponse(500, "Failed to retrieve daily activity report", ex);
             }
         }
 
         #endregion
 
-        #region Report Summary Endpoints
+        #region Report Summary APIs
 
         /// <summary>
         /// Get report summary for a specific date
         /// </summary>
+        /// <param name="date">Report date</param>
+        /// <returns>Report summary</returns>
         [HttpGet("summary/{date:datetime}")]
-        public async Task<ActionResult<ReportSummaryDto>> GetReportSummary(DateTime date)
+        [ProducesResponseType(typeof(ReportSummaryDto), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetReportSummary(DateTime date)
         {
             try
             {
-                var clientCode = User.FindFirst("ClientCode")?.Value;
+                var clientCode = GetClientCodeFromToken();
                 if (string.IsNullOrEmpty(clientCode))
-                    return BadRequest("Client code not found in token");
+                    return BadRequest(new { success = false, message = "Client code not found in token" });
 
                 var summary = await _reportingService.GetReportSummaryAsync(date, clientCode);
-                return Ok(summary);
+                return SuccessResponse(summary);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return ErrorResponse(500, "Failed to retrieve report summary", ex);
             }
         }
 
         /// <summary>
         /// Get report summary for a date range
         /// </summary>
+        /// <param name="startDate">Start date</param>
+        /// <param name="endDate">End date</param>
+        /// <returns>Report summary</returns>
         [HttpGet("summary/range")]
-        public async Task<ActionResult<ReportSummaryDto>> GetReportSummaryByDateRange(
-            [FromQuery] DateTime startDate, [FromQuery] DateTime endDate)
+        [ProducesResponseType(typeof(ReportSummaryDto), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetReportSummaryByDateRange(
+            [FromQuery] DateTime startDate,
+            [FromQuery] DateTime endDate)
         {
             try
             {
-                var clientCode = User.FindFirst("ClientCode")?.Value;
+                var clientCode = GetClientCodeFromToken();
                 if (string.IsNullOrEmpty(clientCode))
-                    return BadRequest("Client code not found in token");
+                    return BadRequest(new { success = false, message = "Client code not found in token" });
 
                 var summary = await _reportingService.GetReportSummaryByDateRangeAsync(startDate, endDate, clientCode);
-                return Ok(summary);
+                return SuccessResponse(summary);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return ErrorResponse(500, "Failed to retrieve report summary", ex);
             }
         }
 
         /// <summary>
         /// Get report summary for a specific branch on a date
         /// </summary>
+        /// <param name="branchId">Branch ID</param>
+        /// <param name="date">Report date</param>
+        /// <returns>Report summary</returns>
         [HttpGet("summary/branch/{branchId}/{date:datetime}")]
-        public async Task<ActionResult<ReportSummaryDto>> GetReportSummaryByBranch(int branchId, DateTime date)
+        [ProducesResponseType(typeof(ReportSummaryDto), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetReportSummaryByBranch(int branchId, DateTime date)
         {
             try
             {
-                var clientCode = User.FindFirst("ClientCode")?.Value;
+                var clientCode = GetClientCodeFromToken();
                 if (string.IsNullOrEmpty(clientCode))
-                    return BadRequest("Client code not found in token");
+                    return BadRequest(new { success = false, message = "Client code not found in token" });
 
                 var summary = await _reportingService.GetReportSummaryByBranchAsync(date, branchId, clientCode);
-                return Ok(summary);
+                return SuccessResponse(summary);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return ErrorResponse(500, "Failed to retrieve report summary", ex);
             }
         }
 
         /// <summary>
         /// Get report summary for a specific counter on a date
         /// </summary>
+        /// <param name="counterId">Counter ID</param>
+        /// <param name="date">Report date</param>
+        /// <returns>Report summary</returns>
         [HttpGet("summary/counter/{counterId}/{date:datetime}")]
-        public async Task<ActionResult<ReportSummaryDto>> GetReportSummaryByCounter(int counterId, DateTime date)
+        [ProducesResponseType(typeof(ReportSummaryDto), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetReportSummaryByCounter(int counterId, DateTime date)
         {
             try
             {
-                var clientCode = User.FindFirst("ClientCode")?.Value;
+                var clientCode = GetClientCodeFromToken();
                 if (string.IsNullOrEmpty(clientCode))
-                    return BadRequest("Client code not found in token");
+                    return BadRequest(new { success = false, message = "Client code not found in token" });
 
                 var summary = await _reportingService.GetReportSummaryByCounterAsync(date, counterId, clientCode);
-                return Ok(summary);
+                return SuccessResponse(summary);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return ErrorResponse(500, "Failed to retrieve report summary", ex);
             }
         }
 
         #endregion
 
-        #region Stock Tracking Endpoints
+        #region Stock Tracking APIs
 
         /// <summary>
         /// Get current stock for a specific product
         /// </summary>
+        /// <param name="productId">Product ID</param>
+        /// <returns>Current stock quantity</returns>
         [HttpGet("stock/current/{productId}")]
-        public async Task<ActionResult<int>> GetCurrentStock(int productId)
+        [ProducesResponseType(typeof(int), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetCurrentStock(int productId)
         {
             try
             {
-                var clientCode = User.FindFirst("ClientCode")?.Value;
+                var clientCode = GetClientCodeFromToken();
                 if (string.IsNullOrEmpty(clientCode))
-                    return BadRequest("Client code not found in token");
+                    return BadRequest(new { success = false, message = "Client code not found in token" });
 
                 var stock = await _reportingService.GetCurrentStockAsync(productId, clientCode);
-                return Ok(stock);
+                return SuccessResponse(stock, $"Current stock: {stock}");
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return ErrorResponse(500, "Failed to retrieve current stock", ex);
             }
         }
 
         /// <summary>
         /// Get current stock for a specific product by branch
         /// </summary>
+        /// <param name="productId">Product ID</param>
+        /// <param name="branchId">Branch ID</param>
+        /// <returns>Current stock quantity</returns>
         [HttpGet("stock/current/{productId}/branch/{branchId}")]
-        public async Task<ActionResult<int>> GetCurrentStockByBranch(int productId, int branchId)
+        [ProducesResponseType(typeof(int), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetCurrentStockByBranch(int productId, int branchId)
         {
             try
             {
-                var clientCode = User.FindFirst("ClientCode")?.Value;
+                var clientCode = GetClientCodeFromToken();
                 if (string.IsNullOrEmpty(clientCode))
-                    return BadRequest("Client code not found in token");
+                    return BadRequest(new { success = false, message = "Client code not found in token" });
 
                 var stock = await _reportingService.GetCurrentStockByBranchAsync(productId, branchId, clientCode);
-                return Ok(stock);
+                return SuccessResponse(stock, $"Current stock: {stock}");
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return ErrorResponse(500, "Failed to retrieve current stock", ex);
             }
         }
 
         /// <summary>
         /// Get current stock for a specific product by counter
         /// </summary>
+        /// <param name="productId">Product ID</param>
+        /// <param name="counterId">Counter ID</param>
+        /// <returns>Current stock quantity</returns>
         [HttpGet("stock/current/{productId}/counter/{counterId}")]
-        public async Task<ActionResult<int>> GetCurrentStockByCounter(int productId, int counterId)
+        [ProducesResponseType(typeof(int), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetCurrentStockByCounter(int productId, int counterId)
         {
             try
             {
-                var clientCode = User.FindFirst("ClientCode")?.Value;
+                var clientCode = GetClientCodeFromToken();
                 if (string.IsNullOrEmpty(clientCode))
-                    return BadRequest("Client code not found in token");
+                    return BadRequest(new { success = false, message = "Client code not found in token" });
 
                 var stock = await _reportingService.GetCurrentStockByCounterAsync(productId, counterId, clientCode);
-                return Ok(stock);
+                return SuccessResponse(stock, $"Current stock: {stock}");
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return ErrorResponse(500, "Failed to retrieve current stock", ex);
             }
         }
 
         /// <summary>
         /// Get current stock for a specific category
         /// </summary>
+        /// <param name="categoryId">Category ID</param>
+        /// <returns>Current stock quantity</returns>
         [HttpGet("stock/current/category/{categoryId}")]
-        public async Task<ActionResult<int>> GetCurrentStockByCategory(int categoryId)
+        [ProducesResponseType(typeof(int), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetCurrentStockByCategory(int categoryId)
         {
             try
             {
-                var clientCode = User.FindFirst("ClientCode")?.Value;
+                var clientCode = GetClientCodeFromToken();
                 if (string.IsNullOrEmpty(clientCode))
-                    return BadRequest("Client code not found in token");
+                    return BadRequest(new { success = false, message = "Client code not found in token" });
 
                 var stock = await _reportingService.GetCurrentStockByCategoryAsync(categoryId, clientCode);
-                return Ok(stock);
+                return SuccessResponse(stock, $"Current stock: {stock}");
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return ErrorResponse(500, "Failed to retrieve current stock", ex);
             }
         }
 
         /// <summary>
         /// Get current stock value for a specific product
         /// </summary>
+        /// <param name="productId">Product ID</param>
+        /// <returns>Current stock value</returns>
         [HttpGet("stock/value/{productId}")]
-        public async Task<ActionResult<decimal>> GetCurrentStockValue(int productId)
+        [ProducesResponseType(typeof(decimal), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetCurrentStockValue(int productId)
         {
             try
             {
-                var clientCode = User.FindFirst("ClientCode")?.Value;
+                var clientCode = GetClientCodeFromToken();
                 if (string.IsNullOrEmpty(clientCode))
-                    return BadRequest("Client code not found in token");
+                    return BadRequest(new { success = false, message = "Client code not found in token" });
 
                 var value = await _reportingService.GetCurrentStockValueAsync(productId, clientCode);
-                return Ok(value);
+                return SuccessResponse(value, $"Current stock value: {value:C}");
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return ErrorResponse(500, "Failed to retrieve current stock value", ex);
             }
         }
 
         /// <summary>
         /// Get current stock value for a specific product by branch
         /// </summary>
+        /// <param name="productId">Product ID</param>
+        /// <param name="branchId">Branch ID</param>
+        /// <returns>Current stock value</returns>
         [HttpGet("stock/value/{productId}/branch/{branchId}")]
-        public async Task<ActionResult<decimal>> GetCurrentStockValueByBranch(int productId, int branchId)
+        [ProducesResponseType(typeof(decimal), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetCurrentStockValueByBranch(int productId, int branchId)
         {
             try
             {
-                var clientCode = User.FindFirst("ClientCode")?.Value;
+                var clientCode = GetClientCodeFromToken();
                 if (string.IsNullOrEmpty(clientCode))
-                    return BadRequest("Client code not found in token");
+                    return BadRequest(new { success = false, message = "Client code not found in token" });
 
                 var value = await _reportingService.GetCurrentStockValueByBranchAsync(productId, branchId, clientCode);
-                return Ok(value);
+                return SuccessResponse(value, $"Current stock value: {value:C}");
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return ErrorResponse(500, "Failed to retrieve current stock value", ex);
             }
         }
 
         /// <summary>
         /// Get current stock value for a specific product by counter
         /// </summary>
+        /// <param name="productId">Product ID</param>
+        /// <param name="counterId">Counter ID</param>
+        /// <returns>Current stock value</returns>
         [HttpGet("stock/value/{productId}/counter/{counterId}")]
-        public async Task<ActionResult<decimal>> GetCurrentStockValueByCounter(int productId, int counterId)
+        [ProducesResponseType(typeof(decimal), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetCurrentStockValueByCounter(int productId, int counterId)
         {
             try
             {
-                var clientCode = User.FindFirst("ClientCode")?.Value;
+                var clientCode = GetClientCodeFromToken();
                 if (string.IsNullOrEmpty(clientCode))
-                    return BadRequest("Client code not found in token");
+                    return BadRequest(new { success = false, message = "Client code not found in token" });
 
                 var value = await _reportingService.GetCurrentStockValueByCounterAsync(productId, counterId, clientCode);
-                return Ok(value);
+                return SuccessResponse(value, $"Current stock value: {value:C}");
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return ErrorResponse(500, "Failed to retrieve current stock value", ex);
             }
         }
 
         /// <summary>
         /// Get current stock value for a specific category
         /// </summary>
+        /// <param name="categoryId">Category ID</param>
+        /// <returns>Current stock value</returns>
         [HttpGet("stock/value/category/{categoryId}")]
-        public async Task<ActionResult<decimal>> GetCurrentStockValueByCategory(int categoryId)
+        [ProducesResponseType(typeof(decimal), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetCurrentStockValueByCategory(int categoryId)
         {
             try
             {
-                var clientCode = User.FindFirst("ClientCode")?.Value;
+                var clientCode = GetClientCodeFromToken();
                 if (string.IsNullOrEmpty(clientCode))
-                    return BadRequest("Client code not found in token");
+                    return BadRequest(new { success = false, message = "Client code not found in token" });
 
                 var value = await _reportingService.GetCurrentStockValueByCategoryAsync(categoryId, clientCode);
-                return Ok(value);
+                return SuccessResponse(value, $"Current stock value: {value:C}");
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return ErrorResponse(500, "Failed to retrieve current stock value", ex);
             }
         }
 
         #endregion
 
-        #region Utility Endpoints
+        #region Utility APIs
 
         /// <summary>
         /// Process daily stock balances for a specific date
         /// </summary>
+        /// <param name="date">Date to process</param>
+        /// <returns>Processing result</returns>
         [HttpPost("process-balances/{date:datetime}")]
-        public async Task<ActionResult<bool>> ProcessDailyStockBalances(DateTime date)
+        [ProducesResponseType(typeof(bool), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> ProcessDailyStockBalances(DateTime date)
         {
             try
             {
-                var clientCode = User.FindFirst("ClientCode")?.Value;
+                var clientCode = GetClientCodeFromToken();
                 if (string.IsNullOrEmpty(clientCode))
-                    return BadRequest("Client code not found in token");
+                    return BadRequest(new { success = false, message = "Client code not found in token" });
 
                 var result = await _reportingService.ProcessDailyStockBalancesAsync(date, clientCode);
-                return Ok(result);
+                return SuccessResponse(result, result ? "Daily stock balances processed successfully" : "Failed to process daily stock balances");
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return ErrorResponse(500, "Failed to process daily stock balances", ex);
             }
         }
 
         /// <summary>
         /// Process daily stock balances for a date range
         /// </summary>
+        /// <param name="startDate">Start date</param>
+        /// <param name="endDate">End date</param>
+        /// <returns>Processing result</returns>
         [HttpPost("process-balances/range")]
-        public async Task<ActionResult<bool>> ProcessAllDailyStockBalances(
-            [FromQuery] DateTime startDate, [FromQuery] DateTime endDate)
+        [ProducesResponseType(typeof(bool), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> ProcessAllDailyStockBalances(
+            [FromQuery] DateTime startDate,
+            [FromQuery] DateTime endDate)
         {
             try
             {
-                var clientCode = User.FindFirst("ClientCode")?.Value;
+                var clientCode = GetClientCodeFromToken();
                 if (string.IsNullOrEmpty(clientCode))
-                    return BadRequest("Client code not found in token");
+                    return BadRequest(new { success = false, message = "Client code not found in token" });
 
                 var result = await _reportingService.ProcessAllDailyStockBalancesAsync(startDate, endDate, clientCode);
-                return Ok(result);
+                return SuccessResponse(result, result ? "Daily stock balances processed successfully" : "Failed to process daily stock balances");
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return ErrorResponse(500, "Failed to process daily stock balances", ex);
             }
         }
 
         /// <summary>
         /// Recalculate stock balances for a date range
         /// </summary>
+        /// <param name="startDate">Start date</param>
+        /// <param name="endDate">End date</param>
+        /// <returns>Recalculation result</returns>
         [HttpPost("recalculate-balances")]
-        public async Task<ActionResult<bool>> RecalculateStockBalances(
-            [FromQuery] DateTime startDate, [FromQuery] DateTime endDate)
+        [ProducesResponseType(typeof(bool), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> RecalculateStockBalances(
+            [FromQuery] DateTime startDate,
+            [FromQuery] DateTime endDate)
         {
             try
             {
-                var clientCode = User.FindFirst("ClientCode")?.Value;
+                var clientCode = GetClientCodeFromToken();
                 if (string.IsNullOrEmpty(clientCode))
-                    return BadRequest("Client code not found in token");
+                    return BadRequest(new { success = false, message = "Client code not found in token" });
 
                 var result = await _reportingService.RecalculateStockBalancesAsync(startDate, endDate, clientCode);
-                return Ok(result);
+                return SuccessResponse(result, result ? "Stock balances recalculated successfully" : "Failed to recalculate stock balances");
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return ErrorResponse(500, "Failed to recalculate stock balances", ex);
             }
         }
 
         #endregion
 
-        #region RFID Usage Report Endpoints
+        #region RFID Usage Report APIs
 
         /// <summary>
         /// Get comprehensive RFID usage report
         /// </summary>
+        /// <returns>RFID usage report</returns>
         [HttpGet("rfid-usage")]
-        public async Task<ActionResult<RfidUsageReportDto>> GetRfidUsageReport()
+        [ProducesResponseType(typeof(RfidUsageReportDto), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetRfidUsageReport()
         {
             try
             {
-                var clientCode = User.FindFirst("ClientCode")?.Value;
+                var clientCode = GetClientCodeFromToken();
                 if (string.IsNullOrEmpty(clientCode))
-                    return BadRequest("Client code not found in token");
+                    return BadRequest(new { success = false, message = "Client code not found in token" });
 
                 var report = await _reportingService.GetRfidUsageReportAsync(clientCode);
-                return Ok(report);
+                return SuccessResponse(report);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return ErrorResponse(500, "Failed to retrieve RFID usage report", ex);
             }
         }
 
         /// <summary>
         /// Get RFID usage report for a specific date
         /// </summary>
+        /// <param name="date">Report date</param>
+        /// <returns>RFID usage report</returns>
         [HttpGet("rfid-usage/date/{date:datetime}")]
-        public async Task<ActionResult<RfidUsageReportDto>> GetRfidUsageReportByDate(DateTime date)
+        [ProducesResponseType(typeof(RfidUsageReportDto), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetRfidUsageReportByDate(DateTime date)
         {
             try
             {
-                var clientCode = User.FindFirst("ClientCode")?.Value;
+                var clientCode = GetClientCodeFromToken();
                 if (string.IsNullOrEmpty(clientCode))
-                    return BadRequest("Client code not found in token");
+                    return BadRequest(new { success = false, message = "Client code not found in token" });
 
                 var report = await _reportingService.GetRfidUsageReportByDateAsync(date, clientCode);
-                return Ok(report);
+                return SuccessResponse(report);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return ErrorResponse(500, "Failed to retrieve RFID usage report", ex);
             }
         }
 
         /// <summary>
         /// Get all used RFID tags
         /// </summary>
+        /// <returns>List of used RFID tags</returns>
         [HttpGet("rfid-usage/used")]
-        public async Task<ActionResult<List<RfidUsageDetailDto>>> GetUsedRfidTags()
+        [ProducesResponseType(typeof(List<RfidUsageDetailDto>), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetUsedRfidTags()
         {
             try
             {
-                var clientCode = User.FindFirst("ClientCode")?.Value;
+                var clientCode = GetClientCodeFromToken();
                 if (string.IsNullOrEmpty(clientCode))
-                    return BadRequest("Client code not found in token");
+                    return BadRequest(new { success = false, message = "Client code not found in token" });
 
                 var usedTags = await _reportingService.GetUsedRfidTagsAsync(clientCode);
-                return Ok(usedTags);
+                return SuccessResponse(usedTags, $"Found {usedTags.Count} used RFID tag(s)");
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return ErrorResponse(500, "Failed to retrieve used RFID tags", ex);
             }
         }
 
         /// <summary>
         /// Get all unused RFID tags
         /// </summary>
+        /// <returns>List of unused RFID tags</returns>
         [HttpGet("rfid-usage/unused")]
-        public async Task<ActionResult<List<RfidUsageDetailDto>>> GetUnusedRfidTags()
+        [ProducesResponseType(typeof(List<RfidUsageDetailDto>), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetUnusedRfidTags()
         {
             try
             {
-                var clientCode = User.FindFirst("ClientCode")?.Value;
+                var clientCode = GetClientCodeFromToken();
                 if (string.IsNullOrEmpty(clientCode))
-                    return BadRequest("Client code not found in token");
+                    return BadRequest(new { success = false, message = "Client code not found in token" });
 
                 var unusedTags = await _reportingService.GetUnusedRfidTagsAsync(clientCode);
-                return Ok(unusedTags);
+                return SuccessResponse(unusedTags, $"Found {unusedTags.Count} unused RFID tag(s)");
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return ErrorResponse(500, "Failed to retrieve unused RFID tags", ex);
             }
         }
 
         /// <summary>
         /// Get RFID tags by usage status
         /// </summary>
+        /// <param name="isUsed">Usage status (true for used, false for unused)</param>
+        /// <returns>List of RFID tags</returns>
         [HttpGet("rfid-usage/status/{isUsed:bool}")]
-        public async Task<ActionResult<List<RfidUsageDetailDto>>> GetRfidTagsByStatus(bool isUsed)
+        [ProducesResponseType(typeof(List<RfidUsageDetailDto>), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetRfidTagsByStatus(bool isUsed)
         {
             try
             {
-                var clientCode = User.FindFirst("ClientCode")?.Value;
+                var clientCode = GetClientCodeFromToken();
                 if (string.IsNullOrEmpty(clientCode))
-                    return BadRequest("Client code not found in token");
+                    return BadRequest(new { success = false, message = "Client code not found in token" });
 
                 var tags = await _reportingService.GetRfidTagsByStatusAsync(isUsed, clientCode);
-                return Ok(tags);
+                return SuccessResponse(tags, $"Found {tags.Count} RFID tag(s)");
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return ErrorResponse(500, "Failed to retrieve RFID tags", ex);
             }
         }
 
         /// <summary>
         /// Get RFID usage summary by category
         /// </summary>
+        /// <returns>List of RFID usage by category</returns>
         [HttpGet("rfid-usage/by-category")]
-        public async Task<ActionResult<List<RfidUsageByCategoryDto>>> GetRfidUsageByCategory()
+        [ProducesResponseType(typeof(List<RfidUsageByCategoryDto>), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetRfidUsageByCategory()
         {
             try
             {
-                var clientCode = User.FindFirst("ClientCode")?.Value;
+                var clientCode = GetClientCodeFromToken();
                 if (string.IsNullOrEmpty(clientCode))
-                    return BadRequest("Client code not found in token");
+                    return BadRequest(new { success = false, message = "Client code not found in token" });
 
                 var categoryUsage = await _reportingService.GetRfidUsageByCategoryAsync(clientCode);
-                return Ok(categoryUsage);
+                return SuccessResponse(categoryUsage, $"Found {categoryUsage.Count} category/categories");
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return ErrorResponse(500, "Failed to retrieve RFID usage by category", ex);
             }
         }
 
         /// <summary>
         /// Get RFID usage summary by branch
         /// </summary>
+        /// <returns>List of RFID usage by branch</returns>
         [HttpGet("rfid-usage/by-branch")]
-        public async Task<ActionResult<List<RfidUsageByBranchDto>>> GetRfidUsageByBranch()
+        [ProducesResponseType(typeof(List<RfidUsageByBranchDto>), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetRfidUsageByBranch()
         {
             try
             {
-                var clientCode = User.FindFirst("ClientCode")?.Value;
+                var clientCode = GetClientCodeFromToken();
                 if (string.IsNullOrEmpty(clientCode))
-                    return BadRequest("Client code not found in token");
+                    return BadRequest(new { success = false, message = "Client code not found in token" });
 
                 var branchUsage = await _reportingService.GetRfidUsageByBranchAsync(clientCode);
-                return Ok(branchUsage);
+                return SuccessResponse(branchUsage, $"Found {branchUsage.Count} branch/branches");
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return ErrorResponse(500, "Failed to retrieve RFID usage by branch", ex);
             }
         }
 
         /// <summary>
         /// Get RFID usage summary by counter
         /// </summary>
+        /// <returns>List of RFID usage by counter</returns>
         [HttpGet("rfid-usage/by-counter")]
-        public async Task<ActionResult<List<RfidUsageByCounterDto>>> GetRfidUsageByCounter()
+        [ProducesResponseType(typeof(List<RfidUsageByCounterDto>), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetRfidUsageByCounter()
         {
             try
             {
-                var clientCode = User.FindFirst("ClientCode")?.Value;
+                var clientCode = GetClientCodeFromToken();
                 if (string.IsNullOrEmpty(clientCode))
-                    return BadRequest("Client code not found in token");
+                    return BadRequest(new { success = false, message = "Client code not found in token" });
 
                 var counterUsage = await _reportingService.GetRfidUsageByCounterAsync(clientCode);
-                return Ok(counterUsage);
+                return SuccessResponse(counterUsage, $"Found {counterUsage.Count} counter/counters");
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return ErrorResponse(500, "Failed to retrieve RFID usage by counter", ex);
             }
         }
 
         /// <summary>
         /// Get RFID usage summary for a specific category
         /// </summary>
+        /// <param name="categoryId">Category ID</param>
+        /// <returns>RFID usage by category</returns>
         [HttpGet("rfid-usage/category/{categoryId}")]
-        public async Task<ActionResult<RfidUsageByCategoryDto>> GetRfidUsageByCategoryId(int categoryId)
+        [ProducesResponseType(typeof(RfidUsageByCategoryDto), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetRfidUsageByCategoryId(int categoryId)
         {
             try
             {
-                var clientCode = User.FindFirst("ClientCode")?.Value;
+                var clientCode = GetClientCodeFromToken();
                 if (string.IsNullOrEmpty(clientCode))
-                    return BadRequest("Client code not found in token");
+                    return BadRequest(new { success = false, message = "Client code not found in token" });
 
                 var categoryUsage = await _reportingService.GetRfidUsageByCategoryIdAsync(categoryId, clientCode);
-                return Ok(categoryUsage);
+                return SuccessResponse(categoryUsage);
             }
             catch (ArgumentException ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new { success = false, message = ex.Message });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return ErrorResponse(500, "Failed to retrieve RFID usage by category", ex);
             }
         }
 
         /// <summary>
         /// Get RFID usage summary for a specific branch
         /// </summary>
+        /// <param name="branchId">Branch ID</param>
+        /// <returns>RFID usage by branch</returns>
         [HttpGet("rfid-usage/branch/{branchId}")]
-        public async Task<ActionResult<RfidUsageByBranchDto>> GetRfidUsageByBranchId(int branchId)
+        [ProducesResponseType(typeof(RfidUsageByBranchDto), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetRfidUsageByBranchId(int branchId)
         {
             try
             {
-                var clientCode = User.FindFirst("ClientCode")?.Value;
+                var clientCode = GetClientCodeFromToken();
                 if (string.IsNullOrEmpty(clientCode))
-                    return BadRequest("Client code not found in token");
+                    return BadRequest(new { success = false, message = "Client code not found in token" });
 
                 var branchUsage = await _reportingService.GetRfidUsageByBranchIdAsync(branchId, clientCode);
-                return Ok(branchUsage);
+                return SuccessResponse(branchUsage);
             }
             catch (ArgumentException ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new { success = false, message = ex.Message });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return ErrorResponse(500, "Failed to retrieve RFID usage by branch", ex);
             }
         }
 
         /// <summary>
         /// Get RFID usage summary for a specific counter
         /// </summary>
+        /// <param name="counterId">Counter ID</param>
+        /// <returns>RFID usage by counter</returns>
         [HttpGet("rfid-usage/counter/{counterId}")]
-        public async Task<ActionResult<RfidUsageByCounterDto>> GetRfidUsageByCounterId(int counterId)
+        [ProducesResponseType(typeof(RfidUsageByCounterDto), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetRfidUsageByCounterId(int counterId)
         {
             try
             {
-                var clientCode = User.FindFirst("ClientCode")?.Value;
+                var clientCode = GetClientCodeFromToken();
                 if (string.IsNullOrEmpty(clientCode))
-                    return BadRequest("Client code not found in token");
+                    return BadRequest(new { success = false, message = "Client code not found in token" });
 
                 var counterUsage = await _reportingService.GetRfidUsageByCounterIdAsync(counterId, clientCode);
-                return Ok(counterUsage);
+                return SuccessResponse(counterUsage);
             }
             catch (ArgumentException ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new { success = false, message = ex.Message });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return ErrorResponse(500, "Failed to retrieve RFID usage by counter", ex);
             }
         }
 
         /// <summary>
         /// Get total count of RFID tags
         /// </summary>
+        /// <returns>Total RFID tags count</returns>
         [HttpGet("rfid-usage/count/total")]
-        public async Task<ActionResult<int>> GetTotalRfidTagsCount()
+        [ProducesResponseType(typeof(int), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetTotalRfidTagsCount()
         {
             try
             {
-                var clientCode = User.FindFirst("ClientCode")?.Value;
+                var clientCode = GetClientCodeFromToken();
                 if (string.IsNullOrEmpty(clientCode))
-                    return BadRequest("Client code not found in token");
+                    return BadRequest(new { success = false, message = "Client code not found in token" });
 
                 var count = await _reportingService.GetTotalRfidTagsCountAsync(clientCode);
-                return Ok(count);
+                return SuccessResponse(count, $"Total RFID tags: {count}");
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return ErrorResponse(500, "Failed to retrieve total RFID tags count", ex);
             }
         }
 
         /// <summary>
         /// Get count of used RFID tags
         /// </summary>
+        /// <returns>Used RFID tags count</returns>
         [HttpGet("rfid-usage/count/used")]
-        public async Task<ActionResult<int>> GetUsedRfidTagsCount()
+        [ProducesResponseType(typeof(int), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetUsedRfidTagsCount()
         {
             try
             {
-                var clientCode = User.FindFirst("ClientCode")?.Value;
+                var clientCode = GetClientCodeFromToken();
                 if (string.IsNullOrEmpty(clientCode))
-                    return BadRequest("Client code not found in token");
+                    return BadRequest(new { success = false, message = "Client code not found in token" });
 
                 var count = await _reportingService.GetUsedRfidTagsCountAsync(clientCode);
-                return Ok(count);
+                return SuccessResponse(count, $"Used RFID tags: {count}");
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return ErrorResponse(500, "Failed to retrieve used RFID tags count", ex);
             }
         }
 
         /// <summary>
         /// Get count of unused RFID tags
         /// </summary>
+        /// <returns>Unused RFID tags count</returns>
         [HttpGet("rfid-usage/count/unused")]
-        public async Task<ActionResult<int>> GetUnusedRfidTagsCount()
+        [ProducesResponseType(typeof(int), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetUnusedRfidTagsCount()
         {
             try
             {
-                var clientCode = User.FindFirst("ClientCode")?.Value;
+                var clientCode = GetClientCodeFromToken();
                 if (string.IsNullOrEmpty(clientCode))
-                    return BadRequest("Client code not found in token");
+                    return BadRequest(new { success = false, message = "Client code not found in token" });
 
                 var count = await _reportingService.GetUnusedRfidTagsCountAsync(clientCode);
-                return Ok(count);
+                return SuccessResponse(count, $"Unused RFID tags: {count}");
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return ErrorResponse(500, "Failed to retrieve unused RFID tags count", ex);
             }
         }
 
         /// <summary>
         /// Get RFID usage percentage
         /// </summary>
+        /// <returns>RFID usage percentage</returns>
         [HttpGet("rfid-usage/percentage")]
-        public async Task<ActionResult<decimal>> GetRfidUsagePercentage()
+        [ProducesResponseType(typeof(decimal), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetRfidUsagePercentage()
         {
             try
             {
-                var clientCode = User.FindFirst("ClientCode")?.Value;
+                var clientCode = GetClientCodeFromToken();
                 if (string.IsNullOrEmpty(clientCode))
-                    return BadRequest("Client code not found in token");
+                    return BadRequest(new { success = false, message = "Client code not found in token" });
 
                 var percentage = await _reportingService.GetRfidUsagePercentageAsync(clientCode);
-                return Ok(percentage);
+                return SuccessResponse(percentage, $"RFID usage: {percentage:F2}%");
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return ErrorResponse(500, "Failed to retrieve RFID usage percentage", ex);
             }
         }
 
         #endregion
 
-        #region Export Endpoints
+        #region Export APIs
 
         /// <summary>
         /// Export stock movements to CSV
         /// </summary>
+        /// <param name="filter">Report filter criteria</param>
+        /// <returns>CSV file</returns>
         [HttpGet("export/stock-movements/csv")]
-        public async Task<ActionResult> ExportStockMovementsToCsv([FromQuery] ReportFilterDto filter)
+        [ProducesResponseType(typeof(FileResult), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> ExportStockMovementsToCsv([FromQuery] ReportFilterDto filter)
         {
             try
             {
-                var clientCode = User.FindFirst("ClientCode")?.Value;
+                var clientCode = GetClientCodeFromToken();
                 if (string.IsNullOrEmpty(clientCode))
-                    return BadRequest("Client code not found in token");
+                    return BadRequest(new { success = false, message = "Client code not found in token" });
 
                 var csvData = await _reportingService.ExportStockMovementsToCsvAsync(filter, clientCode);
                 var fileName = $"stock-movements-{DateTime.Now:yyyyMMdd-HHmmss}.csv";
@@ -1413,21 +1759,26 @@ namespace RfidAppApi.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return ErrorResponse(500, "Failed to export stock movements to CSV", ex);
             }
         }
 
         /// <summary>
         /// Export stock movements to Excel
         /// </summary>
+        /// <param name="filter">Report filter criteria</param>
+        /// <returns>Excel file</returns>
         [HttpGet("export/stock-movements/excel")]
-        public async Task<ActionResult> ExportStockMovementsToExcel([FromQuery] ReportFilterDto filter)
+        [ProducesResponseType(typeof(FileResult), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> ExportStockMovementsToExcel([FromQuery] ReportFilterDto filter)
         {
             try
             {
-                var clientCode = User.FindFirst("ClientCode")?.Value;
+                var clientCode = GetClientCodeFromToken();
                 if (string.IsNullOrEmpty(clientCode))
-                    return BadRequest("Client code not found in token");
+                    return BadRequest(new { success = false, message = "Client code not found in token" });
 
                 var excelData = await _reportingService.ExportStockMovementsToExcelAsync(filter, clientCode);
                 var fileName = $"stock-movements-{DateTime.Now:yyyyMMdd-HHmmss}.xlsx";
@@ -1436,21 +1787,26 @@ namespace RfidAppApi.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return ErrorResponse(500, "Failed to export stock movements to Excel", ex);
             }
         }
 
         /// <summary>
         /// Export daily balances to CSV
         /// </summary>
+        /// <param name="filter">Report filter criteria</param>
+        /// <returns>CSV file</returns>
         [HttpGet("export/daily-balances/csv")]
-        public async Task<ActionResult> ExportDailyBalancesToCsv([FromQuery] ReportFilterDto filter)
+        [ProducesResponseType(typeof(FileResult), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> ExportDailyBalancesToCsv([FromQuery] ReportFilterDto filter)
         {
             try
             {
-                var clientCode = User.FindFirst("ClientCode")?.Value;
+                var clientCode = GetClientCodeFromToken();
                 if (string.IsNullOrEmpty(clientCode))
-                    return BadRequest("Client code not found in token");
+                    return BadRequest(new { success = false, message = "Client code not found in token" });
 
                 var csvData = await _reportingService.ExportDailyBalancesToCsvAsync(filter, clientCode);
                 var fileName = $"daily-balances-{DateTime.Now:yyyyMMdd-HHmmss}.csv";
@@ -1459,21 +1815,26 @@ namespace RfidAppApi.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return ErrorResponse(500, "Failed to export daily balances to CSV", ex);
             }
         }
 
         /// <summary>
         /// Export daily balances to Excel
         /// </summary>
+        /// <param name="filter">Report filter criteria</param>
+        /// <returns>Excel file</returns>
         [HttpGet("export/daily-balances/excel")]
-        public async Task<ActionResult> ExportDailyBalancesToExcel([FromQuery] ReportFilterDto filter)
+        [ProducesResponseType(typeof(FileResult), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> ExportDailyBalancesToExcel([FromQuery] ReportFilterDto filter)
         {
             try
             {
-                var clientCode = User.FindFirst("ClientCode")?.Value;
+                var clientCode = GetClientCodeFromToken();
                 if (string.IsNullOrEmpty(clientCode))
-                    return BadRequest("Client code not found in token");
+                    return BadRequest(new { success = false, message = "Client code not found in token" });
 
                 var excelData = await _reportingService.ExportDailyBalancesToExcelAsync(filter, clientCode);
                 var fileName = $"daily-balances-{DateTime.Now:yyyyMMdd-HHmmss}.xlsx";
@@ -1482,21 +1843,26 @@ namespace RfidAppApi.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return ErrorResponse(500, "Failed to export daily balances to Excel", ex);
             }
         }
 
         /// <summary>
         /// Export sales report to CSV
         /// </summary>
+        /// <param name="filter">Report filter criteria</param>
+        /// <returns>CSV file</returns>
         [HttpGet("export/sales-report/csv")]
-        public async Task<ActionResult> ExportSalesReportToCsv([FromQuery] ReportFilterDto filter)
+        [ProducesResponseType(typeof(FileResult), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> ExportSalesReportToCsv([FromQuery] ReportFilterDto filter)
         {
             try
             {
-                var clientCode = User.FindFirst("ClientCode")?.Value;
+                var clientCode = GetClientCodeFromToken();
                 if (string.IsNullOrEmpty(clientCode))
-                    return BadRequest("Client code not found in token");
+                    return BadRequest(new { success = false, message = "Client code not found in token" });
 
                 var csvData = await _reportingService.ExportSalesReportToCsvAsync(filter, clientCode);
                 var fileName = $"sales-report-{DateTime.Now:yyyyMMdd-HHmmss}.csv";
@@ -1505,21 +1871,26 @@ namespace RfidAppApi.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return ErrorResponse(500, "Failed to export sales report to CSV", ex);
             }
         }
 
         /// <summary>
         /// Export sales report to Excel
         /// </summary>
+        /// <param name="filter">Report filter criteria</param>
+        /// <returns>Excel file</returns>
         [HttpGet("export/sales-report/excel")]
-        public async Task<ActionResult> ExportSalesReportToExcel([FromQuery] ReportFilterDto filter)
+        [ProducesResponseType(typeof(FileResult), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> ExportSalesReportToExcel([FromQuery] ReportFilterDto filter)
         {
             try
             {
-                var clientCode = User.FindFirst("ClientCode")?.Value;
+                var clientCode = GetClientCodeFromToken();
                 if (string.IsNullOrEmpty(clientCode))
-                    return BadRequest("Client code not found in token");
+                    return BadRequest(new { success = false, message = "Client code not found in token" });
 
                 var excelData = await _reportingService.ExportSalesReportToExcelAsync(filter, clientCode);
                 var fileName = $"sales-report-{DateTime.Now:yyyyMMdd-HHmmss}.xlsx";
@@ -1528,21 +1899,25 @@ namespace RfidAppApi.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return ErrorResponse(500, "Failed to export sales report to Excel", ex);
             }
         }
 
         /// <summary>
         /// Export RFID usage to CSV
         /// </summary>
+        /// <returns>CSV file</returns>
         [HttpGet("export/rfid-usage/csv")]
-        public async Task<ActionResult> ExportRfidUsageToCsv()
+        [ProducesResponseType(typeof(FileResult), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> ExportRfidUsageToCsv()
         {
             try
             {
-                var clientCode = User.FindFirst("ClientCode")?.Value;
+                var clientCode = GetClientCodeFromToken();
                 if (string.IsNullOrEmpty(clientCode))
-                    return BadRequest("Client code not found in token");
+                    return BadRequest(new { success = false, message = "Client code not found in token" });
 
                 var csvData = await _reportingService.ExportRfidUsageToCsvAsync(clientCode);
                 var fileName = $"rfid-usage-{DateTime.Now:yyyyMMdd-HHmmss}.csv";
@@ -1551,21 +1926,25 @@ namespace RfidAppApi.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return ErrorResponse(500, "Failed to export RFID usage to CSV", ex);
             }
         }
 
         /// <summary>
         /// Export RFID usage to Excel
         /// </summary>
+        /// <returns>Excel file</returns>
         [HttpGet("export/rfid-usage/excel")]
-        public async Task<ActionResult> ExportRfidUsageToExcel()
+        [ProducesResponseType(typeof(FileResult), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> ExportRfidUsageToExcel()
         {
             try
             {
-                var clientCode = User.FindFirst("ClientCode")?.Value;
+                var clientCode = GetClientCodeFromToken();
                 if (string.IsNullOrEmpty(clientCode))
-                    return BadRequest("Client code not found in token");
+                    return BadRequest(new { success = false, message = "Client code not found in token" });
 
                 var excelData = await _reportingService.ExportRfidUsageToExcelAsync(clientCode);
                 var fileName = $"rfid-usage-{DateTime.Now:yyyyMMdd-HHmmss}.xlsx";
@@ -1574,7 +1953,7 @@ namespace RfidAppApi.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return ErrorResponse(500, "Failed to export RFID usage to Excel", ex);
             }
         }
 

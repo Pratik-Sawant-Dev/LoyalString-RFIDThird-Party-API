@@ -114,6 +114,43 @@ namespace RfidAppApi.Controllers
         }
 
         /// <summary>
+        /// Export all products to Excel file with all fields
+        /// </summary>
+        /// <returns>Excel file containing all products</returns>
+        /// <response code="200">Excel file downloaded successfully</response>
+        /// <response code="500">Internal server error</response>
+        [HttpGet("export-all")]
+        [ProducesResponseType(typeof(FileResult), 200)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> ExportAllProducts()
+        {
+            try
+            {
+                var clientCode = GetClientCodeFromToken();
+                if (string.IsNullOrEmpty(clientCode))
+                {
+                    return BadRequest(new { message = "Client code not found in token." });
+                }
+
+                _logger.LogInformation("Starting product export to Excel for client: {ClientCode}", clientCode);
+
+                var excelBytes = await _productExcelService.ExportAllProductsToExcelAsync(clientCode);
+                
+                var fileName = $"Products_Export_{DateTime.UtcNow:yyyyMMdd_HHmmss}.xlsx";
+                
+                return File(
+                    excelBytes,
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                    fileName);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error exporting products to Excel");
+                return StatusCode(500, new { error = "Failed to export products to Excel", message = ex.Message });
+            }
+        }
+
+        /// <summary>
         /// Get client code from JWT token
         /// </summary>
         private string? GetClientCodeFromToken()

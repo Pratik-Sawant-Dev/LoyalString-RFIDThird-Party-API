@@ -4462,132 +4462,16 @@
         "tags": [
           "Product"
         ],
-        "summary": "Create a new product with images",
+        "summary": "Create a new product with images\nAccepts form data with productData as JSON string and image files",
         "operationId": "Product_CreateProductWithImages",
         "requestBody": {
           "content": {
             "multipart/form-data": {
               "schema": {
                 "properties": {
-                  "Images": {
-                    "type": "array",
-                    "nullable": true,
-                    "items": {
-                      "$ref": "#/components/schemas/ProductImageUploadDto"
-                    }
-                  },
-                  "ItemCode": {
+                  "productData": {
                     "type": "string",
                     "nullable": true
-                  },
-                  "CategoryName": {
-                    "type": "string",
-                    "nullable": true
-                  },
-                  "BranchName": {
-                    "type": "string",
-                    "nullable": true
-                  },
-                  "CounterName": {
-                    "type": "string",
-                    "nullable": true
-                  },
-                  "ProductName": {
-                    "type": "string",
-                    "nullable": true
-                  },
-                  "DesignName": {
-                    "type": "string",
-                    "nullable": true
-                  },
-                  "PurityName": {
-                    "type": "string",
-                    "nullable": true
-                  },
-                  "RfidCode": {
-                    "type": "string",
-                    "nullable": true
-                  },
-                  "RFIDNumber": {
-                    "type": "string",
-                    "nullable": true
-                  },
-                  "GrossWeight": {
-                    "type": "number",
-                    "format": "float",
-                    "nullable": true
-                  },
-                  "StoneWeight": {
-                    "type": "number",
-                    "format": "float",
-                    "nullable": true
-                  },
-                  "DiamondHeight": {
-                    "type": "number",
-                    "format": "float",
-                    "nullable": true
-                  },
-                  "NetWeight": {
-                    "type": "number",
-                    "format": "float",
-                    "nullable": true
-                  },
-                  "BoxDetails": {
-                    "type": "string",
-                    "nullable": true
-                  },
-                  "Size": {
-                    "type": "integer",
-                    "format": "int32",
-                    "nullable": true
-                  },
-                  "StoneAmount": {
-                    "type": "number",
-                    "format": "decimal",
-                    "nullable": true
-                  },
-                  "DiamondAmount": {
-                    "type": "number",
-                    "format": "decimal",
-                    "nullable": true
-                  },
-                  "HallmarkAmount": {
-                    "type": "number",
-                    "format": "decimal",
-                    "nullable": true
-                  },
-                  "MakingPerGram": {
-                    "type": "number",
-                    "format": "decimal",
-                    "nullable": true
-                  },
-                  "MakingPercentage": {
-                    "type": "number",
-                    "format": "decimal",
-                    "nullable": true
-                  },
-                  "MakingFixedAmount": {
-                    "type": "number",
-                    "format": "decimal",
-                    "nullable": true
-                  },
-                  "Mrp": {
-                    "type": "number",
-                    "format": "decimal",
-                    "nullable": true
-                  },
-                  "ImageUrl": {
-                    "type": "string",
-                    "nullable": true
-                  },
-                  "Status": {
-                    "type": "string",
-                    "nullable": true
-                  },
-                  "CustomFields": {
-                    "type": "object",
-                    "nullable": true,
-                    "additionalProperties": {}
                   },
                   "images": {
                     "type": "array",
@@ -4921,6 +4805,28 @@
         }
       }
     },
+    "/api/Product/delete-all": {
+      "delete": {
+        "tags": [
+          "Product"
+        ],
+        "summary": "Delete all products for the current client\nWARNING: This will permanently delete all products, images, custom fields, and RFID assignments",
+        "operationId": "Product_DeleteAllProducts",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Product/search": {
       "get": {
         "tags": [
@@ -5154,6 +5060,31 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/api/ProductExcel/export-all": {
+      "get": {
+        "tags": [
+          "ProductExcel"
+        ],
+        "summary": "Export all products to Excel file with all fields",
+        "operationId": "ProductExcel_ExportAllProducts",
+        "responses": {
+          "200": {
+            "description": "Excel file downloaded successfully",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
                 }
               }
             }
@@ -5591,6 +5522,7 @@
         "operationId": "Reporting_CreateStockMovement",
         "requestBody": {
           "x-name": "movementDto",
+          "description": "Stock movement data",
           "content": {
             "application/json": {
               "schema": {
@@ -5602,8 +5534,8 @@
           "x-position": 1
         },
         "responses": {
-          "200": {
-            "description": "",
+          "201": {
+            "description": "Created stock movement",
             "content": {
               "application/json": {
                 "schema": {
@@ -5611,6 +5543,19 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
           }
         }
       },
@@ -5701,7 +5646,7 @@
         ],
         "responses": {
           "200": {
-            "description": "",
+            "description": "List of stock movements",
             "content": {
               "application/json": {
                 "schema": {
@@ -5712,6 +5657,19 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
           }
         }
       }
@@ -5725,6 +5683,7 @@
         "operationId": "Reporting_CreateBulkStockMovements",
         "requestBody": {
           "x-name": "bulkDto",
+          "description": "Bulk stock movement data",
           "content": {
             "application/json": {
               "schema": {
@@ -5737,7 +5696,7 @@
         },
         "responses": {
           "200": {
-            "description": "",
+            "description": "List of created stock movements",
             "content": {
               "application/json": {
                 "schema": {
@@ -5748,6 +5707,19 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
           }
         }
       }
@@ -5764,6 +5736,7 @@
             "name": "movementId",
             "in": "path",
             "required": true,
+            "description": "Stock movement ID",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -5773,7 +5746,7 @@
         ],
         "responses": {
           "200": {
-            "description": "",
+            "description": "Stock movement details",
             "content": {
               "application/json": {
                 "schema": {
@@ -5781,6 +5754,19 @@
                 }
               }
             }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
           }
         }
       }
@@ -5796,6 +5782,7 @@
           {
             "name": "startDate",
             "in": "query",
+            "description": "Start date",
             "schema": {
               "type": "string",
               "format": "date-time"
@@ -5805,6 +5792,7 @@
           {
             "name": "endDate",
             "in": "query",
+            "description": "End date",
             "schema": {
               "type": "string",
               "format": "date-time"
@@ -5814,7 +5802,7 @@
         ],
         "responses": {
           "200": {
-            "description": "",
+            "description": "List of stock movements",
             "content": {
               "application/json": {
                 "schema": {
@@ -5825,6 +5813,19 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
           }
         }
       }
@@ -5834,13 +5835,14 @@
         "tags": [
           "Reporting"
         ],
-        "summary": "Get stock movements by product",
+        "summary": "Get stock movements by product ID",
         "operationId": "Reporting_GetStockMovementsByProduct",
         "parameters": [
           {
             "name": "productId",
             "in": "path",
             "required": true,
+            "description": "Product ID",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -5850,7 +5852,7 @@
         ],
         "responses": {
           "200": {
-            "description": "",
+            "description": "List of stock movements",
             "content": {
               "application/json": {
                 "schema": {
@@ -5861,6 +5863,19 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
           }
         }
       }
@@ -5870,13 +5885,14 @@
         "tags": [
           "Reporting"
         ],
-        "summary": "Get stock movements by branch",
+        "summary": "Get stock movements by branch ID",
         "operationId": "Reporting_GetStockMovementsByBranch",
         "parameters": [
           {
             "name": "branchId",
             "in": "path",
             "required": true,
+            "description": "Branch ID",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -5886,7 +5902,7 @@
         ],
         "responses": {
           "200": {
-            "description": "",
+            "description": "List of stock movements",
             "content": {
               "application/json": {
                 "schema": {
@@ -5897,6 +5913,19 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
           }
         }
       }
@@ -5906,13 +5935,14 @@
         "tags": [
           "Reporting"
         ],
-        "summary": "Get stock movements by counter",
+        "summary": "Get stock movements by counter ID",
         "operationId": "Reporting_GetStockMovementsByCounter",
         "parameters": [
           {
             "name": "counterId",
             "in": "path",
             "required": true,
+            "description": "Counter ID",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -5922,7 +5952,7 @@
         ],
         "responses": {
           "200": {
-            "description": "",
+            "description": "List of stock movements",
             "content": {
               "application/json": {
                 "schema": {
@@ -5933,6 +5963,19 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
           }
         }
       }
@@ -5942,13 +5985,14 @@
         "tags": [
           "Reporting"
         ],
-        "summary": "Get stock movements by category",
+        "summary": "Get stock movements by category ID",
         "operationId": "Reporting_GetStockMovementsByCategory",
         "parameters": [
           {
             "name": "categoryId",
             "in": "path",
             "required": true,
+            "description": "Category ID",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -5958,7 +6002,7 @@
         ],
         "responses": {
           "200": {
-            "description": "",
+            "description": "List of stock movements",
             "content": {
               "application/json": {
                 "schema": {
@@ -5969,6 +6013,19 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
           }
         }
       }
@@ -5985,6 +6042,7 @@
             "name": "productId",
             "in": "path",
             "required": true,
+            "description": "Product ID",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -5995,6 +6053,7 @@
             "name": "date",
             "in": "path",
             "required": true,
+            "description": "Balance date",
             "schema": {
               "type": "string",
               "format": "date-time"
@@ -6004,7 +6063,7 @@
         ],
         "responses": {
           "200": {
-            "description": "",
+            "description": "Daily stock balance",
             "content": {
               "application/json": {
                 "schema": {
@@ -6012,6 +6071,19 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
           }
         }
       }
@@ -6104,7 +6176,7 @@
         ],
         "responses": {
           "200": {
-            "description": "",
+            "description": "List of daily stock balances",
             "content": {
               "application/json": {
                 "schema": {
@@ -6115,6 +6187,19 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
           }
         }
       }
@@ -6131,6 +6216,7 @@
             "name": "productId",
             "in": "path",
             "required": true,
+            "description": "Product ID",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -6141,6 +6227,7 @@
             "name": "date",
             "in": "path",
             "required": true,
+            "description": "Balance date",
             "schema": {
               "type": "string",
               "format": "date-time"
@@ -6150,7 +6237,7 @@
         ],
         "responses": {
           "200": {
-            "description": "",
+            "description": "Calculated daily stock balance",
             "content": {
               "application/json": {
                 "schema": {
@@ -6158,6 +6245,19 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
           }
         }
       }
@@ -6174,6 +6274,7 @@
             "name": "date",
             "in": "path",
             "required": true,
+            "description": "Balance date",
             "schema": {
               "type": "string",
               "format": "date-time"
@@ -6183,7 +6284,7 @@
         ],
         "responses": {
           "200": {
-            "description": "",
+            "description": "List of calculated daily stock balances",
             "content": {
               "application/json": {
                 "schema": {
@@ -6194,49 +6295,19 @@
                 }
               }
             }
-          }
-        }
-      }
-    },
-    "/api/Reporting/daily-balances/product/{productId}/{date}": {
-      "get": {
-        "tags": [
-          "Reporting"
-        ],
-        "summary": "Get daily stock balance by product and date",
-        "operationId": "Reporting_GetDailyStockBalanceByProduct",
-        "parameters": [
-          {
-            "name": "productId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            },
-            "x-position": 1
           },
-          {
-            "name": "date",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "date-time"
-            },
-            "x-position": 2
-          }
-        ],
-        "responses": {
-          "200": {
+          "400": {
             "description": "",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/DailyStockBalanceDto"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
+          },
+          "500": {
+            "description": ""
           }
         }
       }
@@ -6252,6 +6323,7 @@
           {
             "name": "startDate",
             "in": "query",
+            "description": "Start date",
             "schema": {
               "type": "string",
               "format": "date-time"
@@ -6261,6 +6333,7 @@
           {
             "name": "endDate",
             "in": "query",
+            "description": "End date",
             "schema": {
               "type": "string",
               "format": "date-time"
@@ -6270,7 +6343,7 @@
         ],
         "responses": {
           "200": {
-            "description": "",
+            "description": "List of daily stock balances",
             "content": {
               "application/json": {
                 "schema": {
@@ -6281,6 +6354,19 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
           }
         }
       }
@@ -6373,7 +6459,7 @@
         ],
         "responses": {
           "200": {
-            "description": "",
+            "description": "List of sales reports",
             "content": {
               "application/json": {
                 "schema": {
@@ -6384,6 +6470,19 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
           }
         }
       }
@@ -6400,6 +6499,7 @@
             "name": "date",
             "in": "path",
             "required": true,
+            "description": "Report date",
             "schema": {
               "type": "string",
               "format": "date-time"
@@ -6409,7 +6509,7 @@
         ],
         "responses": {
           "200": {
-            "description": "",
+            "description": "Sales report",
             "content": {
               "application/json": {
                 "schema": {
@@ -6417,6 +6517,19 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
           }
         }
       }
@@ -6432,6 +6545,7 @@
           {
             "name": "startDate",
             "in": "query",
+            "description": "Start date",
             "schema": {
               "type": "string",
               "format": "date-time"
@@ -6441,6 +6555,7 @@
           {
             "name": "endDate",
             "in": "query",
+            "description": "End date",
             "schema": {
               "type": "string",
               "format": "date-time"
@@ -6450,7 +6565,7 @@
         ],
         "responses": {
           "200": {
-            "description": "",
+            "description": "List of sales reports",
             "content": {
               "application/json": {
                 "schema": {
@@ -6461,6 +6576,19 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
           }
         }
       }
@@ -6477,6 +6605,7 @@
             "name": "branchId",
             "in": "path",
             "required": true,
+            "description": "Branch ID",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -6487,6 +6616,7 @@
             "name": "date",
             "in": "path",
             "required": true,
+            "description": "Report date",
             "schema": {
               "type": "string",
               "format": "date-time"
@@ -6496,7 +6626,7 @@
         ],
         "responses": {
           "200": {
-            "description": "",
+            "description": "Sales report",
             "content": {
               "application/json": {
                 "schema": {
@@ -6504,6 +6634,19 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
           }
         }
       }
@@ -6520,6 +6663,7 @@
             "name": "counterId",
             "in": "path",
             "required": true,
+            "description": "Counter ID",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -6530,6 +6674,7 @@
             "name": "date",
             "in": "path",
             "required": true,
+            "description": "Report date",
             "schema": {
               "type": "string",
               "format": "date-time"
@@ -6539,7 +6684,7 @@
         ],
         "responses": {
           "200": {
-            "description": "",
+            "description": "Sales report",
             "content": {
               "application/json": {
                 "schema": {
@@ -6547,6 +6692,19 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
           }
         }
       }
@@ -6563,6 +6721,7 @@
             "name": "categoryId",
             "in": "path",
             "required": true,
+            "description": "Category ID",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -6573,6 +6732,7 @@
             "name": "date",
             "in": "path",
             "required": true,
+            "description": "Report date",
             "schema": {
               "type": "string",
               "format": "date-time"
@@ -6582,7 +6742,7 @@
         ],
         "responses": {
           "200": {
-            "description": "",
+            "description": "Sales report",
             "content": {
               "application/json": {
                 "schema": {
@@ -6590,6 +6750,19 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
           }
         }
       }
@@ -6682,7 +6855,7 @@
         ],
         "responses": {
           "200": {
-            "description": "",
+            "description": "List of stock summary reports",
             "content": {
               "application/json": {
                 "schema": {
@@ -6693,6 +6866,19 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
           }
         }
       }
@@ -6709,6 +6895,7 @@
             "name": "date",
             "in": "path",
             "required": true,
+            "description": "Report date",
             "schema": {
               "type": "string",
               "format": "date-time"
@@ -6718,7 +6905,7 @@
         ],
         "responses": {
           "200": {
-            "description": "",
+            "description": "Stock summary report",
             "content": {
               "application/json": {
                 "schema": {
@@ -6726,6 +6913,19 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
           }
         }
       }
@@ -6742,6 +6942,7 @@
             "name": "branchId",
             "in": "path",
             "required": true,
+            "description": "Branch ID",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -6752,6 +6953,7 @@
             "name": "date",
             "in": "path",
             "required": true,
+            "description": "Report date",
             "schema": {
               "type": "string",
               "format": "date-time"
@@ -6761,7 +6963,7 @@
         ],
         "responses": {
           "200": {
-            "description": "",
+            "description": "Stock summary report",
             "content": {
               "application/json": {
                 "schema": {
@@ -6769,6 +6971,19 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
           }
         }
       }
@@ -6785,6 +7000,7 @@
             "name": "counterId",
             "in": "path",
             "required": true,
+            "description": "Counter ID",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -6795,6 +7011,7 @@
             "name": "date",
             "in": "path",
             "required": true,
+            "description": "Report date",
             "schema": {
               "type": "string",
               "format": "date-time"
@@ -6804,7 +7021,7 @@
         ],
         "responses": {
           "200": {
-            "description": "",
+            "description": "Stock summary report",
             "content": {
               "application/json": {
                 "schema": {
@@ -6812,6 +7029,19 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
           }
         }
       }
@@ -6828,6 +7058,7 @@
             "name": "categoryId",
             "in": "path",
             "required": true,
+            "description": "Category ID",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -6838,6 +7069,7 @@
             "name": "date",
             "in": "path",
             "required": true,
+            "description": "Report date",
             "schema": {
               "type": "string",
               "format": "date-time"
@@ -6847,7 +7079,7 @@
         ],
         "responses": {
           "200": {
-            "description": "",
+            "description": "Stock summary report",
             "content": {
               "application/json": {
                 "schema": {
@@ -6855,6 +7087,19 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
           }
         }
       }
@@ -6947,7 +7192,7 @@
         ],
         "responses": {
           "200": {
-            "description": "",
+            "description": "List of daily activity reports",
             "content": {
               "application/json": {
                 "schema": {
@@ -6958,6 +7203,19 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
           }
         }
       }
@@ -6974,6 +7232,7 @@
             "name": "date",
             "in": "path",
             "required": true,
+            "description": "Report date",
             "schema": {
               "type": "string",
               "format": "date-time"
@@ -6983,7 +7242,7 @@
         ],
         "responses": {
           "200": {
-            "description": "",
+            "description": "Daily activity report",
             "content": {
               "application/json": {
                 "schema": {
@@ -6991,6 +7250,19 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
           }
         }
       }
@@ -7007,6 +7279,7 @@
             "name": "branchId",
             "in": "path",
             "required": true,
+            "description": "Branch ID",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -7017,6 +7290,7 @@
             "name": "date",
             "in": "path",
             "required": true,
+            "description": "Report date",
             "schema": {
               "type": "string",
               "format": "date-time"
@@ -7026,7 +7300,7 @@
         ],
         "responses": {
           "200": {
-            "description": "",
+            "description": "Daily activity report",
             "content": {
               "application/json": {
                 "schema": {
@@ -7034,6 +7308,19 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
           }
         }
       }
@@ -7050,6 +7337,7 @@
             "name": "counterId",
             "in": "path",
             "required": true,
+            "description": "Counter ID",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -7060,6 +7348,7 @@
             "name": "date",
             "in": "path",
             "required": true,
+            "description": "Report date",
             "schema": {
               "type": "string",
               "format": "date-time"
@@ -7069,7 +7358,7 @@
         ],
         "responses": {
           "200": {
-            "description": "",
+            "description": "Daily activity report",
             "content": {
               "application/json": {
                 "schema": {
@@ -7077,6 +7366,19 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
           }
         }
       }
@@ -7093,6 +7395,7 @@
             "name": "categoryId",
             "in": "path",
             "required": true,
+            "description": "Category ID",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -7103,6 +7406,7 @@
             "name": "date",
             "in": "path",
             "required": true,
+            "description": "Report date",
             "schema": {
               "type": "string",
               "format": "date-time"
@@ -7112,7 +7416,7 @@
         ],
         "responses": {
           "200": {
-            "description": "",
+            "description": "Daily activity report",
             "content": {
               "application/json": {
                 "schema": {
@@ -7120,6 +7424,19 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
           }
         }
       }
@@ -7136,6 +7453,7 @@
             "name": "date",
             "in": "path",
             "required": true,
+            "description": "Report date",
             "schema": {
               "type": "string",
               "format": "date-time"
@@ -7145,7 +7463,7 @@
         ],
         "responses": {
           "200": {
-            "description": "",
+            "description": "Report summary",
             "content": {
               "application/json": {
                 "schema": {
@@ -7153,6 +7471,19 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
           }
         }
       }
@@ -7168,6 +7499,7 @@
           {
             "name": "startDate",
             "in": "query",
+            "description": "Start date",
             "schema": {
               "type": "string",
               "format": "date-time"
@@ -7177,6 +7509,7 @@
           {
             "name": "endDate",
             "in": "query",
+            "description": "End date",
             "schema": {
               "type": "string",
               "format": "date-time"
@@ -7186,7 +7519,7 @@
         ],
         "responses": {
           "200": {
-            "description": "",
+            "description": "Report summary",
             "content": {
               "application/json": {
                 "schema": {
@@ -7194,6 +7527,19 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
           }
         }
       }
@@ -7210,6 +7556,7 @@
             "name": "branchId",
             "in": "path",
             "required": true,
+            "description": "Branch ID",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -7220,6 +7567,7 @@
             "name": "date",
             "in": "path",
             "required": true,
+            "description": "Report date",
             "schema": {
               "type": "string",
               "format": "date-time"
@@ -7229,7 +7577,7 @@
         ],
         "responses": {
           "200": {
-            "description": "",
+            "description": "Report summary",
             "content": {
               "application/json": {
                 "schema": {
@@ -7237,6 +7585,19 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
           }
         }
       }
@@ -7253,6 +7614,7 @@
             "name": "counterId",
             "in": "path",
             "required": true,
+            "description": "Counter ID",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -7263,6 +7625,7 @@
             "name": "date",
             "in": "path",
             "required": true,
+            "description": "Report date",
             "schema": {
               "type": "string",
               "format": "date-time"
@@ -7272,7 +7635,7 @@
         ],
         "responses": {
           "200": {
-            "description": "",
+            "description": "Report summary",
             "content": {
               "application/json": {
                 "schema": {
@@ -7280,6 +7643,19 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
           }
         }
       }
@@ -7296,6 +7672,7 @@
             "name": "productId",
             "in": "path",
             "required": true,
+            "description": "Product ID",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -7305,7 +7682,7 @@
         ],
         "responses": {
           "200": {
-            "description": "",
+            "description": "Current stock quantity",
             "content": {
               "application/json": {
                 "schema": {
@@ -7314,6 +7691,19 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
           }
         }
       }
@@ -7330,6 +7720,7 @@
             "name": "productId",
             "in": "path",
             "required": true,
+            "description": "Product ID",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -7340,6 +7731,7 @@
             "name": "branchId",
             "in": "path",
             "required": true,
+            "description": "Branch ID",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -7349,7 +7741,7 @@
         ],
         "responses": {
           "200": {
-            "description": "",
+            "description": "Current stock quantity",
             "content": {
               "application/json": {
                 "schema": {
@@ -7358,6 +7750,19 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
           }
         }
       }
@@ -7374,6 +7779,7 @@
             "name": "productId",
             "in": "path",
             "required": true,
+            "description": "Product ID",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -7384,6 +7790,7 @@
             "name": "counterId",
             "in": "path",
             "required": true,
+            "description": "Counter ID",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -7393,7 +7800,7 @@
         ],
         "responses": {
           "200": {
-            "description": "",
+            "description": "Current stock quantity",
             "content": {
               "application/json": {
                 "schema": {
@@ -7402,6 +7809,19 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
           }
         }
       }
@@ -7418,6 +7838,7 @@
             "name": "categoryId",
             "in": "path",
             "required": true,
+            "description": "Category ID",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -7427,7 +7848,7 @@
         ],
         "responses": {
           "200": {
-            "description": "",
+            "description": "Current stock quantity",
             "content": {
               "application/json": {
                 "schema": {
@@ -7436,6 +7857,19 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
           }
         }
       }
@@ -7452,6 +7886,7 @@
             "name": "productId",
             "in": "path",
             "required": true,
+            "description": "Product ID",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -7461,7 +7896,7 @@
         ],
         "responses": {
           "200": {
-            "description": "",
+            "description": "Current stock value",
             "content": {
               "application/json": {
                 "schema": {
@@ -7470,6 +7905,19 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
           }
         }
       }
@@ -7486,6 +7934,7 @@
             "name": "productId",
             "in": "path",
             "required": true,
+            "description": "Product ID",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -7496,6 +7945,7 @@
             "name": "branchId",
             "in": "path",
             "required": true,
+            "description": "Branch ID",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -7505,7 +7955,7 @@
         ],
         "responses": {
           "200": {
-            "description": "",
+            "description": "Current stock value",
             "content": {
               "application/json": {
                 "schema": {
@@ -7514,6 +7964,19 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
           }
         }
       }
@@ -7530,6 +7993,7 @@
             "name": "productId",
             "in": "path",
             "required": true,
+            "description": "Product ID",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -7540,6 +8004,7 @@
             "name": "counterId",
             "in": "path",
             "required": true,
+            "description": "Counter ID",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -7549,7 +8014,7 @@
         ],
         "responses": {
           "200": {
-            "description": "",
+            "description": "Current stock value",
             "content": {
               "application/json": {
                 "schema": {
@@ -7558,6 +8023,19 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
           }
         }
       }
@@ -7574,6 +8052,7 @@
             "name": "categoryId",
             "in": "path",
             "required": true,
+            "description": "Category ID",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -7583,7 +8062,7 @@
         ],
         "responses": {
           "200": {
-            "description": "",
+            "description": "Current stock value",
             "content": {
               "application/json": {
                 "schema": {
@@ -7592,6 +8071,19 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
           }
         }
       }
@@ -7608,6 +8100,7 @@
             "name": "date",
             "in": "path",
             "required": true,
+            "description": "Date to process",
             "schema": {
               "type": "string",
               "format": "date-time"
@@ -7617,7 +8110,7 @@
         ],
         "responses": {
           "200": {
-            "description": "",
+            "description": "Processing result",
             "content": {
               "application/json": {
                 "schema": {
@@ -7625,6 +8118,19 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
           }
         }
       }
@@ -7640,6 +8146,7 @@
           {
             "name": "startDate",
             "in": "query",
+            "description": "Start date",
             "schema": {
               "type": "string",
               "format": "date-time"
@@ -7649,6 +8156,7 @@
           {
             "name": "endDate",
             "in": "query",
+            "description": "End date",
             "schema": {
               "type": "string",
               "format": "date-time"
@@ -7658,7 +8166,7 @@
         ],
         "responses": {
           "200": {
-            "description": "",
+            "description": "Processing result",
             "content": {
               "application/json": {
                 "schema": {
@@ -7666,6 +8174,19 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
           }
         }
       }
@@ -7681,6 +8202,7 @@
           {
             "name": "startDate",
             "in": "query",
+            "description": "Start date",
             "schema": {
               "type": "string",
               "format": "date-time"
@@ -7690,6 +8212,7 @@
           {
             "name": "endDate",
             "in": "query",
+            "description": "End date",
             "schema": {
               "type": "string",
               "format": "date-time"
@@ -7699,7 +8222,7 @@
         ],
         "responses": {
           "200": {
-            "description": "",
+            "description": "Recalculation result",
             "content": {
               "application/json": {
                 "schema": {
@@ -7707,6 +8230,19 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
           }
         }
       }
@@ -7720,7 +8256,7 @@
         "operationId": "Reporting_GetRfidUsageReport",
         "responses": {
           "200": {
-            "description": "",
+            "description": "RFID usage report",
             "content": {
               "application/json": {
                 "schema": {
@@ -7728,6 +8264,19 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
           }
         }
       }
@@ -7744,6 +8293,7 @@
             "name": "date",
             "in": "path",
             "required": true,
+            "description": "Report date",
             "schema": {
               "type": "string",
               "format": "date-time"
@@ -7753,7 +8303,7 @@
         ],
         "responses": {
           "200": {
-            "description": "",
+            "description": "RFID usage report",
             "content": {
               "application/json": {
                 "schema": {
@@ -7761,6 +8311,19 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
           }
         }
       }
@@ -7774,7 +8337,7 @@
         "operationId": "Reporting_GetUsedRfidTags",
         "responses": {
           "200": {
-            "description": "",
+            "description": "List of used RFID tags",
             "content": {
               "application/json": {
                 "schema": {
@@ -7785,6 +8348,19 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
           }
         }
       }
@@ -7798,7 +8374,7 @@
         "operationId": "Reporting_GetUnusedRfidTags",
         "responses": {
           "200": {
-            "description": "",
+            "description": "List of unused RFID tags",
             "content": {
               "application/json": {
                 "schema": {
@@ -7809,6 +8385,19 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
           }
         }
       }
@@ -7825,6 +8414,7 @@
             "name": "isUsed",
             "in": "path",
             "required": true,
+            "description": "Usage status (true for used, false for unused)",
             "schema": {
               "type": "boolean"
             },
@@ -7833,7 +8423,7 @@
         ],
         "responses": {
           "200": {
-            "description": "",
+            "description": "List of RFID tags",
             "content": {
               "application/json": {
                 "schema": {
@@ -7844,6 +8434,19 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
           }
         }
       }
@@ -7857,7 +8460,7 @@
         "operationId": "Reporting_GetRfidUsageByCategory",
         "responses": {
           "200": {
-            "description": "",
+            "description": "List of RFID usage by category",
             "content": {
               "application/json": {
                 "schema": {
@@ -7868,6 +8471,19 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
           }
         }
       }
@@ -7881,7 +8497,7 @@
         "operationId": "Reporting_GetRfidUsageByBranch",
         "responses": {
           "200": {
-            "description": "",
+            "description": "List of RFID usage by branch",
             "content": {
               "application/json": {
                 "schema": {
@@ -7892,6 +8508,19 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
           }
         }
       }
@@ -7905,7 +8534,7 @@
         "operationId": "Reporting_GetRfidUsageByCounter",
         "responses": {
           "200": {
-            "description": "",
+            "description": "List of RFID usage by counter",
             "content": {
               "application/json": {
                 "schema": {
@@ -7916,6 +8545,19 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
           }
         }
       }
@@ -7932,6 +8574,7 @@
             "name": "categoryId",
             "in": "path",
             "required": true,
+            "description": "Category ID",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -7941,7 +8584,7 @@
         ],
         "responses": {
           "200": {
-            "description": "",
+            "description": "RFID usage by category",
             "content": {
               "application/json": {
                 "schema": {
@@ -7949,6 +8592,19 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
           }
         }
       }
@@ -7965,6 +8621,7 @@
             "name": "branchId",
             "in": "path",
             "required": true,
+            "description": "Branch ID",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -7974,7 +8631,7 @@
         ],
         "responses": {
           "200": {
-            "description": "",
+            "description": "RFID usage by branch",
             "content": {
               "application/json": {
                 "schema": {
@@ -7982,6 +8639,19 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
           }
         }
       }
@@ -7998,6 +8668,7 @@
             "name": "counterId",
             "in": "path",
             "required": true,
+            "description": "Counter ID",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -8007,7 +8678,7 @@
         ],
         "responses": {
           "200": {
-            "description": "",
+            "description": "RFID usage by counter",
             "content": {
               "application/json": {
                 "schema": {
@@ -8015,6 +8686,19 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
           }
         }
       }
@@ -8028,7 +8712,7 @@
         "operationId": "Reporting_GetTotalRfidTagsCount",
         "responses": {
           "200": {
-            "description": "",
+            "description": "Total RFID tags count",
             "content": {
               "application/json": {
                 "schema": {
@@ -8037,6 +8721,19 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
           }
         }
       }
@@ -8050,7 +8747,7 @@
         "operationId": "Reporting_GetUsedRfidTagsCount",
         "responses": {
           "200": {
-            "description": "",
+            "description": "Used RFID tags count",
             "content": {
               "application/json": {
                 "schema": {
@@ -8059,6 +8756,19 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
           }
         }
       }
@@ -8072,7 +8782,7 @@
         "operationId": "Reporting_GetUnusedRfidTagsCount",
         "responses": {
           "200": {
-            "description": "",
+            "description": "Unused RFID tags count",
             "content": {
               "application/json": {
                 "schema": {
@@ -8081,6 +8791,19 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
           }
         }
       }
@@ -8094,7 +8817,7 @@
         "operationId": "Reporting_GetRfidUsagePercentage",
         "responses": {
           "200": {
-            "description": "",
+            "description": "RFID usage percentage",
             "content": {
               "application/json": {
                 "schema": {
@@ -8103,6 +8826,19 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
           }
         }
       }
@@ -8195,7 +8931,7 @@
         ],
         "responses": {
           "200": {
-            "description": "",
+            "description": "CSV file",
             "content": {
               "application/octet-stream": {
                 "schema": {
@@ -8204,6 +8940,19 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
           }
         }
       }
@@ -8296,7 +9045,7 @@
         ],
         "responses": {
           "200": {
-            "description": "",
+            "description": "Excel file",
             "content": {
               "application/octet-stream": {
                 "schema": {
@@ -8305,6 +9054,19 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
           }
         }
       }
@@ -8397,7 +9159,7 @@
         ],
         "responses": {
           "200": {
-            "description": "",
+            "description": "CSV file",
             "content": {
               "application/octet-stream": {
                 "schema": {
@@ -8406,6 +9168,19 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
           }
         }
       }
@@ -8498,7 +9273,7 @@
         ],
         "responses": {
           "200": {
-            "description": "",
+            "description": "Excel file",
             "content": {
               "application/octet-stream": {
                 "schema": {
@@ -8507,6 +9282,19 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
           }
         }
       }
@@ -8599,7 +9387,7 @@
         ],
         "responses": {
           "200": {
-            "description": "",
+            "description": "CSV file",
             "content": {
               "application/octet-stream": {
                 "schema": {
@@ -8608,6 +9396,19 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
           }
         }
       }
@@ -8700,7 +9501,7 @@
         ],
         "responses": {
           "200": {
-            "description": "",
+            "description": "Excel file",
             "content": {
               "application/octet-stream": {
                 "schema": {
@@ -8709,6 +9510,19 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
           }
         }
       }
@@ -8722,7 +9536,7 @@
         "operationId": "Reporting_ExportRfidUsageToCsv",
         "responses": {
           "200": {
-            "description": "",
+            "description": "CSV file",
             "content": {
               "application/octet-stream": {
                 "schema": {
@@ -8731,6 +9545,19 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
           }
         }
       }
@@ -8744,7 +9571,7 @@
         "operationId": "Reporting_ExportRfidUsageToExcel",
         "responses": {
           "200": {
-            "description": "",
+            "description": "Excel file",
             "content": {
               "application/octet-stream": {
                 "schema": {
@@ -8753,6 +9580,19 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
           }
         }
       }
@@ -13714,25 +14554,6 @@
           }
         }
       },
-      "ProductImageUploadDto": {
-        "type": "object",
-        "description": "DTO for uploading product images",
-        "additionalProperties": false,
-        "properties": {
-          "productId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "imageType": {
-            "type": "string",
-            "nullable": true
-          },
-          "displayOrder": {
-            "type": "integer",
-            "format": "int32"
-          }
-        }
-      },
       "UserFriendlyUpdateProductDto": {
         "type": "object",
         "description": "User-friendly DTO for updating products",
@@ -13842,6 +14663,25 @@
             "type": "object",
             "nullable": true,
             "additionalProperties": {}
+          }
+        }
+      },
+      "ProductImageUploadDto": {
+        "type": "object",
+        "description": "DTO for uploading product images",
+        "additionalProperties": false,
+        "properties": {
+          "productId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "imageType": {
+            "type": "string",
+            "nullable": true
+          },
+          "displayOrder": {
+            "type": "integer",
+            "format": "int32"
           }
         }
       },

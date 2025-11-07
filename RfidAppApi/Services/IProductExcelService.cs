@@ -21,6 +21,11 @@ namespace RfidAppApi.Services
         /// Read and parse Excel file to extract product data
         /// </summary>
         Task<List<ProductExcelRowDto>> ReadExcelFileAsync(IFormFile file);
+
+        /// <summary>
+        /// Export all products to Excel file with all fields
+        /// </summary>
+        Task<byte[]> ExportAllProductsToExcelAsync(string clientCode);
     }
 }
 
